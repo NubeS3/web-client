@@ -1,7 +1,26 @@
+import Dashboard from './views/pages/Dashboard'
+import SignIn from './views/pages/auth/Login/Login'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from 'react-router-dom'
+import './App.css'
+
 function App() {
   return (
-    <div className="App">
-      <h1>Welcome to NubeS3 cloud storage. Give me your all money, we will serve you the best.</h1>
+    <div className="wrapper">
+      <h1>NubeS3 Cloud Storage</h1>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Dashboard />
+          </Route>
+          <Route exact path="/sign-in">
+            <SignIn />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }
