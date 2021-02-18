@@ -1,8 +1,8 @@
 import actionTypes from '../../configs/actionTypes'
 import respTypes from '../../configs/responseType'
 import localStorageKeys from '../../configs/localStorageKeys'
-import authenticateRequest from '../../services/auth/'
-import logoutRequest from '../../services/auth/'
+import authRequest from '../../services/authRequest'
+import logoutRequest from '../../services/logoutRequest'
 
 const isValidatingAuthentication = () => ({
   type: actionTypes.VALIDATING_AUTHENTICATION
@@ -24,7 +24,7 @@ export const verifyAuthentication = () => async (dispatch, getState) => {
   if (!token) {
     return dispatch(invalidAuthentication());
   }
-  const result = await authenticateRequest(token);
+  const result = await authRequest(token);
 
   if (result.type === respTypes.SUCCEED) {
     dispatch(validAuthentication(token));

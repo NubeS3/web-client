@@ -2,8 +2,9 @@ const BASE = `${process.env.NUBES_BACK_END_URL}`
 
 const endpoints = {
   BASE,
-  LOGIN: `${BASE}/users/signin`,
+  AUTHENTICATION: `${BASE}/users/verify-authentication`,
   REGISTER: `${BASE}/users/signup`,
+  LOGIN: `${BASE}/users/signin`,
   LOGOUT: `${BASE}/users/signout`,
   CONFIRM_OTP: `${BASE}/users/confirm-otp`
 }

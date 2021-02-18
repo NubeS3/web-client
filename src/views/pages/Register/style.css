@@ -1,0 +1,40 @@
+.register-wrapper {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+
+  justify-content: center;
+  align-items: center;
+}
+
+.register-wrapper .form-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  width: 420px;
+}
+
+.register-wrapper .form-wrapper .form-control {
+  display: flex;
+  justify-content: space-between;
+}
+
+.register-wrapper .form-wrapper .form-control .textfield,
+.register-wrapper .form-wrapper .textfield {
+  margin: 5px 0 !important;
+}
+
+.register-wrapper .form-wrapper .register-button {
+  width: 100%;
+  border-radius: 0px !important;
+  border: 0.25px solid dimgray !important;
+}
+
+.register-wrapper .form-wrapper .register-error {
+  height: 50px;
+  color: crimson;
+}
