@@ -1,21 +1,21 @@
-import actionTypes from '../../configs/actionTypes'
-import respTypes from '../../configs/responseType'
-import localStorageKeys from '../../configs/localStorageKeys'
-import authRequest from '../../services/authRequest'
-import logoutRequest from '../../services/logoutRequest'
+import actionTypes from "../../configs/actionTypes";
+import respTypes from "../../configs/responseType";
+import localStorageKeys from "../../configs/localStorageKeys";
+import authRequest from "../../services/authRequest";
+import logoutRequest from "../../services/logoutRequest";
 
 const isValidatingAuthentication = () => ({
-  type: actionTypes.VALIDATING_AUTHENTICATION
-})
+  type: actionTypes.VALIDATING_AUTHENTICATION,
+});
 
 export const validAuthentication = (token) => ({
   type: actionTypes.VALID_AUTHENTICATION,
-  token
-})
+  token,
+});
 
 export const invalidAuthentication = () => ({
-  type: actionTypes.INVALID_AUTHENTICATION
-})
+  type: actionTypes.INVALID_AUTHENTICATION,
+});
 
 export const verifyAuthentication = () => async (dispatch, getState) => {
   dispatch(isValidatingAuthentication());
@@ -28,11 +28,10 @@ export const verifyAuthentication = () => async (dispatch, getState) => {
 
   if (result.type === respTypes.SUCCEED) {
     dispatch(validAuthentication(token));
-  }
-  else {
+  } else {
     dispatch(invalidAuthentication());
   }
-}
+};
 
 export const clearAuthentication = () => async (dispatch) => {
   const token = localStorage.getItem(localStorageKeys.AUTH_TOKEN);
@@ -41,4 +40,4 @@ export const clearAuthentication = () => async (dispatch) => {
   }
   await logoutRequest(token);
   dispatch(invalidAuthentication());
-}
+};

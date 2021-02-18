@@ -1,10 +1,10 @@
-import respTypes from '../configs/responseType'
+import respTypes from "../configs/responseType";
 
 export const succeed = (response) => {
   return {
     type: respTypes.SUCCEED,
     code: response.status,
-    data: response.data
+    data: response.data,
   };
 };
 
@@ -13,12 +13,11 @@ export const failed = (error) => {
     return {
       type: respTypes.FAILED,
       code: error.response.status,
-      error: error.response.data.error
+      error: error.response.data.error,
     };
-  }
-  catch (error) {
+  } catch (error) {
     return {
-      type: respTypes.FAILED
+      type: respTypes.FAILED,
     };
   }
 };

@@ -1,4 +1,4 @@
-const BASE = `${process.env.NUBES_BACK_END_URL}`
+const BASE = `${process.env.NUBES_BACK_END_URL}`;
 
 const endpoints = {
   BASE,
@@ -6,7 +6,7 @@ const endpoints = {
   REGISTER: `${BASE}/users/signup`,
   LOGIN: `${BASE}/users/signin`,
   LOGOUT: `${BASE}/users/signout`,
-  CONFIRM_OTP: `${BASE}/users/confirm-otp`
-}
+  CONFIRM_OTP: `${BASE}/users/confirm-otp`,
+};
 
-export default endpoints
+export default endpoints;

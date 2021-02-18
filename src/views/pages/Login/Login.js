@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 import loginRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
@@ -8,7 +8,7 @@ import paths from "../../../configs/paths";
 import { validAuthentication } from "../../../store/actions/authenticateAction";
 import preValidateLoginData from "../../../helpers/preValidateLoginData";
 
-import { Button, InputAdornment, IconButton } from "@material-ui/core";
+import { Button, InputAdornment, IconButton, Link } from "@material-ui/core";
 import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
@@ -18,6 +18,8 @@ const Login = (props) => {
   const [password, setPassword] = useState("");
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
+
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ const Login = (props) => {
     const result = await loginRequest(username, password);
     if (result.type === respType.SUCCEED) {
       await props.saveAuthToken(result.data.token);
-      props.history.push(paths.BASE);
+      history.push(paths.BASE);
     } else {
       setError(result.error);
     }
@@ -43,6 +45,15 @@ const Login = (props) => {
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+
+  const redirectToForgotPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const redirectToRegister = (event) => {
+    event.preventDefault();
+    history.push(paths.REGISTER);
   };
 
   if (props.isValidAuthentication) {
@@ -86,6 +97,21 @@ const Login = (props) => {
           SIGN IN
         </Button>
       </form>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+          marginTop: "20px",
+        }}
+      >
+        <Link color="black" onClick={redirectToForgotPassword}>
+          Forgot password?
+        </Link>
+        <Link color="black" onClick={redirectToRegister}>
+          Register
+        </Link>
+      </div>
     </div>
   );
 };

@@ -25,7 +25,7 @@
 .login-wrapper .form-wrapper .login-button {
   width: 100%;
   border-radius: 0px !important;
-  border: .25px solid dimgray !important;
+  border: 0.25px solid dimgray !important;
 }
 
 .login-wrapper .form-wrapper .login-error {

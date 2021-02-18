@@ -1,6 +1,6 @@
 const responseTypes = {
-  SUCCEED: 'SUCCEED',
-  FAILED: 'FAILED'
+  SUCCEED: "SUCCEED",
+  FAILED: "FAILED",
 };
 
 export default responseTypes;

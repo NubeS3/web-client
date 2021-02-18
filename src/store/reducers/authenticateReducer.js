@@ -1,31 +1,31 @@
-import actionTypes from '../../configs/actionTypes'
-import localStorageKeys from '../../configs/localStorageKeys'
+import actionTypes from "../../configs/actionTypes";
+import localStorageKeys from "../../configs/localStorageKeys";
 
 const initialState = {
-  token: '',
+  token: "",
   isValidAuthentication: false,
   isValidating: true,
-  user: null
-}
+  user: null,
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.VALID_AUTHENTICATION:
-      localStorage.setItem(localStorageKeys.TOKEN, action.token)
+      localStorage.setItem(localStorageKeys.TOKEN, action.token);
       return {
         token: action.token,
         isValidAuthentication: true,
-        isValidating: false
-      }
+        isValidating: false,
+      };
     case actionTypes.INVALID_AUTHENTICATION:
-      localStorage.removeItem(localStorageKeys.TOKEN)
+      localStorage.removeItem(localStorageKeys.TOKEN);
       return {
         ...initialState,
-        isValidating: false
-      }
+        isValidating: false,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
-export default reducer
+export default reducer;

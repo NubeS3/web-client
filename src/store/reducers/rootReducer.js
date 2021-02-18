@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux'
-import authenticateReducer from '../reducers/authenticateReducer'
+import { combineReducers } from "redux";
+import authenticateReducer from "../reducers/authenticateReducer";
 
 const rootReducer = combineReducers({
-  authenticateReducer
-})
+  authenticateReducer,
+});
 
-export default rootReducer
+export default rootReducer;
