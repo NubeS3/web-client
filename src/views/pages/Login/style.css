@@ -1,7 +1,9 @@
-.login-wrapper {
+/* .login-wrapper {
   position: fixed;
   display: flex;
   flex-direction: column;
+
+  width: 33.3%;
 
   top: 40%;
   left: 50%;
@@ -15,7 +17,7 @@
   display: flex;
   flex-direction: column;
 
-  width: 280px;
+  width: 320px;
 }
 
 .login-wrapper .form-wrapper .textfield {
@@ -31,4 +33,77 @@
 .login-wrapper .form-wrapper .login-error {
   height: 50px;
   color: crimson;
+} */
+
+.login-card {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+
+  width: 33.3%;
+
+  align-items: center;
+
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+}
+
+.login-card .login-form {
+  display: flex;
+  flex-direction: column;
+
+  width: 60%;
+  margin: 50px 0;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card .login-form .form-field,
+.login-card .login-form .form-control {
+  display: flex;
+
+  width: 100%;
+
+  margin: 10px 0;
+  align-items: center;
+}
+
+.login-card .login-form .form-field {
+  justify-content: space-between;
+}
+
+.login-card .login-form .form-control {
+  justify-content: space-between;
+}
+
+.login-card .login-form .form-field label {
+  width: 30%;
+  min-width: 80px;
+}
+
+.login-card .login-form .form-control .button {
+  margin: 5px 0px;
+}
+
+@media (max-width: 1024px) {
+  .login-card {
+    width: 50%;
+  }
+
+  .login-card .login-form .form-field,
+  .login-card .login-form .form-control,
+  .login-card .login-form .form-control.form-control-button {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .login-card .login-form .form-control.form-control-button {
+    flex-direction: column-reverse;
+  }
+
+  .login-card .login-form .form-control.form-control-button .button {
+    width: 100%;
+  }
 }

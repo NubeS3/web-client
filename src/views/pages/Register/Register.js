@@ -39,10 +39,6 @@ const Login = (props) => {
     e.preventDefault();
   };
 
-  const handleClickShowPassword = () => {
-    setVisiblePass(!isVisiblePass);
-  };
-
   const handleChangeDate = (date) => {
     setDate(date);
   };
@@ -147,7 +143,7 @@ const Login = (props) => {
                 "aria-label": "checkbox with default color",
               }}
               checked={isVisiblePass}
-              onChange={handleClickShowPassword}
+              onChange={() => setVisiblePass(!isVisiblePass)}
             />
           }
           label="Show password"

@@ -6,7 +6,7 @@ import Dashboard from "./views/pages/Dashboard";
 import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
-import "./App.css";
+import "./styles/App.css";
 
 const App = (props) => {
   const mount = async () => {
@@ -28,7 +28,7 @@ const App = (props) => {
 
   return (
     <div className="App">
-      <h1>NubeS3 Cloud Storage</h1>
+      {/* <h1>NubeS3 Cloud Storage</h1> */}
       <Router basename="/">
         <Switch>
           <Route exact path="/">
