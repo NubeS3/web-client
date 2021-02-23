@@ -13,16 +13,12 @@ import {
   InputAdornment,
   IconButton,
   Link,
-  FormControl,
-  InputLabel,
-  Input,
   Card,
   CardHeader,
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core";
 import TextField from "../../components/Textfield";
-// import Button from "../../components/Button";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
 
@@ -75,58 +71,6 @@ const Login = (props) => {
   }
 
   return (
-    // <div className="login-wrapper">
-    //   <h1>Sign In</h1>
-    //   <form className="form-wrapper" autoComplete="off">
-    //     <TextField
-    //       className="textfield"
-    //       label="Username"
-    //       type="text"
-    //       value={username}
-    //       onChange={(e) => setUsername(e.target.value)}
-    //       autoFocus
-    //     />
-    //     <TextField
-    //       className="textfield"
-    //       label="Password"
-    //       type={isVisiblePass ? "text" : "password"}
-    //       value={password}
-    //       onChange={(e) => setPassword(e.target.value)}
-    //       InputProps={{
-    //         endAdornment: (
-    //           <InputAdornment position="end">
-    //             <IconButton
-    //               aria-label="toggle password visibility"
-    //               onClick={handleClickShowPassword}
-    //               onMouseDown={handleMouseDownPassword}
-    //             >
-    //               {isVisiblePass ? <Visibility /> : <VisibilityOff />}
-    //             </IconButton>
-    //           </InputAdornment>
-    //         ),
-    //       }}
-    //     />
-    //     <div className="login-error">{error && <p>{error}</p>}</div>
-    //     <Button className="login-button" type="submit" onClick={handleSubmit}>
-    //       SIGN IN
-    //     </Button>
-    //   </form>
-    //   <div
-    //     style={{
-    //       display: "flex",
-    //       justifyContent: "space-between",
-    //       width: "100%",
-    //       marginTop: "20px",
-    //     }}
-    //   >
-    //     <Link color="black" onClick={redirectToForgotPassword}>
-    //       Forgot password?
-    //     </Link>
-    //     <Link color="black" onClick={redirectToRegister}>
-    //       Register
-    //     </Link>
-    //   </div>
-    // </div>
     <Card className="login-card">
       <CardHeader
         style={{
@@ -143,7 +87,7 @@ const Login = (props) => {
         }}
       />
       <form className="login-form">
-        <div className="form-field">
+        <div className="login-form-field">
           <label>Username</label>
           <TextField
             style={{
@@ -155,7 +99,7 @@ const Login = (props) => {
             autoFocus
           />
         </div>
-        <div className="form-field">
+        <div className="login-form-field">
           <label>Password</label>
           <TextField
             style={{
@@ -179,7 +123,7 @@ const Login = (props) => {
             }}
           />
         </div>
-        <div className="form-control">
+        <div className="login-form-control">
           <FormControlLabel
             control={
               <Checkbox
@@ -198,16 +142,19 @@ const Login = (props) => {
             Forgot password?
           </Link>
         </div>
-        <div className="form-control form-control-button">
-          <Button variant="outlined" className="button">
+        <div className="login-error">{error && <p>{error}</p>}</div>
+        <div className="login-form-control login-form-control-button">
+          <Button variant="outlined" className="login-buttons">
             BACK
           </Button>
           <Button
             variant="contained"
-            className="button"
+            className="login-buttons"
             style={{
               backgroundColor: "#b7ecea",
             }}
+            type="submit"
+            onClick={handleSubmit}
           >
             SIGN IN
           </Button>
