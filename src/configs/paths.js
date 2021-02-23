@@ -5,6 +5,7 @@ const paths = {
   LOGOUT: "/sign-out",
   CONFIRM_OTP: "/confirm-otp",
   RESEND_OTP: "/resend-otp",
+  DASHBOARD: "/dashboard",
 };
 
 export default paths;

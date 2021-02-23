@@ -34,7 +34,7 @@ export const verifyAuthentication = () => async (dispatch, getState) => {
 };
 
 export const clearAuthentication = () => async (dispatch) => {
-  const token = localStorage.getItem(localStorageKeys.AUTH_TOKEN);
+  const token = localStorage.getItem(localStorageKeys.TOKEN);
   if (!token) {
     return dispatch(invalidAuthentication());
   }

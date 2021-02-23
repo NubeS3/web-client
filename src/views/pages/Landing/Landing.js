@@ -1,12 +1,14 @@
-import { Button } from "@material-ui/core";
 import React from "react";
 import PageFrame from "../../components/PageFrame";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+
+import { Button } from "@material-ui/core";
 
 import paths from "../../../configs/paths";
 import "./style.css";
 
-const Landing = () => {
+const Landing = (props) => {
   const history = useHistory();
   return (
     <PageFrame className="landing-container">
@@ -16,7 +18,11 @@ const Landing = () => {
         variant="outlined"
         style={{ backgroundColor: "#b7ecea" }}
         onClick={() => {
-          history.push(paths.LOGIN);
+          if (props.isValidAuthentication) {
+            history.push(paths.DASHBOARD);
+          } else {
+            history.push(paths.LOGIN);
+          }
         }}
       >
         GET STARTED
@@ -25,4 +31,8 @@ const Landing = () => {
   );
 };
 
-export default Landing;
+const mapStateToProps = (state) => ({
+  isValidAuthentication: state.authenticateReducer.isValidAuthentication,
+});
+
+export default connect(mapStateToProps)(Landing);
