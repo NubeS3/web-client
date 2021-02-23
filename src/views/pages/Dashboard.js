@@ -1,10 +1,12 @@
 import React from "react";
 
+import PageFrame from "../components/PageFrame"
+
 const Dashboard = () => {
   return (
-    <div>
+    <PageFrame>
       <h2>Dashboard</h2>
-    </div>
+    </PageFrame>
   );
 };
 

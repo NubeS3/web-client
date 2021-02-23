@@ -28,7 +28,6 @@ const App = (props) => {
 
   return (
     <div className="App">
-      {/* <h1>NubeS3 Cloud Storage</h1> */}
       <Router basename="/">
         <Switch>
           <Route exact path="/">

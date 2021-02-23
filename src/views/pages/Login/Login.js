@@ -18,6 +18,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core";
+import PageFrame from "../../components/PageFrame";
 import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
@@ -71,103 +72,105 @@ const Login = (props) => {
   }
 
   return (
-    <Card className="login-card">
-      <CardHeader
-        style={{
-          textAlign: "center",
-          backgroundColor: "#78c5dc",
-          width: "100%",
-          color: "#ffffff",
-        }}
-        title="Sign In"
-        titleTypographyProps={{
-          style: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <form className="login-form">
-        <div className="login-form-field">
-          <label>Username</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoFocus
-          />
-        </div>
-        <div className="login-form-field">
-          <label>Password</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type={isVisiblePass ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {isVisiblePass ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </div>
-        <div className="login-form-control">
-          <FormControlLabel
-            control={
-              <Checkbox
-                defaultChecked
-                color="default"
-                inputProps={{
-                  "aria-label": "checkbox with default color",
-                }}
-                checked={isStaySignedIn}
-                onChange={() => setStaySignIn(!isStaySignedIn)}
-              />
-            }
-            label="Stay signed in"
-          />
-          <Link color="black" onClick={redirectToForgotPassword}>
-            Forgot password?
-          </Link>
-        </div>
-        <div className="login-error">{error && <p>{error}</p>}</div>
-        <div className="login-form-control login-form-control-button">
-          <Button variant="outlined" className="login-buttons">
-            BACK
-          </Button>
-          <Button
-            variant="contained"
-            className="login-buttons"
-            style={{
-              backgroundColor: "#b7ecea",
-            }}
-            type="submit"
-            onClick={handleSubmit}
+    <PageFrame>
+      <Card className="login-card">
+        <CardHeader
+          style={{
+            textAlign: "center",
+            backgroundColor: "#78c5dc",
+            width: "100%",
+            color: "#ffffff",
+          }}
+          title="Sign In"
+          titleTypographyProps={{
+            style: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <form className="login-form">
+          <div className="login-form-field">
+            <label>Username</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoFocus
+            />
+          </div>
+          <div className="login-form-field">
+            <label>Password</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type={isVisiblePass ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {isVisiblePass ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
+          <div className="login-form-control">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  defaultChecked
+                  color="default"
+                  inputProps={{
+                    "aria-label": "checkbox with default color",
+                  }}
+                  checked={isStaySignedIn}
+                  onChange={() => setStaySignIn(!isStaySignedIn)}
+                />
+              }
+              label="Stay signed in"
+            />
+            <Link color="black" onClick={redirectToForgotPassword}>
+              Forgot password?
+            </Link>
+          </div>
+          <div className="login-error">{error && <p>{error}</p>}</div>
+          <div className="login-form-control login-form-control-button">
+            <Button variant="outlined" className="login-buttons">
+              BACK
+            </Button>
+            <Button
+              variant="contained"
+              className="login-buttons"
+              style={{
+                backgroundColor: "#b7ecea",
+              }}
+              type="submit"
+              onClick={handleSubmit}
+            >
+              SIGN IN
+            </Button>
+          </div>
+          <Link
+            style={{ marginTop: "10px" }}
+            color="black"
+            onClick={redirectToRegister}
           >
-            SIGN IN
-          </Button>
-        </div>
-        <Link
-          style={{ marginTop: "10px" }}
-          color="black"
-          onClick={redirectToRegister}
-        >
-          Create new account
-        </Link>
-      </form>
-    </Card>
+            Create new account
+          </Link>
+        </form>
+      </Card>
+    </PageFrame>
   );
 };
 
