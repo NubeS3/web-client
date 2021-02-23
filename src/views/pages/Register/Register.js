@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
+import PageFrame from "../../components/PageFrame";
 import registerRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
 import paths from "../../../configs/paths";
@@ -52,189 +53,191 @@ const Login = (props) => {
   }
 
   return (
-    <Card className="register-wrapper">
-      <CardHeader
-        style={{
-          textAlign: "center",
-          backgroundColor: "#78c5dc",
-          width: "100%",
-          color: "#ffffff",
-        }}
-        title="Sign Up"
-        titleTypographyProps={{
-          style: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <form className="register-form">
-        <div className="register-form-field">
-          <label>Firstname</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
-            autoFocus
-          />
-        </div>
-        <div className="register-form-field">
-          <label>Lastname</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={lastname}
-            onChange={(e) => setLastname(e.target.value)}
-          />
-        </div>
-        <div className="register-form-field">
-          <label>Email</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="register-fields-inline">
-          <div
-            className="register-form-field"
-            style={{ width: "40%", justifyContent: "flex-start" }}
-          >
-            <label
-              style={{
-                width: "fit-content",
-                minWidth: "fit-content",
-                marginRight: "10px",
-              }}
-            >
-              Gender
-            </label>
+    <PageFrame>
+      <Card className="register-wrapper">
+        <CardHeader
+          style={{
+            textAlign: "center",
+            backgroundColor: "#78c5dc",
+            width: "100%",
+            color: "#ffffff",
+          }}
+          title="Sign Up"
+          titleTypographyProps={{
+            style: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <form className="register-form">
+          <div className="register-form-field">
+            <label>Firstname</label>
             <TextField
-              style={{ width: "100%" }}
-              select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-            >
-              <MenuItem value={true}>Male</MenuItem>
-              <MenuItem value={false}>Female</MenuItem>
-            </TextField>
-          </div>
-          <div
-            className="register-form-field"
-            style={{ width: "50%", justifyContent: "flex-end" }}
-          >
-            <label
               style={{
-                width: "fit-content",
-                minWidth: "fit-content",
-                textAlign: "right",
-                marginRight: "10px",
+                width: "100%",
               }}
-            >
-              DOB
-            </label>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                style={{ margin: "5px 0", width: "calc(" }}
-                disableToolbar
-                variant="inline"
-                format="MM/dd/yyyy"
-                margin="normal"
-                value={selectedDate}
-                onChange={handleChangeDate}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
-            </MuiPickersUtilsProvider>
+              type="text"
+              value={firstname}
+              onChange={(e) => setFirstname(e.target.value)}
+              autoFocus
+            />
           </div>
-        </div>
-        <div className="register-form-field">
-          <label>Company</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-          />
-        </div>
-        <div className="register-form-field">
-          <label>Username</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="register-form-field">
-          <label>Password</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type={isVisiblePass ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="register-form-field">
-          <label>Confirm</label>
-          <TextField
-            style={{
-              width: "100%",
-            }}
-            type={isVisiblePass ? "text" : "password"}
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-          />
-        </div>
-        <div style={{ width: "100%" }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                defaultChecked
-                color="default"
-                inputProps={{
-                  "aria-label": "checkbox with default color",
+          <div className="register-form-field">
+            <label>Lastname</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={lastname}
+              onChange={(e) => setLastname(e.target.value)}
+            />
+          </div>
+          <div className="register-form-field">
+            <label>Email</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="register-fields-inline">
+            <div
+              className="register-form-field"
+              style={{ width: "40%", justifyContent: "flex-start" }}
+            >
+              <label
+                style={{
+                  width: "fit-content",
+                  minWidth: "fit-content",
+                  marginRight: "10px",
                 }}
-                checked={isVisiblePass}
-                onChange={() => setVisiblePass(!isVisiblePass)}
-              />
-            }
-            label="Show password"
-          />
-        </div>
-        <div className="register-error"> {error && <p> {error} </p>}</div>
-        <div className="register-form-control register-form-control-button">
-          <Button variant="outlined" className="register-buttons">
-            BACK
-          </Button>
-          <Button
-            variant="contained"
-            className="register-buttons"
-            style={{
-              backgroundColor: "#b7ecea",
-            }}
-            type="submit"
-            onClick={handleSubmit}
-          >
-            CREATE ACCOUNT
-          </Button>
-        </div>
-      </form>
-    </Card>
+              >
+                Gender
+              </label>
+              <TextField
+                style={{ width: "100%" }}
+                select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <MenuItem value={true}>Male</MenuItem>
+                <MenuItem value={false}>Female</MenuItem>
+              </TextField>
+            </div>
+            <div
+              className="register-form-field"
+              style={{ width: "50%", justifyContent: "flex-end" }}
+            >
+              <label
+                style={{
+                  width: "fit-content",
+                  minWidth: "fit-content",
+                  textAlign: "right",
+                  marginRight: "10px",
+                }}
+              >
+                DOB
+              </label>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  style={{ margin: "5px 0", width: "calc(" }}
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  value={selectedDate}
+                  onChange={handleChangeDate}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+            </div>
+          </div>
+          <div className="register-form-field">
+            <label>Company</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            />
+          </div>
+          <div className="register-form-field">
+            <label>Username</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="register-form-field">
+            <label>Password</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type={isVisiblePass ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="register-form-field">
+            <label>Confirm</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type={isVisiblePass ? "text" : "password"}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+            />
+          </div>
+          <div style={{ width: "100%" }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  defaultChecked
+                  color="default"
+                  inputProps={{
+                    "aria-label": "checkbox with default color",
+                  }}
+                  checked={isVisiblePass}
+                  onChange={() => setVisiblePass(!isVisiblePass)}
+                />
+              }
+              label="Show password"
+            />
+          </div>
+          <div className="register-error"> {error && <p> {error} </p>}</div>
+          <div className="register-form-control register-form-control-button">
+            <Button variant="outlined" className="register-buttons">
+              BACK
+            </Button>
+            <Button
+              variant="contained"
+              className="register-buttons"
+              style={{
+                backgroundColor: "#b7ecea",
+              }}
+              type="submit"
+              onClick={handleSubmit}
+            >
+              CREATE ACCOUNT
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </PageFrame>
   );
 };
 
