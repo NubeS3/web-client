@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
-import Dashboard from "./views/pages/Dashboard";
+import Landing from "./views/pages/Landing/Landing";
+import Dashboard from "./views/pages/Dashboard/Dashboard";
 import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
@@ -31,6 +32,9 @@ const App = (props) => {
       <Router basename="/">
         <Switch>
           <Route exact path="/">
+            <Landing />
+          </Route>
+          <Route exact path="/dashboard">
             <Dashboard />
           </Route>
           <Route exact path="/sign-up">

@@ -72,7 +72,7 @@ const Login = (props) => {
   }
 
   return (
-    <PageFrame>
+    <PageFrame className="login-container">
       <Card className="login-card">
         <CardHeader
           style={{
@@ -146,7 +146,11 @@ const Login = (props) => {
           </div>
           <div className="login-error">{error && <p>{error}</p>}</div>
           <div className="login-form-control login-form-control-button">
-            <Button variant="outlined" className="login-buttons">
+            <Button
+              variant="outlined"
+              className="login-buttons"
+              onClick={() => history.goBack()}
+            >
               BACK
             </Button>
             <Button

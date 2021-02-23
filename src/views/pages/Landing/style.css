@@ -1,0 +1,11 @@
+.landing-container {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+
+  margin: 20% 10%;
+
+  justify-content: center;
+  align-items: flex-start;
+}
