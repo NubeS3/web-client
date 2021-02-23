@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 import PageFrame from "../../components/PageFrame";
 import registerRequest from "../../../services/loginRequest";
@@ -38,6 +38,8 @@ const Login = (props) => {
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
 
+  const history = useHistory();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,8 +55,8 @@ const Login = (props) => {
   }
 
   return (
-    <PageFrame>
-      <Card className="register-wrapper">
+    <PageFrame className="register-container">
+      <Card className="register-card">
         <CardHeader
           style={{
             textAlign: "center",
@@ -220,7 +222,11 @@ const Login = (props) => {
           </div>
           <div className="register-error"> {error && <p> {error} </p>}</div>
           <div className="register-form-control register-form-control-button">
-            <Button variant="outlined" className="register-buttons">
+            <Button
+              variant="outlined"
+              className="register-buttons"
+              onClick={() => history.goBack()}
+            >
               BACK
             </Button>
             <Button

@@ -6,9 +6,9 @@ const PageFrame = (props) => {
   return (
     <>
       <Header />
-      {props.children}
+      <div {...props}>{props.children}</div>
     </>
-  )
+  );
 };
 
 export default PageFrame;

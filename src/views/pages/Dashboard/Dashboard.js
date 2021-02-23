@@ -1,6 +1,6 @@
 import React from "react";
 
-import PageFrame from "../components/PageFrame"
+import PageFrame from "../../components/PageFrame"
 
 const Dashboard = () => {
   return (
