@@ -3,7 +3,9 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 import PageFrame from "../../components/PageFrame";
+import PersistentDrawer from "../../components/PersistentDrawer"
 import paths from "../../../configs/paths";
+import Header from "../../components/Header";
 
 const Dashboard = (props) => {
   if (!props.isValidAuthentication) {
@@ -11,9 +13,13 @@ const Dashboard = (props) => {
   }
 
   return (
-    <PageFrame>
-      <h2>Dashboard</h2>
-    </PageFrame>
+    /*<PageFrame className={"landing-container"}>
+
+    </PageFrame>*/
+      <div>
+        <Header/>
+        <PersistentDrawer></PersistentDrawer>
+      </div>
   );
 };
 
