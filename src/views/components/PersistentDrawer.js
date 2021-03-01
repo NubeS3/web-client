@@ -27,6 +27,9 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        position: "absolute",
+        top: "0",
+        left: "0",
         display: 'flex',
     },
     appBar: {
@@ -51,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawer: {
         width: drawerWidth,
+        position: "absolute",
         flexShrink: 0,
     },
     drawerPaper: {
@@ -134,6 +138,7 @@ export default function PersistentDrawer() {
                     paper: classes.drawerPaper,
                 }}
             >
+                <Toolbar/>
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -168,10 +173,11 @@ export default function PersistentDrawer() {
                     [classes.contentShift]: open,
                 })}
             >
+
                 <AppBar position="static">
                     <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
                         <Tab label="Item One" {...a11yProps(0)} />
-                        <Tab label="Item Two" {...a11yProps(1)} />
+                        <Tab label="    Item Two" {...a11yProps(1)} />
                         <Tab label="Item Three" {...a11yProps(2)} />
                     </Tabs>
                 </AppBar>

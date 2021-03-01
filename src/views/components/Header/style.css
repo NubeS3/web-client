@@ -11,7 +11,7 @@
 .unauth-header {
   display: flex;
   width: 100%;
-
+  z-index: 1255;
   background-color: #78c5dc;
 
   justify-content: space-between;

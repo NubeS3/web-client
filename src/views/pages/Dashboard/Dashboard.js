@@ -13,13 +13,9 @@ const Dashboard = (props) => {
   }
 
   return (
-    /*<PageFrame className={"landing-container"}>
-
-    </PageFrame>*/
-      <div>
-        <Header/>
+    <PageFrame className={"landing-container"}>
         <PersistentDrawer></PersistentDrawer>
-      </div>
+    </PageFrame>
   );
 };
 
