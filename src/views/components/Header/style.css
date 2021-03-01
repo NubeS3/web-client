@@ -1,0 +1,23 @@
+.logo-header {
+  display: flex;
+  margin-left: 0;
+  align-items: center;
+}
+
+.logo-header img {
+  width: 50px;
+  height: 50px;
+}
+
+.unauth-header-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 425px) {
+  .unauth-header-button-group {
+    display: none;
+  }
+  .unauth-header-mobile-menu {
+    display: flex;
+  }
+}

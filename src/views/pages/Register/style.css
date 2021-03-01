@@ -1,0 +1,115 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  display: flex;
+  flex-direction: column;
+
+  width: 33.3%;
+  min-width: 600px;
+  margin: 5% 0;
+
+  align-items: center;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+
+  width: 60%;
+  margin: 50px 0;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.register-fields-inline,
+.register-form-control,
+.register-form-field {
+  display: flex;
+
+  width: 100%;
+  margin: 5px 0;
+  justify-content: space-between;
+}
+
+.register-form-field {
+  align-items: center;
+}
+
+.register-form-field label {
+  width: 30%;
+  min-width: 80px;
+}
+
+.register-form-control .register-buttons {
+  margin: 5px 0px;
+}
+
+.register-error {
+  height: 30px;
+  color: crimson;
+}
+
+.register-error p {
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .register-card {
+    width: 60%;
+    min-width: 60%;
+  }
+
+  .register-form {
+    width: 80%;
+  }
+
+  .register-form-control.register-form-control-button {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+
+  .register-buttons {
+    width: 100%;
+  }
+}
+
+@media (max-width: 800px) {
+  .register-card {
+    width: 80%;
+  }
+
+  .register-form {
+    margin-bottom: 10px;
+  }
+
+  .register-form-field,
+  .register-form-control {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .register-form {
+    width: 90%;
+  }
+}
+
+@media (max-width: 425px) {
+  .register-card {
+    width: 90%;
+    margin: 5% 0;
+  }
+
+  .register-form {
+    width: 90%;
+  }
+}
