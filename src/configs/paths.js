@@ -6,6 +6,7 @@ const paths = {
   CONFIRM_OTP: "/confirm-otp",
   RESEND_OTP: "/resend-otp",
   DASHBOARD: "/dashboard",
+  STORAGE: "/storage"
 };
 
 export default paths;

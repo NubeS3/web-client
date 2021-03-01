@@ -208,7 +208,6 @@ const Login = (props) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  defaultChecked
                   color="default"
                   inputProps={{
                     "aria-label": "checkbox with default color",
@@ -225,7 +224,7 @@ const Login = (props) => {
             <Button
               variant="outlined"
               className="register-buttons"
-              onClick={() => history.goBack()}
+              onClick={() => history.push(paths.BASE)}
             >
               BACK
             </Button>

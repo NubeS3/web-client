@@ -1,5 +1,7 @@
 .logo-header {
+  display: flex;
   margin-left: 0;
+  align-items: center;
 }
 
 .logo-header img {

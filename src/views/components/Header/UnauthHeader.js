@@ -30,8 +30,8 @@ const UnauthHeader = (props) => {
       open={isMenuOpen}
       onClose={() => setAnchorEl(null)}
     >
-      <MenuItem onClick={() => alert("Signup clicked!")}>Sign Up</MenuItem>
-      <MenuItem onClick={() => alert("Signin clicked!")}>Sign In</MenuItem>
+      <MenuItem onClick={() => history.push(paths.REGISTER)}>Sign Up</MenuItem>
+      <MenuItem onClick={() => history.push(paths.LOGIN)}>Sign In</MenuItem>
     </Menu>
   );
 
@@ -40,7 +40,7 @@ const UnauthHeader = (props) => {
       <AppBar position="sticky" style={{ backgroundColor: "#78c5dc" }}>
         <Toolbar variant="dense">
           <LogoHeader />
-          <Typography style={{ flexGrow: "1" }}>NubeS3</Typography>
+          <div style={{ flexGrow: "1" }} />
           <div className="unauth-header-button-group">
             <Button
               variant="contained"
