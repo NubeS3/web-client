@@ -16,11 +16,13 @@ const AuthHeader = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const handleSignOut = () => {};
+
   return (
     <AppBar position="sticky" style={{ backgroundColor: "#78c5dc" }}>
       <Toolbar variant="dense">
         <LogoHeader />
-        <Typography style={{ flexGrow: "1" }}>NubeS3</Typography>
+        <div style={{ flexGrow: "1" }} />
         <div>
           <IconButton
             aria-label="account of current user"

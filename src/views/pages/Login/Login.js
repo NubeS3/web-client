@@ -134,7 +134,6 @@ const Login = (props) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  defaultChecked
                   color="default"
                   inputProps={{
                     "aria-label": "checkbox with default color",
@@ -145,7 +144,7 @@ const Login = (props) => {
               }
               label="Stay signed in"
             />
-            <Link color="black" onClick={redirectToForgotPassword}>
+            <Link style={{ color: "black" }} onClick={redirectToForgotPassword}>
               Forgot password?
             </Link>
           </div>
@@ -154,7 +153,7 @@ const Login = (props) => {
             <Button
               variant="outlined"
               className="login-buttons"
-              onClick={() => history.goBack()}
+              onClick={() => history.push(paths.BASE)}
             >
               BACK
             </Button>
@@ -171,8 +170,7 @@ const Login = (props) => {
             </Button>
           </div>
           <Link
-            style={{ marginTop: "10px" }}
-            color="black"
+            style={{ marginTop: "10px", color: "black" }}
             onClick={redirectToRegister}
           >
             Create new account

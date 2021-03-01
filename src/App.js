@@ -4,9 +4,11 @@ import { connect } from "react-redux";
 
 import Landing from "./views/pages/Landing/Landing";
 import Dashboard from "./views/pages/Dashboard/Dashboard";
+import Storage from "./views/pages/Storage/Storage";
 import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
+import paths from "./configs/paths";
 import "./styles/App.css";
 
 const App = (props) => {
@@ -31,16 +33,19 @@ const App = (props) => {
     <div className="App">
       <Router basename="/">
         <Switch>
-          <Route exact path="/">
+          <Route exact path={paths.BASE}>
             <Landing />
           </Route>
-          <Route exact path="/dashboard">
+          <Route exact path={paths.DASHBOARD}>
             <Dashboard />
           </Route>
-          <Route exact path="/sign-up">
+          <Route exact path={paths.STORAGE}>
+            <Storage />
+          </Route>
+          <Route exact path={paths.REGISTER}>
             <SignUp />
           </Route>
-          <Route exact path="/sign-in">
+          <Route exact path={paths.LOGIN}>
             <SignIn />
           </Route>
         </Switch>

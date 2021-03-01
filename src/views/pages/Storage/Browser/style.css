@@ -1,0 +1,17 @@
+.browser-appbar-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 435px) {
+  .browser-appbar-button-group {
+    display: none;
+  }
+
+  .browser-appbar-mobile-menu {
+    display: flex;
+  }
+}
+
+.bucket-table-row {
+  
+}
