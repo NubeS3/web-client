@@ -1,5 +1,7 @@
 .logo-header {
+  display: flex;
   margin-left: 0;
+  align-items: center;
 }
 
 .logo-header img {
@@ -7,13 +9,15 @@
   height: 50px;
 }
 
-.auth-header,
-.unauth-header {
-  display: flex;
-  width: 100%;
+.unauth-header-mobile-menu {
+  display: none;
+}
 
-  background-color: #78c5dc;
-
-  justify-content: space-between;
-  align-items: center;
+@media (max-width: 425px) {
+  .unauth-header-button-group {
+    display: none;
+  }
+  .unauth-header-mobile-menu {
+    display: flex;
+  }
 }
