@@ -14,9 +14,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Box from '@material-ui/core/Box';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+
 import HomeIcon from '@material-ui/icons/Home';
 import StorageIcon from '@material-ui/icons/Storage';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -27,6 +25,9 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        position: "absolute",
+        top: "0",
+        left: "0",
         display: 'flex',
     },
     appBar: {
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
     },
     drawer: {
         width: drawerWidth,
+        position: "absolute",
         flexShrink: 0,
     },
     drawerPaper: {
@@ -82,14 +84,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function PersistentDrawer() {
+const PersistentDrawer = (props) => {
     const classes = useStyles();
     const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
     const [open, setOpen] = React.useState(false);
 
@@ -134,6 +131,7 @@ export default function PersistentDrawer() {
                     paper: classes.drawerPaper,
                 }}
             >
+                <Toolbar/>
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -168,56 +166,10 @@ export default function PersistentDrawer() {
                     [classes.contentShift]: open,
                 })}
             >
-                <AppBar position="static">
-                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-                        <Tab label="Item One" {...a11yProps(0)} />
-                        <Tab label="Item Two" {...a11yProps(1)} />
-                        <Tab label="Item Three" {...a11yProps(2)} />
-                    </Tabs>
-                </AppBar>
-                <TabPanel value={value} index={0}>
-                    Item One
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    Item Two
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    Item Three
-                </TabPanel>
+                <div {...props}>{props.children}</div>
             </main>
         </div>
     );
 }
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={3}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-/*TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-};*/
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
+export default PersistentDrawer;
