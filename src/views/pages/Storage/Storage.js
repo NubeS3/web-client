@@ -5,20 +5,23 @@ import { Storage as StorageIcon } from "@material-ui/icons";
 
 import Browser from "./Browser/Browser";
 import "./style.css";
+import PersistentDrawer from "../../components/PersistentDrawer";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`storage-tabpanel-${index}`}
-      aria-labelledby={`storage-tab-${index}`}
-      {...other}
-    >
-      {value === index && children}
-    </div>
+    <PersistentDrawer>
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`storage-tabpanel-${index}`}
+        aria-labelledby={`storage-tab-${index}`}
+        {...other}
+        >
+        {value === index && children}
+      </div>
+    </PersistentDrawer>
   );
 };
 
