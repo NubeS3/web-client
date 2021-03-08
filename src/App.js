@@ -9,7 +9,6 @@ import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
 import paths from "./configs/paths";
-import "./styles/App.css";
 
 const App = (props) => {
   const mount = async () => {
@@ -30,7 +29,7 @@ const App = (props) => {
   }
 
   return (
-    <div className="App">
+    <div className="flex-col">
       <Router basename="/">
         <Switch>
           <Route exact path={paths.BASE}>

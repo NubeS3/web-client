@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
+  Button,
   IconButton,
   Menu,
   MenuItem,
@@ -19,10 +19,19 @@ const AuthHeader = (props) => {
   const handleSignOut = () => {};
 
   return (
-    <AppBar position="sticky" style={{ backgroundColor: "#78c5dc" }}>
+    <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
       <Toolbar variant="dense">
         <LogoHeader />
         <div style={{ flexGrow: "1" }} />
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: "#b7ecea",
+            marginRight: "20px"
+          }}
+        >
+          Console
+        </Button>
         <div>
           <IconButton
             aria-label="account of current user"
