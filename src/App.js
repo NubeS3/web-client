@@ -9,6 +9,7 @@ import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
 import paths from "./configs/paths";
+import Otp from "./views/pages/Otp/Otp";
 
 const App = (props) => {
   const mount = async () => {
@@ -46,6 +47,9 @@ const App = (props) => {
           </Route>
           <Route exact path={paths.LOGIN}>
             <SignIn />
+          </Route>
+          <Route exact path={paths.OTP}>
+            <Otp/>
           </Route>
         </Switch>
       </Router>
