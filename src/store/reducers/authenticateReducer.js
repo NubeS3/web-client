@@ -12,6 +12,7 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.VALID_AUTHENTICATION:
       localStorage.setItem(localStorageKeys.TOKEN, action.token);
+      console.log("valid_auth");
       return {
         token: action.token,
         isValidAuthentication: true,
