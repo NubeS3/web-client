@@ -6,6 +6,7 @@ const initialState = {
   isValidAuthentication: false,
   isValidating: true,
   user: null,
+  redirectToReferrer: false,
 };
 
 const reducer = (state = initialState, action) => {
