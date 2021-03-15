@@ -85,6 +85,7 @@
   .login-card {
     width: 90%;
     min-width: 90%;
+    margin: 5% 0;
   }
 
   .login-form {

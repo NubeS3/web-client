@@ -2,12 +2,15 @@ import { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
+import GuardRoute from "./views/routes/GuardRoute";
 import Landing from "./views/pages/Landing/Landing";
 import Dashboard from "./views/pages/Dashboard/Dashboard";
+import Storage from "./views/pages/Storage/Storage";
 import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import { verifyAuthentication } from "./store/actions/authenticateAction";
-import "./styles/App.css";
+import paths from "./configs/paths";
+import Otp from "./views/pages/Otp/Otp";
 
 const App = (props) => {
   const mount = async () => {
@@ -16,7 +19,6 @@ const App = (props) => {
 
   useEffect(() => {
     mount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (props.isValidating) {
@@ -28,24 +30,16 @@ const App = (props) => {
   }
 
   return (
-    <div className="App">
-      <Router basename="/">
-        <Switch>
-          <Route exact path="/">
-            <Landing />
-          </Route>
-          <Route exact path="/dashboard">
-            <Dashboard />
-          </Route>
-          <Route exact path="/sign-up">
-            <SignUp />
-          </Route>
-          <Route exact path="/sign-in">
-            <SignIn />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <Router basename="/">
+      <Switch>
+        <Route exact path={paths.BASE} component={Landing} />
+        <Route exact path={paths.REGISTER} component={SignUp} />
+        <Route exact path={paths.LOGIN} component={SignIn} />
+        <Route exact path={paths.OTP} component={Otp} />
+        <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
+        <GuardRoute exact path={paths.STORAGE} component={Storage} />
+      </Switch>
+    </Router>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import PageFrame from "../../components/PageFrame";
 import registerRequest from "../../../services/loginRequest";
@@ -37,8 +37,6 @@ const Login = (props) => {
   const [confirm, setConfirm] = useState("");
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
-
-  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -208,7 +206,6 @@ const Login = (props) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  defaultChecked
                   color="default"
                   inputProps={{
                     "aria-label": "checkbox with default color",
@@ -225,7 +222,7 @@ const Login = (props) => {
             <Button
               variant="outlined"
               className="register-buttons"
-              onClick={() => history.goBack()}
+              onClick={() => props.history.push(paths.BASE)}
             >
               BACK
             </Button>

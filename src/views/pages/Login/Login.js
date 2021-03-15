@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import loginRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
@@ -30,7 +30,11 @@ const Login = (props) => {
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
 
-  const history = useHistory();
+  const { from } = props.location.state || { from: { pathName: paths.BASE } };
+
+  if (props.isValidAuthentication) {
+    return <Redirect to={paths.BASE} />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,12 +48,12 @@ const Login = (props) => {
     // const result = await loginRequest(username, password);
     // if (result.type === respType.SUCCEED) {
     //   await props.saveAuthToken(result.data.token);
-    //   history.push(paths.BASE);
+    //   props.history.push(paths.BASE);
     // } else {
     //   setError(result.error);
     // }
     await props.saveAuthToken("token12345");
-    history.push(paths.BASE);
+    props.history.push(from.pathname);
   };
 
   const handleClickShowPassword = () => {
@@ -66,12 +70,8 @@ const Login = (props) => {
 
   const redirectToRegister = (event) => {
     event.preventDefault();
-    history.push(paths.REGISTER);
+    props.history.push(paths.REGISTER);
   };
-
-  if (props.isValidAuthentication) {
-    return <Redirect to={paths.BASE} />;
-  }
 
   return (
     <PageFrame className="login-container">
@@ -131,7 +131,6 @@ const Login = (props) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  defaultChecked
                   color="default"
                   inputProps={{
                     "aria-label": "checkbox with default color",
@@ -142,7 +141,7 @@ const Login = (props) => {
               }
               label="Stay signed in"
             />
-            <Link color="black" onClick={redirectToForgotPassword}>
+            <Link style={{ color: "black" }} onClick={redirectToForgotPassword}>
               Forgot password?
             </Link>
           </div>
@@ -151,7 +150,7 @@ const Login = (props) => {
             <Button
               variant="outlined"
               className="login-buttons"
-              onClick={() => history.goBack()}
+              onClick={() => props.history.push(paths.BASE)}
             >
               BACK
             </Button>
@@ -168,8 +167,7 @@ const Login = (props) => {
             </Button>
           </div>
           <Link
-            style={{ marginTop: "10px" }}
-            color="black"
+            style={{ marginTop: "10px", color: "black" }}
             onClick={redirectToRegister}
           >
             Create new account
