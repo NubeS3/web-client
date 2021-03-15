@@ -18,7 +18,6 @@ const App = (props) => {
 
   useEffect(() => {
     mount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (props.isValidating) {
