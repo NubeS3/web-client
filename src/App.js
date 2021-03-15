@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
+import GuardRoute from "./views/routes/GuardRoute";
 import Landing from "./views/pages/Landing/Landing";
 import Dashboard from "./views/pages/Dashboard/Dashboard";
 import Storage from "./views/pages/Storage/Storage";
@@ -29,30 +30,16 @@ const App = (props) => {
   }
 
   return (
-    <div className="flex-col">
-      <Router basename="/">
-        <Switch>
-          <Route exact path={paths.BASE}>
-            <Landing />
-          </Route>
-          <Route exact path={paths.DASHBOARD}>
-            <Dashboard />
-          </Route>
-          <Route exact path={paths.STORAGE}>
-            <Storage />
-          </Route>
-          <Route exact path={paths.REGISTER}>
-            <SignUp />
-          </Route>
-          <Route exact path={paths.LOGIN}>
-            <SignIn />
-          </Route>
-          <Route exact path={paths.OTP}>
-            <Otp/>
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <Router basename="/">
+      <Switch>
+        <Route exact path={paths.BASE} component={Landing} />
+        <Route exact path={paths.REGISTER} component={SignUp} />
+        <Route exact path={paths.LOGIN} component={SignIn} />
+        <Route exact path={paths.OTP} component={Otp} />
+        <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
+        <GuardRoute exact path={paths.STORAGE} component={Storage} />
+      </Switch>
+    </Router>
   );
 };
 
