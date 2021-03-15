@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import loginRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
@@ -30,10 +30,11 @@ const Login = (props) => {
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const { from } = props.location.state || { from: { pathName: paths.BASE } };
 
-  const history = useHistory();
+  if (props.isValidAuthentication) {
+    return <Redirect to={paths.BASE} />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,12 +48,12 @@ const Login = (props) => {
     // const result = await loginRequest(username, password);
     // if (result.type === respType.SUCCEED) {
     //   await props.saveAuthToken(result.data.token);
-    //   history.push(paths.BASE);
+    //   props.history.push(paths.BASE);
     // } else {
     //   setError(result.error);
     // }
     await props.saveAuthToken("token12345");
-    history.push(paths.BASE);
+    props.history.push(from.pathname);
   };
 
   const handleClickShowPassword = () => {
@@ -69,12 +70,8 @@ const Login = (props) => {
 
   const redirectToRegister = (event) => {
     event.preventDefault();
-    history.push(paths.REGISTER);
+    props.history.push(paths.REGISTER);
   };
-
-  if (props.isValidAuthentication) {
-    return <Redirect to={paths.BASE} />;
-  }
 
   return (
     <PageFrame className="login-container">
@@ -153,7 +150,7 @@ const Login = (props) => {
             <Button
               variant="outlined"
               className="login-buttons"
-              onClick={() => history.push(paths.BASE)}
+              onClick={() => props.history.push(paths.BASE)}
             >
               BACK
             </Button>
