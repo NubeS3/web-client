@@ -23,14 +23,16 @@ export const verifyAuthentication = () => async (dispatch, getState) => {
   const token = localStorage.getItem(localStorageKeys.TOKEN);
   if (!token) {
     return dispatch(invalidAuthentication());
-  }
-  const result = await authRequest(token);
-
-  if (result.type === respTypes.SUCCEED) {
-    dispatch(validAuthentication(token));
   } else {
-    dispatch(invalidAuthentication());
+    dispatch(validAuthentication(token));
   }
+  // const result = await authRequest(token);
+
+  // if (result.type === respTypes.SUCCEED) {
+  //   dispatch(validAuthentication(token));
+  // } else {
+  //   dispatch(invalidAuthentication());
+  // }
 };
 
 export const clearAuthentication = () => async (dispatch) => {
