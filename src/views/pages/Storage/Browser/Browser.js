@@ -26,7 +26,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
-import ArchiveIcon from "@material-ui/core/icons/Archive"
+import ArchiveIcon from "@material-ui/icons/Archive"
 import "./style.css";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
