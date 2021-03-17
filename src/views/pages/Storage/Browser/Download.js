@@ -3,17 +3,6 @@ import { useTheme } from '@material-ui/core/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
   
-const notification = (item) =>{
-  toast('🦄' + item, {
-    position: "bottom-right",
-    autoClose: false,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: false,
-    progress: undefined,
-  });
-}
 const handleOpen = (state) => {
   console.log(permissions)
   setOpen(state)

@@ -26,6 +26,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
+import ArchiveIcon from "@material-ui/core/icons/Archive"
 import "./style.css";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
@@ -487,6 +488,18 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
   );
 };
 
+const notification = () => {
+  toast("Downloading", {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: false,
+    progress: undefined,
+  });
+}
+
 const ConfirmDownload = ({open}) => {
   const [openDownloadDialog, setOpenDownloadDialog] = React.useState(open);
 
@@ -494,6 +507,10 @@ const ConfirmDownload = ({open}) => {
     setOpenDownloadDialog(state);
   };
 
+  const handleConfirmDownload =(state) => {
+    setOpenDownloadDialog(state);
+    notification();
+  };
   return (
     <div>
     <ToastContainer/>
@@ -519,7 +536,9 @@ const ConfirmDownload = ({open}) => {
                   </div>
                   {/*body*/}
                   <div className="relative p-6 flex-auto">
-
+                    <ul>
+                      <li><ArchiveIcon/> File 1</li>
+                    </ul>
                   </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
@@ -527,7 +546,7 @@ const ConfirmDownload = ({open}) => {
                         className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
                         type="button"
                         style={{ transition: "all .15s ease" }}
-                        onClick={() => handleOpenDownload(false)}
+                        onClick={() => handleConfirmDownload(false)}
                     >
                       Cancel
                     </button>
