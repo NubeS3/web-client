@@ -406,9 +406,15 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
   const menuId = "mobile-menu";
   const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
 
-  const handleOpenDownload = (state) => {
-    setOpenDownloadDialog(state);
+  const handleOpenDownload = () => {
+    setOpenDownloadDialog(true);
+    console.log(openDownloadDialog)
   };
+
+  const handleCloseDownload = () => {
+    setOpenDownloadDialog(false);
+  };
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -453,13 +459,13 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
               <Button startIcon={<PublishIcon />}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon />}>Create folder</Button>
-              <Button startIcon={<GetAppIcon />}>Download</Button>
+              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>Download</Button>
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
               <Button startIcon={<ShareIcon />}>Share</Button>
               <Button startIcon={<EditIcon />}>Edit bucket</Button>
-              <Button startIcon={<DeleteIcon />} onClick={() => handleOpenDownload(true)}>Delete</Button>
+              <Button startIcon={<DeleteIcon />}>Delete</Button>
             </div>
             <div className="browser-appbar-mobile-menu">
               <IconButton
@@ -481,7 +487,7 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
           items={items || []}
           onItemClick={onItemClick}
         />
-        <ConfirmDownload open={openDownloadDialog}/>
+        <ConfirmDownload open={openDownloadDialog} handleClose={handleCloseDownload}/>
         {renderMenu}
       </Paper>
     </Slide>
@@ -500,17 +506,13 @@ const notification = () => {
   });
 }
 
-const ConfirmDownload = ({open}) => {
-  const [openDownloadDialog, setOpenDownloadDialog] = React.useState(open);
+const ConfirmDownload = ({open, handleClose}) => {
+  const openDownloadDialog = open;
 
-  const handleOpenDownload = (state) => {
-    setOpenDownloadDialog(state);
-  };
-
-  const handleConfirmDownload =(state) => {
-    setOpenDownloadDialog(state);
+  const handleConfirmDownload = (state) => {
     notification();
   };
+
   return (
     <div>
     <ToastContainer/>
@@ -527,7 +529,7 @@ const ConfirmDownload = ({open}) => {
                     </h3>
                     <button
                         className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                        onClick={() => handleOpenDownload(false)}
+                        onClick={handleClose}
                     >
                   <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                     ×
@@ -546,7 +548,7 @@ const ConfirmDownload = ({open}) => {
                         className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
                         type="button"
                         style={{ transition: "all .15s ease" }}
-                        onClick={() => handleConfirmDownload(false)}
+                        onClick={handleClose}
                     >
                       Cancel
                     </button>
@@ -554,7 +556,7 @@ const ConfirmDownload = ({open}) => {
                         className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                         type="button"
                         style={{ transition: "all .15s ease" }}
-                        onClick={() => handleOpenDownload(false)}
+                        onClick={() => handleConfirmDownload(false)}
                     >
                       OK
                     </button>

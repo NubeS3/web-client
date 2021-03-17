@@ -77,9 +77,9 @@ const Login = (props) => {
     <PageFrame className="login-container">
       <Card className="login-card">
         <CardHeader
+        className="bg-light-blue"
           style={{
             textAlign: "center",
-            backgroundColor: "#78c5dc",
             width: "100%",
             color: "#ffffff",
           }}
@@ -156,10 +156,7 @@ const Login = (props) => {
             </Button>
             <Button
               variant="contained"
-              className="login-buttons"
-              style={{
-                backgroundColor: "#b7ecea",
-              }}
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               type="submit"
               onClick={handleSubmit}
             >

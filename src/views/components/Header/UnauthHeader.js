@@ -41,26 +41,20 @@ const UnauthHeader = (props) => {
         <Toolbar variant="dense">
           <LogoHeader />
           <div style={{ flexGrow: "1" }} />
-          <div className="unauth-header-button-group">
-            <Button
+          <div>
+            <button
               variant="contained"
-              style={{
-                backgroundColor: "#b7ecea",
-                marginRight: "10px",
-              }}
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-2 mb-1"
               onClick={() => history.push(paths.LOGIN)}
             >
               Sign In
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                backgroundColor: "#b7ecea",
-              }}
+            </button>
+            <button
+              variant="contained" className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               onClick={() => history.push(paths.REGISTER)}
             >
               Sign Up
-            </Button>
+            </button>
           </div>
           <div className="unauth-header-mobile-menu">
             <IconButton

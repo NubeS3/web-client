@@ -8,7 +8,7 @@ module.exports = {
         'light-blue': "#019BE5"
       }
     },
-    
+
   },
   variants: {
     extend: {},
