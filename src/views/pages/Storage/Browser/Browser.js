@@ -26,9 +26,13 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
-
+import ArchiveIcon from "@material-ui/icons/Archive";
 import "./style.css";
-
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import GetAppIcon from "@material-ui/icons/GetApp";
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
 };
@@ -428,6 +432,17 @@ const BucketItemsContainer = ({
   const isMenuOpen = Boolean(anchorEl);
 
   const menuId = "mobile-menu";
+  const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
+
+  const handleOpenDownload = () => {
+    setOpenDownloadDialog(true);
+    console.log(openDownloadDialog);
+  };
+
+  const handleCloseDownload = () => {
+    setOpenDownloadDialog(false);
+  };
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -472,6 +487,9 @@ const BucketItemsContainer = ({
               <Button startIcon={<PublishIcon />}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon />}>Create folder</Button>
+              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
+                Download
+              </Button>
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
@@ -499,9 +517,92 @@ const BucketItemsContainer = ({
           items={items || []}
           onItemClick={onItemClick}
         />
+        <ConfirmDownload
+          open={openDownloadDialog}
+          handleClose={handleCloseDownload}
+        />
         {renderMenu}
       </Paper>
     </Slide>
+  );
+};
+
+const notification = () => {
+  toast("Downloading", {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: false,
+    progress: undefined,
+  });
+};
+
+const ConfirmDownload = ({ open, handleClose }) => {
+  const openDownloadDialog = open;
+
+  const handleConfirmDownload = (state) => {
+    notification();
+  };
+
+  return (
+    <div>
+      <ToastContainer />
+      {openDownloadDialog ? (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                  <h3 className="text-3xl font-semibold">
+                    Download these files?
+                  </h3>
+                  <button
+                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                    onClick={handleClose}
+                  >
+                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <ul>
+                    <li>
+                      <ArchiveIcon /> File 1
+                    </li>
+                  </ul>
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={() => handleConfirmDownload(false)}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+    </div>
   );
 };
 
@@ -563,8 +664,9 @@ const BucketItemTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
-
+    rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper>
       <TableContainer>

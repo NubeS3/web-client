@@ -14,7 +14,7 @@ const Landing = (props) => {
       <h2>Access your data anytime, anywhere</h2>
       <Button
         variant="outlined"
-        style={{ backgroundColor: "#b7ecea" }}
+        className="bg-light-blue"
         onClick={() => {
           if (props.isValidAuthentication) {
             props.history.push(paths.DASHBOARD);
