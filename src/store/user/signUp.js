@@ -1,62 +1,55 @@
-import axios from 'axios';
-import {
-    createSlice,
-    createAsyncThunk,
-} from '@reduxjs/toolkit';
-import endpoints from '../../configs/endpoints';
+import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import endpoints from "../../configs/endpoints";
 
 const initialState = {
-    loading: false,
-    done: false,
-    err: null,
-}
+  loading: false,
+  done: false,
+  err: null,
+};
 
-export const signUp = createAsyncThunk(
-    'signUp/signUp',
-    async (data, api) => {
-        try {
-            api.dispatch(signUpSlice.actions.loading())
-            const response = await axios.post(endpoints.REGISTER, {
-                "firstname": data.firstname,
-                "lastname": data.lastname,
-                "username": data.username,
-                "password": data.password,
-                "email": data.email,
-                "dob": data.dob,
-                "company": data.company,
-                "gender": data.gender
-            });
+export const signUp = createAsyncThunk("signUp/signUp", async (data, api) => {
+  try {
+    api.dispatch(signUpSlice.actions.loading());
+    const response = await axios.post(endpoints.REGISTER, {
+      firstname: data.firstname,
+      lastname: data.lastname,
+      username: data.username,
+      password: data.password,
+      email: data.email,
+      dob: data.dob,
+      company: data.company,
+      gender: data.gender,
+    });
 
-            return response.data
-        } catch (err) {
-            return api.rejectWithValue(err.response.data.error)
-        }
-    }
-)
+    return response.data;
+  } catch (err) {
+    return api.rejectWithValue(err.response.data.error);
+  }
+});
 
 export const signUpSlice = createSlice({
-    name: 'signUp',
-    initialState: initialState,
-    reducers: {
-        loading: (state, action) => {
-            state.loading = true
-        },
-        reset: (state, action) => {
-            state.loading = false
-            state.done = false
-            state.err = null
-        }
+  name: "signUp",
+  initialState: initialState,
+  reducers: {
+    loading: (state, action) => {
+      state.loading = true;
     },
-    extraReducers: {
-        [signUp.fulfilled]: (state, action) => {
-            state.loading = false
-            state.done = true
-            state.err = null
-        },
-        [signUp.rejected]: (state, action) => {
-            state.loading = false
-            state.err = action.payload
-        },
-    }
-})
-
+    reset: (state, action) => {
+      state.loading = false;
+      state.done = false;
+      state.err = null;
+    },
+  },
+  extraReducers: {
+    [signUp.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.done = true;
+      state.err = null;
+    },
+    [signUp.rejected]: (state, action) => {
+      state.loading = false;
+      state.err = action.payload;
+    },
+  },
+});

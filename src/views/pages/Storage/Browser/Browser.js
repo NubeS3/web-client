@@ -40,6 +40,15 @@ const createBucketItemData = (name, size, lastModified, accessMode) => {
 const bucketRows = [
   createBucketData("Bucket #01", "Public"),
   createBucketData("Bucket #02", "Private"),
+  // createBucketData("Bucket #03", "Private"),
+  // createBucketData("Bucket #04", "Private"),
+  // createBucketData("Bucket #05", "Private"),
+  // createBucketData("Bucket #06", "Private"),
+  // createBucketData("Bucket #07", "Private"),
+  // createBucketData("Bucket #08", "Private"),
+  // createBucketData("Bucket #09", "Private"),
+  // createBucketData("Bucket #10", "Private"),
+  // createBucketData("Bucket #11", "Private"),
 ];
 
 const bucketItemRows = [
@@ -176,10 +185,21 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
+const BucketContainer = ({
+  items,
+  setItems,
+  onItemClick,
+  visibility,
+  ...props
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleDeleteBucket = () => {
+    setItems(items.filter(() => selected));
+    setSelected([]);
+  };
 
   const menuId = "mobile-menu";
   const renderMenu = (
@@ -198,6 +218,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
         <Button
           startIcon={<DeleteIcon />}
           disabled={selected.length !== 0 ? false : true}
+          onClick={handleDeleteBucket}
         >
           Delete bucket
         </Button>
@@ -224,6 +245,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
+              onClick={handleDeleteBucket}
             >
               Delete bucket
             </Button>
@@ -313,7 +335,7 @@ const BucketTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
   return (
     <Paper>
@@ -325,7 +347,7 @@ const BucketTable = ({
             orderBy={orderBy}
             onSelectedAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={bucketRows.length}
+            rowCount={items.length}
             headCells={headCells}
           />
           <TableBody>
@@ -374,7 +396,7 @@ const BucketTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -394,7 +416,13 @@ const BucketTable = ({
   );
 };
 
-const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
+const BucketItemsContainer = ({
+  title,
+  items,
+  setItems,
+  onBack,
+  onItemClick,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
@@ -535,7 +563,7 @@ const BucketItemTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
   return (
     <Paper>
@@ -608,7 +636,7 @@ const BucketItemTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -646,12 +674,14 @@ const Browser = () => {
   return (
     <BucketContainer
       items={buckets}
+      setItems={setBuckets}
       onItemClick={(name) => setBucketSelected(name)}
       visibility={bucketSelected !== null ? "hidden" : "visible"}
     >
       <BucketItemsContainer
         title={bucketSelected}
         items={bucketItems}
+        setItems={setBucketItems}
         onBack={() => setBucketSelected(null)}
         onItemClick={(name) => alert(name)}
       />

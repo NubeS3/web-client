@@ -3,10 +3,8 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
 import PageFrame from "../../components/PageFrame";
-import registerRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
 import paths from "../../../configs/paths";
-import { validAuthentication } from "../../../store/actions/authenticateAction";
 import preValidateRegisterData from "../../../helpers/preValidateRegisterData";
 
 import {
@@ -245,11 +243,7 @@ const Login = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authenticateReducer.isValidAuthentication,
+  isValidAuthentication: state.authen.isValidAuthentication,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  saveAuthToken: (token) => dispatch(validAuthentication(token)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps)(Login);

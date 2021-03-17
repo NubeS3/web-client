@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import store from "../../../store/store";
+import { clearAuthentication } from "../../../store/auth/auth";
+import paths from "../../../configs/paths";
+import localStorageKeys from "../../../configs/localStorageKeys";
 
 import {
   AppBar,
@@ -15,8 +20,17 @@ import "./style.css";
 const AuthHeader = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const history = useHistory();
 
-  const handleSignOut = () => {};
+  const handleSignOut = () => {
+    store.dispatch(
+      clearAuthentication({
+        authToken: localStorage.getItem(localStorageKeys.TOKEN),
+        rfToken: localStorage.getItem(localStorageKeys.RFTOKEN),
+      })
+    );
+    history.push(paths.BASE);
+  };
 
   return (
     <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
@@ -27,7 +41,7 @@ const AuthHeader = (props) => {
           variant="contained"
           style={{
             backgroundColor: "#b7ecea",
-            marginRight: "20px"
+            marginRight: "20px",
           }}
         >
           Console
@@ -60,9 +74,7 @@ const AuthHeader = (props) => {
             <MenuItem onClick={() => alert("Profile clicked!")}>
               Profile
             </MenuItem>
-            <MenuItem onClick={() => alert("Signout clicked!")}>
-              Sign out
-            </MenuItem>
+            <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
           </Menu>
         </div>
       </Toolbar>
