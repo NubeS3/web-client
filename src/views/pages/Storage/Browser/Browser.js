@@ -26,12 +26,12 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
-import ArchiveIcon from "@material-ui/icons/Archive"
+import ArchiveIcon from "@material-ui/icons/Archive";
 import "./style.css";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -44,6 +44,15 @@ const createBucketItemData = (name, size, lastModified, accessMode) => {
 const bucketRows = [
   createBucketData("Bucket #01", "Public"),
   createBucketData("Bucket #02", "Private"),
+  // createBucketData("Bucket #03", "Private"),
+  // createBucketData("Bucket #04", "Private"),
+  // createBucketData("Bucket #05", "Private"),
+  // createBucketData("Bucket #06", "Private"),
+  // createBucketData("Bucket #07", "Private"),
+  // createBucketData("Bucket #08", "Private"),
+  // createBucketData("Bucket #09", "Private"),
+  // createBucketData("Bucket #10", "Private"),
+  // createBucketData("Bucket #11", "Private"),
 ];
 
 const bucketItemRows = [
@@ -180,10 +189,21 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
+const BucketContainer = ({
+  items,
+  setItems,
+  onItemClick,
+  visibility,
+  ...props
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleDeleteBucket = () => {
+    setItems(items.filter(() => selected));
+    setSelected([]);
+  };
 
   const menuId = "mobile-menu";
   const renderMenu = (
@@ -202,6 +222,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
         <Button
           startIcon={<DeleteIcon />}
           disabled={selected.length !== 0 ? false : true}
+          onClick={handleDeleteBucket}
         >
           Delete bucket
         </Button>
@@ -228,6 +249,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
+              onClick={handleDeleteBucket}
             >
               Delete bucket
             </Button>
@@ -317,7 +339,7 @@ const BucketTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
   return (
     <Paper>
@@ -329,7 +351,7 @@ const BucketTable = ({
             orderBy={orderBy}
             onSelectedAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={bucketRows.length}
+            rowCount={items.length}
             headCells={headCells}
           />
           <TableBody>
@@ -378,7 +400,7 @@ const BucketTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -398,7 +420,13 @@ const BucketTable = ({
   );
 };
 
-const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
+const BucketItemsContainer = ({
+  title,
+  items,
+  setItems,
+  onBack,
+  onItemClick,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
@@ -408,7 +436,7 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
 
   const handleOpenDownload = () => {
     setOpenDownloadDialog(true);
-    console.log(openDownloadDialog)
+    console.log(openDownloadDialog);
   };
 
   const handleCloseDownload = () => {
@@ -459,7 +487,9 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
               <Button startIcon={<PublishIcon />}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon />}>Create folder</Button>
-              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>Download</Button>
+              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
+                Download
+              </Button>
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
@@ -487,7 +517,10 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
           items={items || []}
           onItemClick={onItemClick}
         />
-        <ConfirmDownload open={openDownloadDialog} handleClose={handleCloseDownload}/>
+        <ConfirmDownload
+          open={openDownloadDialog}
+          handleClose={handleCloseDownload}
+        />
         {renderMenu}
       </Paper>
     </Slide>
@@ -504,9 +537,9 @@ const notification = () => {
     draggable: false,
     progress: undefined,
   });
-}
+};
 
-const ConfirmDownload = ({open, handleClose}) => {
+const ConfirmDownload = ({ open, handleClose }) => {
   const openDownloadDialog = open;
 
   const handleConfirmDownload = (state) => {
@@ -515,57 +548,60 @@ const ConfirmDownload = ({open, handleClose}) => {
 
   return (
     <div>
-    <ToastContainer/>
+      <ToastContainer />
       {openDownloadDialog ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                    <h3 className="text-3xl font-semibold">
-                      Download these files?
-                    </h3>
-                    <button
-                        className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                        onClick={handleClose}
-                    >
-                  <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                    ×
-                  </span>
-                    </button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <ul>
-                      <li><ArchiveIcon/> File 1</li>
-                    </ul>
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                    <button
-                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
-                        type="button"
-                        style={{ transition: "all .15s ease" }}
-                        onClick={handleClose}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                        className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                        type="button"
-                        style={{ transition: "all .15s ease" }}
-                        onClick={() => handleConfirmDownload(false)}
-                    >
-                      OK
-                    </button>
-                  </div>
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                  <h3 className="text-3xl font-semibold">
+                    Download these files?
+                  </h3>
+                  <button
+                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                    onClick={handleClose}
+                  >
+                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <ul>
+                    <li>
+                      <ArchiveIcon /> File 1
+                    </li>
+                  </ul>
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={() => handleConfirmDownload(false)}
+                  >
+                    OK
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>) : null}
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </div>
   );
 };
@@ -630,11 +666,11 @@ const BucketItemTable = ({
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper>
       <TableContainer>
-          <Table>
+        <Table>
           <EnhancedTableHead
             numSelected={selected.length}
             order={order}
@@ -702,7 +738,7 @@ const BucketItemTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -737,15 +773,17 @@ const Browser = () => {
     setBucketItems(bucketItemRows);
   }, [bucketSelected]);
 
-  return (  
+  return (
     <BucketContainer
       items={buckets}
+      setItems={setBuckets}
       onItemClick={(name) => setBucketSelected(name)}
       visibility={bucketSelected !== null ? "hidden" : "visible"}
     >
       <BucketItemsContainer
         title={bucketSelected}
         items={bucketItems}
+        setItems={setBucketItems}
         onBack={() => setBucketSelected(null)}
         onItemClick={(name) => alert(name)}
       />

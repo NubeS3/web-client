@@ -25,7 +25,7 @@ const GuardRoute = ({
 );
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authenticateReducer.isValidAuthentication,
+  isValidAuthentication: state.authen.isValidAuthentication,
 });
 
 export default connect(mapStateToProps)(GuardRoute);
