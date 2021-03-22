@@ -7,6 +7,8 @@ const endpoints = {
   LOGIN: `${BASE}/users/signin`,
   LOGOUT: `${BASE}/users/signout`,
   CONFIRM_OTP: `${BASE}/users/confirm-otp`,
+  UPLOAD: `${BASE}/files/upload`,
+  DOWNLOAD: `${BASE}/files/download`
 };
 
 export default endpoints;
