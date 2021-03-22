@@ -14,7 +14,6 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-
 import HomeIcon from "@material-ui/icons/Home";
 import StorageIcon from "@material-ui/icons/Storage";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -144,13 +143,13 @@ const PersistentDrawer = (props) => {
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
-              <ListItemText primary="Home" />
+              <ListItemText primary="Home" onClick={() => {props.history.push(paths.DASHBOARD)}}/>
             </ListItem>
           </List>
           <Divider />
           <List>
             <ListItem button key="storage">
-              <ListItemText primary="Storage" />
+              <ListItemText primary="Storage" onClick={() => {props.history.push(paths.STORAGE)}}/>
             </ListItem>
             <ListItem button key="browser">
               <ListItemIcon>
