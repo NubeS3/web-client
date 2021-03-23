@@ -1,7 +1,7 @@
 import validator from "validator";
 
 const preValidateLoginData = (data = { username: "", password: "" }) => {
-  if (!validator.isEmail(data.username) && !/^(\d+|\w+)$/.test(data.username)) {
+  if (!/^(\d+|\w+)$/.test(data.username)) {
     return "Invalid username";
   }
 
@@ -10,7 +10,7 @@ const preValidateLoginData = (data = { username: "", password: "" }) => {
   }
 
   if (
-    data.password.length < 8 ||
+    data.password.length < 1 ||
     data.password.toLowerCase().includes("password")
   ) {
     return "Unable to login";

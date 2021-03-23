@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
 import PageFrame from "../../components/PageFrame";
-import respType from "../../../configs/responseType";
 import paths from "../../../configs/paths";
 import preValidateRegisterData from "../../../helpers/preValidateRegisterData";
 
@@ -22,8 +21,10 @@ import {
 } from "@material-ui/pickers";
 import TextField from "../../components/Textfield";
 import "./style.css";
+import store from "../../../store/store";
+import { signUp } from "../../../store/user/signUp"
 
-const Login = (props) => {
+const Register = (props) => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -35,11 +36,19 @@ const Login = (props) => {
   const [confirm, setConfirm] = useState("");
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
+  const { from } = props.location.state || { from: { pathname: paths.BASE } };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const error = preValidateRegisterData({ username, password });
+    if (error) {
+      return setError(error);
+    }
 
     setError("");
+    store.dispatch(signUp({ firstname: firstname, lastname: lastname, username: username, password: password,email: email,dob: selectedDate, company:company, gender:gender }));
+    console.log(from.pathname);
+    props.history.push(from.pathname);
   };
 
   const handleChangeDate = (date) => {
@@ -54,9 +63,9 @@ const Login = (props) => {
     <PageFrame className="register-container">
       <Card className="register-card">
         <CardHeader
+        className="bg-light-blue"
           style={{
             textAlign: "center",
-            backgroundColor: "#78c5dc",
             width: "100%",
             color: "#ffffff",
           }}
@@ -224,17 +233,14 @@ const Login = (props) => {
             >
               BACK
             </Button>
-            <Button
+            <button
               variant="contained"
-              className="register-buttons"
-              style={{
-                backgroundColor: "#b7ecea",
-              }}
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               type="submit"
               onClick={handleSubmit}
             >
               CREATE ACCOUNT
-            </Button>
+            </button>
           </div>
         </form>
       </Card>
@@ -246,4 +252,4 @@ const mapStateToProps = (state) => ({
   isValidAuthentication: state.authen.isValidAuthentication,
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(Register);

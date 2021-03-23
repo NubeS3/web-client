@@ -8,8 +8,20 @@ const initialState = {
     name: '',
     ttl: 0,
     err: null,
+    uploading: false,
 };
 
 const upload = createAsyncThunk("/upload", async (data, api) => {
 
 })
+
+export const uploadSlice = createSlice({
+    name: 'upload',
+    initialState: initialState,
+    reducers: {
+        uploading: (state,action) => {
+            state.uploading = false;
+        }
+    }
+})
+

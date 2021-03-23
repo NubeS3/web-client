@@ -19,7 +19,7 @@ import StorageIcon from "@material-ui/icons/Storage";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useTheme } from "@material-ui/core";
 import clsx from "clsx";
-
+import paths from "../../configs/paths"
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({

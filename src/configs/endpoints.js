@@ -1,4 +1,4 @@
-const BASE = `${process.env.NUBES_BACK_END_URL}`;
+const BASE = `${process.env.REACT_APP_BACK_END_URL}`;
 
 const endpoints = {
   BASE,
