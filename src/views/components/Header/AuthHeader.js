@@ -37,7 +37,7 @@ const AuthHeader = (props) => {
       <Toolbar variant="dense">
         <LogoHeader />
         <div style={{ flexGrow: "1" }} />
-        <button
+        <button onClick={() => {history.push(paths.DASHBOARD)}}
           variant="contained"
           className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1">
           Console

@@ -6,6 +6,7 @@ import store from "./store/store";
 import { verifyAuthentication } from "./store/auth/auth";
 
 import GuardRoute from "./views/routes/GuardRoute";
+import Header from "./views/components/Header";
 import Landing from "./views/pages/Landing/Landing";
 import Dashboard from "./views/pages/Dashboard/Dashboard";
 import Storage from "./views/pages/Storage/Storage";
@@ -46,6 +47,8 @@ const App = (props) => {
         <Route exact path={paths.OTP} component={Otp} />
         <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
         <GuardRoute exact path={paths.STORAGE} component={Storage} />
+        {/* <Route exact path={paths.DASHBOARD} component={Dashboard} />
+        <Route exact path={paths.STORAGE} component={Storage} /> */}
       </Switch>
     </Router>
   );

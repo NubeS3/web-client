@@ -1,5 +1,6 @@
 import React from "react";
 
+import Header from "../../components/Header"
 import PageFrame from "../../components/PageFrame";
 import PersistentDrawer from "../../components/PersistentDrawer";
 import Box from "@material-ui/core/Box";
@@ -16,19 +17,17 @@ const Dashboard = (props) => {
   };
 
   return (
-    <PersistentDrawer>
-      <AppBar position="static">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="simple tabs example"
-        >
-          <Tab label="Dashboard" {...a11yProps(0)} />
+    <PersistentDrawer title="Dashboard">
+      <AppBar
+        position="static"
+        style={{ backgroundColor: "white", color: "black" }}>
+        <Tabs value={value} onChange={handleChange}>
+          <Tab className="focus:outline-none" label="Dashboard" {...a11yProps(0)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         Dashboard
-      </TabPanel>
+        </TabPanel>
     </PersistentDrawer>
   );
 };
