@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { authenSlice } from "./auth/auth"
 import { signUpSlice } from "./user/signUp";
-import { uploadSlice } from "./file/upload";
-import { downloadSlice } from "./file/download"
+import { uploadSlice } from "./storage/upload";
+import { downloadSlice } from "./storage/download"
+import { bucketSlice } from "./storage/bucket"
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
 
     upload: uploadSlice.reducer,
     download: downloadSlice.reducer,
+    storage: bucketSlice.reducer,
   },
 });
 

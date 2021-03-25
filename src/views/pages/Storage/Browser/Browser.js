@@ -34,6 +34,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import Dropzone from 'react-dropzone'
+import { connect } from "react-redux"
 
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -784,7 +785,7 @@ const BucketItemTable = ({
   );
 };
 
-const Browser = () => {
+const Browser = (props) => {
   const [buckets, setBuckets] = useState(bucketRows);
   const [bucketItems, setBucketItems] = useState(null);
   // const [bucketItemSelected, setBucketItemSelected] = useState({});
@@ -817,4 +818,8 @@ const Browser = () => {
   );
 };
 
-export default Browser;
+const mapStateToProps = (state) => ({
+  
+});
+
+export default connect(mapStateToProps)(Browser);

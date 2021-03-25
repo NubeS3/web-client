@@ -8,19 +8,20 @@ const initialState = {
     name: '',
     ttl: 0,
     err: null,
-    downloading: false,
+    uploading: false,
 };
 
-const download = createAsyncThunk("/download", async (data, api) => {
+const upload = createAsyncThunk("storage/upload", async (data, api) => {
 
 })
 
-export const downloadSlice = createSlice({
-    name: 'download',
+export const uploadSlice = createSlice({
+    name: 'upload',
     initialState: initialState,
     reducers: {
-        downloading: (state,action) => {
-            state.downloading = false;
+        uploading: (state,action) => {
+            state.uploading = false;
         }
     }
 })
+

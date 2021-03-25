@@ -13,6 +13,7 @@ import {
   FormControlLabel,
   Checkbox,
   MenuItem,
+  Select,
 } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
 import {
@@ -46,7 +47,7 @@ const Register = (props) => {
     }
 
     setError("");
-    store.dispatch(signUp({ firstname: firstname, lastname: lastname, username: username, password: password,email: email,dob: selectedDate, company:company, gender:gender }));
+    store.dispatch(signUp({ firstname: firstname, lastname: lastname, username: username, password: password, email: email, dob: selectedDate, company: company, gender: gender }));
     console.log(from.pathname);
     props.history.push(from.pathname);
   };
@@ -63,7 +64,7 @@ const Register = (props) => {
     <PageFrame className="register-container">
       <Card className="register-card">
         <CardHeader
-        className="bg-light-blue"
+          className="bg-light-blue"
           style={{
             textAlign: "center",
             width: "100%",
@@ -77,6 +78,17 @@ const Register = (props) => {
           }}
         />
         <form className="register-form">
+          <div className="register-form-field">
+            <label>Username</label>
+            <TextField
+              style={{
+                width: "100%",
+              }}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
           <div className="register-form-field">
             <label>Firstname</label>
             <TextField
@@ -120,20 +132,19 @@ const Register = (props) => {
                 style={{
                   width: "fit-content",
                   minWidth: "fit-content",
-                  marginRight: "10px",
+                  marginRight: "22%",
                 }}
               >
                 Gender
               </label>
-              <TextField
-                style={{ width: "100%" }}
+              <Select
                 select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
                 <MenuItem value={true}>Male</MenuItem>
                 <MenuItem value={false}>Female</MenuItem>
-              </TextField>
+              </Select>
             </div>
             <div
               className="register-form-field"
@@ -158,6 +169,9 @@ const Register = (props) => {
                   margin="normal"
                   value={selectedDate}
                   onChange={handleChangeDate}
+                  inputProps={{
+                    width: "fit-content",
+                  }}
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}
@@ -174,17 +188,6 @@ const Register = (props) => {
               type="text"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-            />
-          </div>
-          <div className="register-form-field">
-            <label>Username</label>
-            <TextField
-              style={{
-                width: "100%",
-              }}
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="register-form-field">
