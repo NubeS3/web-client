@@ -17,6 +17,14 @@ import {
   Checkbox,
   TableSortLabel,
   Slide,
+  Typography,
+  InputLabel,
+  TextField,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+  Radio,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -194,11 +202,13 @@ const BucketContainer = ({
   setItems,
   onItemClick,
   visibility,
+  setVisibility,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+  const [createButtonClicked, setCreateButtonClick] = useState(false);
 
   const handleDeleteBucket = () => {
     setItems(items.filter(() => selected));
@@ -245,7 +255,7 @@ const BucketContainer = ({
         <Toolbar variant="dense">
           <h3 style={{ marginRight: "20px" }}>Bucket</h3>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />}>Create bucket</Button>
+            <Button startIcon={<AddIcon />} onClick={() => setCreateButtonClick(true)}>Create bucket 1</Button>
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
@@ -276,6 +286,7 @@ const BucketContainer = ({
         onItemClick={onItemClick}
       />
       {renderMenu}
+      <CreateBucket visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
       {props.children}
     </Paper>
   );
@@ -758,10 +769,49 @@ const BucketItemTable = ({
   );
 };
 
+const CreateBucket = ({ onBack, visibility }) => {
+  return (
+    <Slide
+      in={visibility}
+      direction="left"
+      mountOnEnter
+      unmountOnExit
+    >
+      <Paper style={{ position: "absolute", width: "inherit", top: "0" }}>
+        <div>
+          <Toolbar variant="dense">
+            <IconButton onClick={() => onBack(null)}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography style={{ fontWeight: "bold" }}>Create a bucket</Typography>
+          </Toolbar>
+          <div style={{ marginLeft: "50px" }}>
+            <InputLabel><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }}>Name</Typography> (must be unique across cloud storage)</InputLabel>
+            <TextField variant="outlined" style={{ width: 650, backgroundColor: "#FFF" }} />
+            <form style={{ marginTop: "15px" }}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend" style={{ color: 'black', fontWeight: 'bold' }}>Access</FormLabel>
+                <RadioGroup aria-label="access" name="access1">
+                  <FormControlLabel value="Public" control={<Radio color="primary" />} label="Public" />
+                  <FormControlLabel value="Private" control={<Radio color="primary" />} label="Private" />
+                </RadioGroup>
+              </FormControl>
+              <div style={{ marginTop: "10px", marginBottom: "15px" }}>
+                <Button style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
+                <Button>Cancel</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Paper>
+    </Slide >
+  )
+}
+
 const Browser = () => {
   const [buckets, setBuckets] = useState(bucketRows);
   const [bucketItems, setBucketItems] = useState(null);
-  // const [bucketItemSelected, setBucketItemSelected] = useState({});
+  // const [bucketItemSelected, setBucketItemSelected] = useState({ });
 
   const [bucketSelected, setBucketSelected] = useState(null);
 
