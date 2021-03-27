@@ -35,6 +35,7 @@ import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import Dropzone from 'react-dropzone'
 import { connect } from "react-redux"
+import EditBucketContainer from "./BucketDetail";
 
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -433,6 +434,7 @@ const BucketItemsContainer = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+  const [showEditBucket, setShowEditBucket] = useState(false);
 
   const menuId = "mobile-menu";
   const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
@@ -509,7 +511,7 @@ const BucketItemsContainer = ({
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
               <Button startIcon={<ShareIcon />}>Share</Button>
-              <Button startIcon={<EditIcon />}>Edit bucket</Button>
+              <Button startIcon={<EditIcon />} onClick={() => setShowEditBucket(true)}>Edit bucket</Button>
               <Button startIcon={<DeleteIcon />}>Delete</Button>
             </div>
             <div className="browser-appbar-mobile-menu">
@@ -534,20 +536,21 @@ const BucketItemsContainer = ({
               </div>
             </section>
           )} */}
-          <BucketItemTable
-            headCells={bucketItemHeadCells}
-            selected={selected}
-            setSelected={setSelected}
-            items={items || []}
-            onItemClick={onItemClick}
-          />
-          <input type='file' id='fileInput' ref={fileInputRef} className="none" onChange={handleFileSelected}></input>
+        <BucketItemTable
+          headCells={bucketItemHeadCells}
+          selected={selected}
+          setSelected={setSelected}
+          items={items || []}
+          onItemClick={onItemClick}
+        />
+        <input type='file' id='fileInput' ref={fileInputRef} className="hidden" onChange={handleFileSelected}></input>
         {/* </Dropzone> */}
 
         <ConfirmDownload
           open={openDownloadDialog}
           handleClose={handleCloseDownload}
         />
+        <EditBucketContainer show={showEditBucket} title={title}/>
         {renderMenu}
       </Paper>
     </Slide>
@@ -693,7 +696,6 @@ const BucketItemTable = ({
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper>
       <TableContainer>
@@ -819,7 +821,7 @@ const Browser = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  
+
 });
 
 export default connect(mapStateToProps)(Browser);

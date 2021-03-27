@@ -45,10 +45,10 @@ const App = (props) => {
         <Route exact path={paths.REGISTER} component={SignUp} />
         <Route exact path={paths.LOGIN} component={SignIn} />
         <Route exact path={paths.OTP} component={Otp} />
-        <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
-        <GuardRoute exact path={paths.STORAGE} component={Storage} />
-        {/* <Route exact path={paths.DASHBOARD} component={Dashboard} />
-        <Route exact path={paths.STORAGE} component={Storage} /> */}
+        {/* <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
+        <GuardRoute exact path={paths.STORAGE} component={Storage} /> */}
+        <Route exact path={paths.DASHBOARD} component={Dashboard} />
+        <Route exact path={paths.STORAGE} component={Storage} />
       </Switch>
     </Router>
   );
