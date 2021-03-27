@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef, useRef } from "react";
 import {
   AppBar,
   Toolbar,
@@ -41,6 +41,10 @@ import { useTheme } from "@material-ui/core/styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import Dropzone from 'react-dropzone'
+import { connect } from "react-redux"
+import EditBucketContainer from "./BucketDetail";
+
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
 };
@@ -441,6 +445,7 @@ const BucketItemsContainer = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+  const [showEditBucket, setShowEditBucket] = useState(false);
 
   const menuId = "mobile-menu";
   const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
@@ -454,6 +459,18 @@ const BucketItemsContainer = ({
     setOpenDownloadDialog(false);
   };
 
+  const fileInputRef = useRef(null)
+  const handleUploadFile = () => {
+    fileInputRef.current.click();
+  }
+
+  const handleFileSelected = (e) => {
+    e.preventDefault()
+    let file = e.target.files;
+    console.log(file[0])
+  }
+
+  const dropzoneRef = createRef();
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -495,7 +512,7 @@ const BucketItemsContainer = ({
             </IconButton>
             <h3 style={{ marginRight: "20px" }}>{title}</h3>
             <div className="browser-appbar-button-group">
-              <Button startIcon={<PublishIcon />}>Upload file</Button>
+              <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon />}>Create folder</Button>
               <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
@@ -505,7 +522,7 @@ const BucketItemsContainer = ({
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
               <Button startIcon={<ShareIcon />}>Share</Button>
-              <Button startIcon={<EditIcon />}>Edit bucket</Button>
+              <Button startIcon={<EditIcon />} onClick={() => setShowEditBucket(true)}>Edit bucket</Button>
               <Button startIcon={<DeleteIcon />}>Delete</Button>
             </div>
             <div className="browser-appbar-mobile-menu">
@@ -521,6 +538,15 @@ const BucketItemsContainer = ({
             </div>
           </Toolbar>
         </AppBar>
+        {/* <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)} ref={dropzoneRef}>
+          {({getRootProps, getInputProps}) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()}/>
+                <p>Drag n drop files here to upload</p>
+              </div>
+            </section>
+          )} */}
         <BucketItemTable
           headCells={bucketItemHeadCells}
           selected={selected}
@@ -528,10 +554,14 @@ const BucketItemsContainer = ({
           items={items || []}
           onItemClick={onItemClick}
         />
+        <input type='file' id='fileInput' ref={fileInputRef} className="hidden" onChange={handleFileSelected}></input>
+        {/* </Dropzone> */}
+
         <ConfirmDownload
           open={openDownloadDialog}
           handleClose={handleCloseDownload}
         />
+        <EditBucketContainer show={showEditBucket} title={title}/>
         {renderMenu}
       </Paper>
     </Slide>
@@ -677,7 +707,6 @@ const BucketItemTable = ({
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper>
       <TableContainer>
@@ -841,4 +870,8 @@ const Browser = () => {
   );
 };
 
-export default Browser;
+const mapStateToProps = (state) => ({
+
+});
+
+export default connect(mapStateToProps)(Browser);

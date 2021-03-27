@@ -151,7 +151,7 @@ const Login = (props) => {
             </Button>
             <Button
               variant="contained"
-              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               type="submit"
               onClick={handleSubmit}
             >

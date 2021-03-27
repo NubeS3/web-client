@@ -1,7 +1,7 @@
 import validator from "validator";
 
-const preValidateLoginData = (data = { username: "", password: "" }) => {
-  if (!validator.isEmail(data.username) && !/^(\d+|\w+)$/.test(data.username)) {
+const preValidateRegisterData = (data = { username: "", password: "" }) => {
+  if (!/^(\d+|\w+)$/.test(data.username)) {
     return "Invalid username";
   }
 
@@ -17,4 +17,4 @@ const preValidateLoginData = (data = { username: "", password: "" }) => {
   }
 };
 
-export default preValidateLoginData;
+export default preValidateRegisterData;
