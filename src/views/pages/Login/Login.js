@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-import loginRequest from "../../../services/loginRequest";
 import respType from "../../../configs/responseType";
 import paths from "../../../configs/paths";
-import { validAuthentication } from "../../../store/actions/authenticateAction";
 import preValidateLoginData from "../../../helpers/preValidateLoginData";
+
+import store from "../../../store/store";
+import { login } from "../../../store/auth/auth";
 
 import {
   Button,
@@ -30,10 +31,10 @@ const Login = (props) => {
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
 
-  const { from } = props.location.state || { from: { pathName: paths.BASE } };
+  const { from } = props.location.state || { from: { pathname: paths.BASE } };
 
   if (props.isValidAuthentication) {
-    return <Redirect to={paths.BASE} />;
+    return <Redirect to={from.pathname} />;
   }
 
   const handleSubmit = async (e) => {
@@ -45,14 +46,8 @@ const Login = (props) => {
     }
 
     setError("");
-    // const result = await loginRequest(username, password);
-    // if (result.type === respType.SUCCEED) {
-    //   await props.saveAuthToken(result.data.token);
-    //   props.history.push(paths.BASE);
-    // } else {
-    //   setError(result.error);
-    // }
-    await props.saveAuthToken("token12345");
+    store.dispatch(login({ username: username, password: password }));
+    console.log(from.pathname);
     props.history.push(from.pathname);
   };
 
@@ -156,7 +151,7 @@ const Login = (props) => {
             </Button>
             <Button
               variant="contained"
-              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               type="submit"
               onClick={handleSubmit}
             >
@@ -176,11 +171,7 @@ const Login = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authenticateReducer.isValidAuthentication,
+  isValidAuthentication: state.authen.isValidAuthentication,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  saveAuthToken: (token) => dispatch(validAuthentication(token)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps)(Login);

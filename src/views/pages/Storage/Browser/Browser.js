@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef, useRef } from "react";
 import {
   AppBar,
   Toolbar,
@@ -17,6 +17,14 @@ import {
   Checkbox,
   TableSortLabel,
   Slide,
+  Typography,
+  InputLabel,
+  TextField,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+  Radio,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -26,13 +34,17 @@ import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
-import ArchiveIcon from "@material-ui/icons/Archive"
+import ArchiveIcon from "@material-ui/icons/Archive";
 import "./style.css";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import Dropzone from 'react-dropzone'
+import { connect } from "react-redux"
+import EditBucketContainer from "./BucketDetail";
+
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
 };
@@ -44,6 +56,15 @@ const createBucketItemData = (name, size, lastModified, accessMode) => {
 const bucketRows = [
   createBucketData("Bucket #01", "Public"),
   createBucketData("Bucket #02", "Private"),
+  // createBucketData("Bucket #03", "Private"),
+  // createBucketData("Bucket #04", "Private"),
+  // createBucketData("Bucket #05", "Private"),
+  // createBucketData("Bucket #06", "Private"),
+  // createBucketData("Bucket #07", "Private"),
+  // createBucketData("Bucket #08", "Private"),
+  // createBucketData("Bucket #09", "Private"),
+  // createBucketData("Bucket #10", "Private"),
+  // createBucketData("Bucket #11", "Private"),
 ];
 
 const bucketItemRows = [
@@ -180,10 +201,23 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
+const BucketContainer = ({
+  items,
+  setItems,
+  onItemClick,
+  visibility,
+  setVisibility,
+  ...props
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+  const [createButtonClicked, setCreateButtonClick] = useState(false);
+
+  const handleDeleteBucket = () => {
+    setItems(items.filter(() => selected));
+    setSelected([]);
+  };
 
   const menuId = "mobile-menu";
   const renderMenu = (
@@ -202,6 +236,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
         <Button
           startIcon={<DeleteIcon />}
           disabled={selected.length !== 0 ? false : true}
+          onClick={handleDeleteBucket}
         >
           Delete bucket
         </Button>
@@ -224,10 +259,11 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
         <Toolbar variant="dense">
           <h3 style={{ marginRight: "20px" }}>Bucket</h3>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />}>Create bucket</Button>
+            <Button startIcon={<AddIcon />} onClick={() => setCreateButtonClick(true)}>Create bucket 1</Button>
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
+              onClick={handleDeleteBucket}
             >
               Delete bucket
             </Button>
@@ -254,6 +290,7 @@ const BucketContainer = ({ items, onItemClick, visibility, ...props }) => {
         onItemClick={onItemClick}
       />
       {renderMenu}
+      <CreateBucket visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
       {props.children}
     </Paper>
   );
@@ -317,7 +354,7 @@ const BucketTable = ({
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
   return (
     <Paper>
@@ -329,7 +366,7 @@ const BucketTable = ({
             orderBy={orderBy}
             onSelectedAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={bucketRows.length}
+            rowCount={items.length}
             headCells={headCells}
           />
           <TableBody>
@@ -378,7 +415,7 @@ const BucketTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -398,23 +435,42 @@ const BucketTable = ({
   );
 };
 
-const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
+const BucketItemsContainer = ({
+  title,
+  items,
+  setItems,
+  onBack,
+  onItemClick,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
   const isMenuOpen = Boolean(anchorEl);
+  const [showEditBucket, setShowEditBucket] = useState(false);
 
   const menuId = "mobile-menu";
   const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
 
   const handleOpenDownload = () => {
     setOpenDownloadDialog(true);
-    console.log(openDownloadDialog)
+    console.log(openDownloadDialog);
   };
 
   const handleCloseDownload = () => {
     setOpenDownloadDialog(false);
   };
 
+  const fileInputRef = useRef(null)
+  const handleUploadFile = () => {
+    fileInputRef.current.click();
+  }
+
+  const handleFileSelected = (e) => {
+    e.preventDefault()
+    let file = e.target.files;
+    console.log(file[0])
+  }
+
+  const dropzoneRef = createRef();
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -456,15 +512,17 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
             </IconButton>
             <h3 style={{ marginRight: "20px" }}>{title}</h3>
             <div className="browser-appbar-button-group">
-              <Button startIcon={<PublishIcon />}>Upload file</Button>
+              <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon />}>Create folder</Button>
-              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>Download</Button>
+              <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
+                Download
+              </Button>
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
               <Button startIcon={<ShareIcon />}>Share</Button>
-              <Button startIcon={<EditIcon />}>Edit bucket</Button>
+              <Button startIcon={<EditIcon />} onClick={() => setShowEditBucket(true)}>Edit bucket</Button>
               <Button startIcon={<DeleteIcon />}>Delete</Button>
             </div>
             <div className="browser-appbar-mobile-menu">
@@ -480,6 +538,15 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
             </div>
           </Toolbar>
         </AppBar>
+        {/* <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)} ref={dropzoneRef}>
+          {({getRootProps, getInputProps}) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()}/>
+                <p>Drag n drop files here to upload</p>
+              </div>
+            </section>
+          )} */}
         <BucketItemTable
           headCells={bucketItemHeadCells}
           selected={selected}
@@ -487,7 +554,14 @@ const BucketItemsContainer = ({ title, items, onBack, onItemClick }) => {
           items={items || []}
           onItemClick={onItemClick}
         />
-        <ConfirmDownload open={openDownloadDialog} handleClose={handleCloseDownload}/>
+        <input type='file' id='fileInput' ref={fileInputRef} className="hidden" onChange={handleFileSelected}></input>
+        {/* </Dropzone> */}
+
+        <ConfirmDownload
+          open={openDownloadDialog}
+          handleClose={handleCloseDownload}
+        />
+        <EditBucketContainer show={showEditBucket} title={title}/>
         {renderMenu}
       </Paper>
     </Slide>
@@ -504,9 +578,9 @@ const notification = () => {
     draggable: false,
     progress: undefined,
   });
-}
+};
 
-const ConfirmDownload = ({open, handleClose}) => {
+const ConfirmDownload = ({ open, handleClose }) => {
   const openDownloadDialog = open;
 
   const handleConfirmDownload = (state) => {
@@ -515,57 +589,60 @@ const ConfirmDownload = ({open, handleClose}) => {
 
   return (
     <div>
-    <ToastContainer/>
+      <ToastContainer />
       {openDownloadDialog ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                    <h3 className="text-3xl font-semibold">
-                      Download these files?
-                    </h3>
-                    <button
-                        className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                        onClick={handleClose}
-                    >
-                  <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                    ×
-                  </span>
-                    </button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <ul>
-                      <li><ArchiveIcon/> File 1</li>
-                    </ul>
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                    <button
-                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
-                        type="button"
-                        style={{ transition: "all .15s ease" }}
-                        onClick={handleClose}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                        className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                        type="button"
-                        style={{ transition: "all .15s ease" }}
-                        onClick={() => handleConfirmDownload(false)}
-                    >
-                      OK
-                    </button>
-                  </div>
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                  <h3 className="text-3xl font-semibold">
+                    Download these files?
+                  </h3>
+                  <button
+                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                    onClick={handleClose}
+                  >
+                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <ul>
+                    <li>
+                      <ArchiveIcon /> File 1
+                    </li>
+                  </ul>
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                    type="button"
+                    style={{ transition: "all .15s ease" }}
+                    onClick={() => handleConfirmDownload(false)}
+                  >
+                    OK
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>) : null}
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </div>
   );
 };
@@ -630,11 +707,10 @@ const BucketItemTable = ({
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Paper>
       <TableContainer>
-          <Table>
+        <Table>
           <EnhancedTableHead
             numSelected={selected.length}
             order={order}
@@ -702,7 +778,7 @@ const BucketItemTable = ({
                 );
               })}
             {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
+              <TableRow style={{ height: 81 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
             )}
@@ -722,10 +798,49 @@ const BucketItemTable = ({
   );
 };
 
+const CreateBucket = ({ onBack, visibility }) => {
+  return (
+    <Slide
+      in={visibility}
+      direction="left"
+      mountOnEnter
+      unmountOnExit
+    >
+      <Paper style={{ position: "absolute", width: "inherit", top: "0" }}>
+        <div>
+          <Toolbar variant="dense">
+            <IconButton onClick={() => onBack(null)}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography style={{ fontWeight: "bold" }}>Create a bucket</Typography>
+          </Toolbar>
+          <div style={{ marginLeft: "50px" }}>
+            <InputLabel><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }}>Name</Typography> (must be unique across cloud storage)</InputLabel>
+            <TextField variant="outlined" style={{ width: 650, backgroundColor: "#FFF" }} />
+            <form style={{ marginTop: "15px" }}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend" style={{ color: 'black', fontWeight: 'bold' }}>Access</FormLabel>
+                <RadioGroup aria-label="access" name="access1">
+                  <FormControlLabel value="Public" control={<Radio color="primary" />} label="Public" />
+                  <FormControlLabel value="Private" control={<Radio color="primary" />} label="Private" />
+                </RadioGroup>
+              </FormControl>
+              <div style={{ marginTop: "10px", marginBottom: "15px" }}>
+                <Button style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
+                <Button>Cancel</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Paper>
+    </Slide >
+  )
+}
+
 const Browser = () => {
   const [buckets, setBuckets] = useState(bucketRows);
   const [bucketItems, setBucketItems] = useState(null);
-  // const [bucketItemSelected, setBucketItemSelected] = useState({});
+  // const [bucketItemSelected, setBucketItemSelected] = useState({ });
 
   const [bucketSelected, setBucketSelected] = useState(null);
 
@@ -737,15 +852,17 @@ const Browser = () => {
     setBucketItems(bucketItemRows);
   }, [bucketSelected]);
 
-  return (  
+  return (
     <BucketContainer
       items={buckets}
+      setItems={setBuckets}
       onItemClick={(name) => setBucketSelected(name)}
       visibility={bucketSelected !== null ? "hidden" : "visible"}
     >
       <BucketItemsContainer
         title={bucketSelected}
         items={bucketItems}
+        setItems={setBucketItems}
         onBack={() => setBucketSelected(null)}
         onItemClick={(name) => alert(name)}
       />
@@ -753,4 +870,8 @@ const Browser = () => {
   );
 };
 
-export default Browser;
+const mapStateToProps = (state) => ({
+
+});
+
+export default connect(mapStateToProps)(Browser);

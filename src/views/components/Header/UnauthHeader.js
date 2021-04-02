@@ -37,7 +37,7 @@ const UnauthHeader = (props) => {
 
   return (
     <>
-      <AppBar position="sticky" style={{ backgroundColor: "##006db3" }}>
+      <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
         <Toolbar variant="dense">
           <LogoHeader />
           <div style={{ flexGrow: "1" }} />

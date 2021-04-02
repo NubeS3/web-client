@@ -31,7 +31,6 @@ const a11yProps = (index) => {
 
 const Storage = (props) => {
   const [value, setValue] = useState(0);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
