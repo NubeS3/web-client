@@ -13,7 +13,7 @@ import Storage from "./views/pages/Storage/Storage";
 import SignUp from "./views/pages/Register/Register";
 import SignIn from "./views/pages/Login/Login";
 import paths from "./configs/paths";
-import Otp from "./views/pages/Otp/Otp";
+import ConfirmedOTP from "./views/pages/Otp/Otp";
 import localStorageKeys from "./configs/localStorageKeys";
 
 const App = (props) => {
@@ -44,11 +44,11 @@ const App = (props) => {
         <Route exact path={paths.BASE} component={Landing} />
         <Route exact path={paths.REGISTER} component={SignUp} />
         <Route exact path={paths.LOGIN} component={SignIn} />
-        <Route exact path={paths.OTP} component={Otp} />
-        {/* <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
-        <GuardRoute exact path={paths.STORAGE} component={Storage} /> */}
-        <Route exact path={paths.DASHBOARD} component={Dashboard} />
-        <Route exact path={paths.STORAGE} component={Storage} />
+        <Route exact path={paths.OTP} component={ConfirmedOTP} />
+        <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
+        <GuardRoute exact path={paths.STORAGE} component={Storage} />
+        {/* <Route exact path={paths.DASHBOARD} component={Dashboard} />
+        <Route exact path={paths.STORAGE} component={Storage} /> */}
       </Switch>
     </Router>
   );

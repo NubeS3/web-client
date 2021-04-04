@@ -1,7 +1,5 @@
 import React from "react";
 
-import Header from "../../components/Header"
-import PageFrame from "../../components/PageFrame";
 import PersistentDrawer from "../../components/PersistentDrawer";
 import Box from "@material-ui/core/Box";
 import Tabs from "@material-ui/core/Tabs";

@@ -20,12 +20,8 @@ import {
   Typography,
   InputLabel,
   TextField,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
-  Radio,
 } from "@material-ui/core";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoreIcon from "@material-ui/icons/MoreVert";
@@ -36,7 +32,6 @@ import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
 import ArchiveIcon from "@material-ui/icons/Archive";
 import "./style.css";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +39,9 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import Dropzone from 'react-dropzone'
 import { connect } from "react-redux"
 import EditBucketContainer from "./BucketDetail";
+import store from "../../../../store/store";
+import {getAllBucket, createBucket, getBucketItems} from "../../../../store/storage/bucket"
+import {uploadFile} from "../../../../store/storage/upload"
 
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -116,12 +114,31 @@ const stableSort = (array, comparator) => {
 };
 
 const bucketHeadCells = [
-  { id: "name", numeric: false, disablePadding: true, label: "Name" },
+  { id: "id", numeric: false, disablePadding: true, label: "ID" },
   {
-    id: "accessMode",
+    id: "name",
     numeric: false,
     disablePadding: false,
-    label: "Access Mode",
+    label: "Name",
+  },
+  {
+    id: "uid",
+    numeric: false,
+    disablePadding: false,
+    label: "User",
+  },
+  
+  {
+    id: "region",
+    numeric: false,
+    disablePadding: false,
+    label: "Region",
+  },
+  {
+    id: "created_at",
+    numeric: false,
+    disablePadding: false,
+    label: "Date Created",
   },
   {
     id: "empty",
@@ -135,16 +152,16 @@ const bucketItemHeadCells = [
   { id: "name", numeric: false, disablePadding: true, label: "Name" },
   { id: "size", numeric: false, disablePadding: false, label: "Size" },
   {
-    id: "lastModified",
+    id: "content_type",
     numeric: false,
     disablePadding: false,
-    label: "Last modified",
+    label: "File type",
   },
   {
-    id: "accessMode",
+    id: "expired_date",
     numeric: false,
     disablePadding: false,
-    label: "Access Mode",
+    label: "Expiring Date",
   },
   {
     id: "empty",
@@ -259,7 +276,7 @@ const BucketContainer = ({
         <Toolbar variant="dense">
           <h3 style={{ marginRight: "20px" }}>Bucket</h3>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />} onClick={() => setCreateButtonClick(true)}>Create bucket 1</Button>
+            <Button startIcon={<AddIcon />} onClick={() => setCreateButtonClick(true)}>Create bucket</Button>
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
@@ -290,7 +307,7 @@ const BucketContainer = ({
         onItemClick={onItemClick}
       />
       {renderMenu}
-      <CreateBucket visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
+      <CreateBucket authToken={props.authToken} visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
       {props.children}
     </Paper>
   );
@@ -381,7 +398,7 @@ const BucketTable = ({
                     hover
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.name}
+                    key={row.id}
                     selected={isItemSelected}
                   >
                     <TableCell padding="checkbox">
@@ -398,13 +415,31 @@ const BucketTable = ({
                       scope="row"
                       padding="none"
                     >
+                      {row.id}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      onClick={() => onItemClick(row.name)}
+                    >
                       {row.name}
                     </TableCell>
                     <TableCell
                       align="left"
                       onClick={() => onItemClick(row.name)}
                     >
-                      {row.accessMode}
+                      {row.uid}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      onClick={() => onItemClick(row.name)}
+                    >
+                      {row.region}
+                    </TableCell>
+                    <TableCell
+                      align="left"
+                      onClick={() => onItemClick(row.name)}
+                    >
+                      {row.created_at}
                     </TableCell>
                     <TableCell align="right">
                       <IconButton>
@@ -436,11 +471,13 @@ const BucketTable = ({
 };
 
 const BucketItemsContainer = ({
-  title,
+  bucketName,
   items,
   setItems,
   onBack,
   onItemClick,
+  authToken, 
+  bucketId,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
@@ -467,7 +504,7 @@ const BucketItemsContainer = ({
   const handleFileSelected = (e) => {
     e.preventDefault()
     let file = e.target.files;
-    console.log(file[0])
+    store.dispatc(uploadFile({authToken: authToken, file: file[0], bucketId: bucketId}))
   }
 
   const dropzoneRef = createRef();
@@ -496,7 +533,7 @@ const BucketItemsContainer = ({
 
   return (
     <Slide
-      in={items !== null ? true : false}
+      in={bucketName != "" > 0 ? true : false}
       direction="left"
       mountOnEnter
       unmountOnExit
@@ -510,7 +547,7 @@ const BucketItemsContainer = ({
             <IconButton onClick={() => onBack(null)}>
               <ArrowBackIcon />
             </IconButton>
-            <h3 style={{ marginRight: "20px" }}>{title}</h3>
+            <h3 style={{ marginRight: "20px" }}>{bucketName}</h3>
             <div className="browser-appbar-button-group">
               <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>Upload file</Button>
               <Button startIcon={<PublishIcon />}>Upload folder</Button>
@@ -561,7 +598,7 @@ const BucketItemsContainer = ({
           open={openDownloadDialog}
           handleClose={handleCloseDownload}
         />
-        <EditBucketContainer show={showEditBucket} title={title}/>
+        <EditBucketContainer show={showEditBucket} title={bucketName}/>
         {renderMenu}
       </Paper>
     </Slide>
@@ -798,7 +835,267 @@ const BucketItemTable = ({
   );
 };
 
-const CreateBucket = ({ onBack, visibility }) => {
+const CreateBucket = ({ onBack, visibility, authToken}) => {
+
+  const regions = [
+    { name: "Albania", code: "AL" },
+    { name: "Åland Islands", code: "AX" },
+    { name: "Algeria", code: "DZ" },
+    { name: "American Samoa", code: "AS" },
+    { name: "Andorra", code: "AD" },
+    { name: "Angola", code: "AO" },
+    { name: "Anguilla", code: "AI" },
+    { name: "Antarctica", code: "AQ" },
+    { name: "Antigua and Barbuda", code: "AG" },
+    { name: "Argentina", code: "AR" },
+    { name: "Armenia", code: "AM" },
+    { name: "Aruba", code: "AW" },
+    { name: "Australia", code: "AU" },
+    { name: "Austria", code: "AT" },
+    { name: "Azerbaijan", code: "AZ" },
+    { name: "Bahamas (the)", code: "BS" },
+    { name: "Bahrain", code: "BH" },
+    { name: "Bangladesh", code: "BD" },
+    { name: "Barbados", code: "BB" },
+    { name: "Belarus", code: "BY" },
+    { name: "Belgium", code: "BE" },
+    { name: "Belize", code: "BZ" },
+    { name: "Benin", code: "BJ" },
+    { name: "Bermuda", code: "BM" },
+    { name: "Bhutan", code: "BT" },
+    { name: "Bolivia (Plurinational State of)", code: "BO" },
+    { name: "Bonaire, Sint Eustatius and Saba", code: "BQ" },
+    { name: "Bosnia and Herzegovina", code: "BA" },
+    { name: "Botswana", code: "BW" },
+    { name: "Bouvet Island", code: "BV" },
+    { name: "Brazil", code: "BR" },
+    { name: "British Indian Ocean Territory (the)", code: "IO" },
+    { name: "Brunei Darussalam", code: "BN" },
+    { name: "Bulgaria", code: "BG" },
+    { name: "Burkina Faso", code: "BF" },
+    { name: "Burundi", code: "BI" },
+    { name: "Cabo Verde", code: "CV" },
+    { name: "Cambodia", code: "KH" },
+    { name: "Cameroon", code: "CM" },
+    { name: "Canada", code: "CA" },
+    { name: "Cayman Islands (the)", code: "KY" },
+    { name: "Central African Republic (the)", code: "CF" },
+    { name: "Chad", code: "TD" },
+    { name: "Chile", code: "CL" },
+    { name: "China", code: "CN" },
+    { name: "Christmas Island", code: "CX" },
+    { name: "Cocos (Keeling) Islands (the)", code: "CC" },
+    { name: "Colombia", code: "CO" },
+    { name: "Comoros (the)", code: "KM" },
+    { name: "Congo (the Democratic Republic of the)", code: "CD" },
+    { name: "Congo (the)", code: "CG" },
+    { name: "Cook Islands (the)", code: "CK" },
+    { name: "Costa Rica", code: "CR" },
+    { name: "Croatia", code: "HR" },
+    { name: "Cuba", code: "CU" },
+    { name: "Curaçao", code: "CW" },
+    { name: "Cyprus", code: "CY" },
+    { name: "Czechia", code: "CZ" },
+    { name: "Côte d'Ivoire", code: "CI" },
+    { name: "Denmark", code: "DK" },
+    { name: "Djibouti", code: "DJ" },
+    { name: "Dominica", code: "DM" },
+    { name: "Dominican Republic (the)", code: "DO" },
+    { name: "Ecuador", code: "EC" },
+    { name: "Egypt", code: "EG" },
+    { name: "El Salvador", code: "SV" },
+    { name: "Equatorial Guinea", code: "GQ" },
+    { name: "Eritrea", code: "ER" },
+    { name: "Estonia", code: "EE" },
+    { name: "Eswatini", code: "SZ" },
+    { name: "Ethiopia", code: "ET" },
+    { name: "Falkland Islands (the) [Malvinas]", code: "FK" },
+    { name: "Faroe Islands (the)", code: "FO" },
+    { name: "Fiji", code: "FJ" },
+    { name: "Finland", code: "FI" },
+    { name: "France", code: "FR" },
+    { name: "French Guiana", code: "GF" },
+    { name: "French Polynesia", code: "PF" },
+    { name: "French Southern Territories (the)", code: "TF" },
+    { name: "Gabon", code: "GA" },
+    { name: "Gambia (the)", code: "GM" },
+    { name: "Georgia", code: "GE" },
+    { name: "Germany", code: "DE" },
+    { name: "Ghana", code: "GH" },
+    { name: "Gibraltar", code: "GI" },
+    { name: "Greece", code: "GR" },
+    { name: "Greenland", code: "GL" },
+    { name: "Grenada", code: "GD" },
+    { name: "Guadeloupe", code: "GP" },
+    { name: "Guam", code: "GU" },
+    { name: "Guatemala", code: "GT" },
+    { name: "Guernsey", code: "GG" },
+    { name: "Guinea", code: "GN" },
+    { name: "Guinea-Bissau", code: "GW" },
+    { name: "Guyana", code: "GY" },
+    { name: "Haiti", code: "HT" },
+    { name: "Heard Island and McDonald Islands", code: "HM" },
+    { name: "Holy See (the)", code: "VA" },
+    { name: "Honduras", code: "HN" },
+    { name: "Hong Kong", code: "HK" },
+    { name: "Hungary", code: "HU" },
+    { name: "Iceland", code: "IS" },
+    { name: "India", code: "IN" },
+    { name: "Indonesia", code: "ID" },
+    { name: "Iran (Islamic Republic of)", code: "IR" },
+    { name: "Iraq", code: "IQ" },
+    { name: "Ireland", code: "IE" },
+    { name: "Isle of Man", code: "IM" },
+    { name: "Israel", code: "IL" },
+    { name: "Italy", code: "IT" },
+    { name: "Jamaica", code: "JM" },
+    { name: "Japan", code: "JP" },
+    { name: "Jersey", code: "JE" },
+    { name: "Jordan", code: "JO" },
+    { name: "Kazakhstan", code: "KZ" },
+    { name: "Kenya", code: "KE" },
+    { name: "Kiribati", code: "KI" },
+    { name: "Korea (the Democratic People's Republic of)", code: "KP" },
+    { name: "Korea (the Republic of)", code: "KR" },
+    { name: "Kuwait", code: "KW" },
+    { name: "Kyrgyzstan", code: "KG" },
+    { name: "Lao People's Democratic Republic (the)", code: "LA" },
+    { name: "Latvia", code: "LV" },
+    { name: "Lebanon", code: "LB" },
+    { name: "Lesotho", code: "LS" },
+    { name: "Liberia", code: "LR" },
+    { name: "Libya", code: "LY" },
+    { name: "Liechtenstein", code: "LI" },
+    { name: "Lithuania", code: "LT" },
+    { name: "Luxembourg", code: "LU" },
+    { name: "Macao", code: "MO" },
+    { name: "Madagascar", code: "MG" },
+    { name: "Malawi", code: "MW" },
+    { name: "Malaysia", code: "MY" },
+    { name: "Maldives", code: "MV" },
+    { name: "Mali", code: "ML" },
+    { name: "Malta", code: "MT" },
+    { name: "Marshall Islands (the)", code: "MH" },
+    { name: "Martinique", code: "MQ" },
+    { name: "Mauritania", code: "MR" },
+    { name: "Mauritius", code: "MU" },
+    { name: "Mayotte", code: "YT" },
+    { name: "Mexico", code: "MX" },
+    { name: "Micronesia (Federated States of)", code: "FM" },
+    { name: "Moldova (the Republic of)", code: "MD" },
+    { name: "Monaco", code: "MC" },
+    { name: "Mongolia", code: "MN" },
+    { name: "Montenegro", code: "ME" },
+    { name: "Montserrat", code: "MS" },
+    { name: "Morocco", code: "MA" },
+    { name: "Mozambique", code: "MZ" },
+    { name: "Myanmar", code: "MM" },
+    { name: "Namibia", code: "NA" },
+    { name: "Nauru", code: "NR" },
+    { name: "Nepal", code: "NP" },
+    { name: "Netherlands (the)", code: "NL" },
+    { name: "New Caledonia", code: "NC" },
+    { name: "New Zealand", code: "NZ" },
+    { name: "Nicaragua", code: "NI" },
+    { name: "Niger (the)", code: "NE" },
+    { name: "Nigeria", code: "NG" },
+    { name: "Niue", code: "NU" },
+    { name: "Norfolk Island", code: "NF" },
+    { name: "Northern Mariana Islands (the)", code: "MP" },
+    { name: "Norway", code: "NO" },
+    { name: "Oman", code: "OM" },
+    { name: "Pakistan", code: "PK" },
+    { name: "Palau", code: "PW" },
+    { name: "Palestine, State of", code: "PS" },
+    { name: "Panama", code: "PA" },
+    { name: "Papua New Guinea", code: "PG" },
+    { name: "Paraguay", code: "PY" },
+    { name: "Peru", code: "PE" },
+    { name: "Philippines (the)", code: "PH" },
+    { name: "Pitcairn", code: "PN" },
+    { name: "Poland", code: "PL" },
+    { name: "Portugal", code: "PT" },
+    { name: "Puerto Rico", code: "PR" },
+    { name: "Qatar", code: "QA" },
+    { name: "Republic of North Macedonia", code: "MK" },
+    { name: "Romania", code: "RO" },
+    { name: "Russian Federation (the)", code: "RU" },
+    { name: "Rwanda", code: "RW" },
+    { name: "Réunion", code: "RE" },
+    { name: "Saint Barthélemy", code: "BL" },
+    { name: "Saint Helena, Ascension and Tristan da Cunha", code: "SH" },
+    { name: "Saint Kitts and Nevis", code: "KN" },
+    { name: "Saint Lucia", code: "LC" },
+    { name: "Saint Martin (French part)", code: "MF" },
+    { name: "Saint Pierre and Miquelon", code: "PM" },
+    { name: "Saint Vincent and the Grenadines", code: "VC" },
+    { name: "Samoa", code: "WS" },
+    { name: "San Marino", code: "SM" },
+    { name: "Sao Tome and Principe", code: "ST" },
+    { name: "Saudi Arabia", code: "SA" },
+    { name: "Senegal", code: "SN" },
+    { name: "Serbia", code: "RS" },
+    { name: "Seychelles", code: "SC" },
+    { name: "Sierra Leone", code: "SL" },
+    { name: "Singapore", code: "SG" },
+    { name: "Sint Maarten (Dutch part)", code: "SX" },
+    { name: "Slovakia", code: "SK" },
+    { name: "Slovenia", code: "SI" },
+    { name: "Solomon Islands", code: "SB" },
+    { name: "Somalia", code: "SO" },
+    { name: "South Africa", code: "ZA" },
+    { name: "South Georgia and the South Sandwich Islands", code: "GS" },
+    { name: "South Sudan", code: "SS" },
+    { name: "Spain", code: "ES" },
+    { name: "Sri Lanka", code: "LK" },
+    { name: "Sudan (the)", code: "SD" },
+    { name: "Suriname", code: "SR" },
+    { name: "Svalbard and Jan Mayen", code: "SJ" },
+    { name: "Sweden", code: "SE" },
+    { name: "Switzerland", code: "CH" },
+    { name: "Syrian Arab Republic", code: "SY" },
+    { name: "Taiwan", code: "TW" },
+    { name: "Tajikistan", code: "TJ" },
+    { name: "Tanzania, United Republic of", code: "TZ" },
+    { name: "Thailand", code: "TH" },
+    { name: "Timor-Leste", code: "TL" },
+    { name: "Togo", code: "TG" },
+    { name: "Tokelau", code: "TK" },
+    { name: "Tonga", code: "TO" },
+    { name: "Trinidad and Tobago", code: "TT" },
+    { name: "Tunisia", code: "TN" },
+    { name: "Turkey", code: "TR" },
+    { name: "Turkmenistan", code: "TM" },
+    { name: "Turks and Caicos Islands (the)", code: "TC" },
+    { name: "Tuvalu", code: "TV" },
+    { name: "Uganda", code: "UG" },
+    { name: "Ukraine", code: "UA" },
+    { name: "United Arab Emirates (the)", code: "AE" },
+    { name: "United Kingdom of Great Britain and Northern Ireland (the)", code: "GB" },
+    { name: "United States Minor Outlying Islands (the)", code: "UM" },
+    { name: "United States of America (the)", code: "US" },
+    { name: "Uruguay", code: "UY" },
+    { name: "Uzbekistan", code: "UZ" },
+    { name: "Vanuatu", code: "VU" },
+    { name: "Venezuela (Bolivarian Republic of)", code: "VE" },
+    { name: "Viet Nam", code: "VN" },
+    { name: "Virgin Islands (British)", code: "VG" },
+    { name: "Virgin Islands (U.S.)", code: "VI" },
+    { name: "Wallis and Futuna", code: "WF" },
+    { name: "Western Sahara", code: "EH" },
+    { name: "Yemen", code: "YE" },
+    { name: "Zambia", code: "ZM" },
+    { name: "Zimbabwe", code: "ZW" }
+  ]
+
+  const [selectedRegion, setRegion] = useState(regions[0].name)
+  const [bucketName, setBucketName] = useState("")
+  const handleCreateBucket = () => {
+    store.dispatch(createBucket({authToken: authToken, name: bucketName, region: selectedRegion}));
+    store.dispatch(getAllBucket({authToken: authToken, limit: 10, offset: 0}));
+    onBack(null)
+  }
+
   return (
     <Slide
       in={visibility}
@@ -815,63 +1112,94 @@ const CreateBucket = ({ onBack, visibility }) => {
             <Typography style={{ fontWeight: "bold" }}>Create a bucket</Typography>
           </Toolbar>
           <div style={{ marginLeft: "50px" }}>
-            <InputLabel><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }}>Name</Typography> (must be unique across cloud storage)</InputLabel>
-            <TextField variant="outlined" style={{ width: 650, backgroundColor: "#FFF" }} />
-            <form style={{ marginTop: "15px" }}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend" style={{ color: 'black', fontWeight: 'bold' }}>Access</FormLabel>
-                <RadioGroup aria-label="access" name="access1">
-                  <FormControlLabel value="Public" control={<Radio color="primary" />} label="Public" />
-                  <FormControlLabel value="Private" control={<Radio color="primary" />} label="Private" />
-                </RadioGroup>
-              </FormControl>
-              <div style={{ marginTop: "10px", marginBottom: "15px" }}>
-                <Button style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
-                <Button>Cancel</Button>
-              </div>
-            </form>
-          </div>
+            <InputLabel className="my-2"><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }}>Name</Typography> (must be unique across storage)</InputLabel>
+            <TextField value={bucketName} onChange={(e) => setBucketName(e.target.value)} variant="outlined" style={{ width: 650, backgroundColor: "#FFF" }} />
+            <InputLabel className="my-2"><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }} >Region</Typography></InputLabel>
+            <Autocomplete
+              id="region-select-"
+              style={{ width: 650 }}
+              options={regions}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  value={selectedRegion}
+                  onChange={(e) => setRegion(e.target.value)}
+                  label="Choose a region"
+                  variant="outlined"
+                  inputProps={{
+                    ...params.inputProps,
+                    autoComplete: 'new-password', // disable autocomplete and autofill
+                  }}
+                />
+              )}
+            />
+            <div style={{ marginTop: "50px", marginBottom: "15px" }} className="flex">
+              <Button onClick={handleCreateBucket}
+              style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
+              <Button className="flex-end">Cancel</Button>
+            </div>
+        </div>
         </div>
       </Paper>
     </Slide >
   )
 }
 
-const Browser = () => {
-  const [buckets, setBuckets] = useState(bucketRows);
-  const [bucketItems, setBucketItems] = useState(null);
+const Browser = ({isBucketLoading, bucketList = [], authToken, bucketItemsList = [], ...props}) => {
+  const [buckets, setBuckets] = useState(bucketList);
+  const [bucketItems, setBucketItems] = useState(props.bucketItemsList);
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
 
   const [bucketSelected, setBucketSelected] = useState(null);
+  const [bucketName, setBucketName] = useState("")
 
+  const handleSelectedBucket = (name, bucketId) => {
+    setBucketSelected(bucketId);
+    setBucketName(name)
+    store.dispatch(getBucketItems({authToken: authToken, limit: 10, offset: 0, bucketId: bucketId}))
+  }
   useEffect(() => {
+    //if (!props.isBucketLoading)
+      console.log(store.dispatch(getAllBucket({authToken: authToken, limit: 5, offset: 0})));
+      setBuckets(bucketList)
     if (bucketSelected === null) {
+      console.log(bucketList)
       setBucketItems(null);
       return;
+    } else {
+      console.log(props.bucketList)
     }
-    setBucketItems(bucketItemRows);
-  }, [bucketSelected]);
+  }, []);
 
   return (
     <BucketContainer
       items={buckets}
       setItems={setBuckets}
-      onItemClick={(name) => setBucketSelected(name)}
+      onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
       visibility={bucketSelected !== null ? "hidden" : "visible"}
+      authToken={authToken}
     >
       <BucketItemsContainer
-        title={bucketSelected}
+        bucketName={bucketName}
         items={bucketItems}
         setItems={setBucketItems}
         onBack={() => setBucketSelected(null)}
         onItemClick={(name) => alert(name)}
+        bucketId={bucketSelected}
       />
     </BucketContainer>
   );
 };
 
-const mapStateToProps = (state) => ({
-
-});
+const mapStateToProps = (state) => {
+  const authToken = state.authen.authToken;
+  const bucketList = state.bucket.bucketList;
+  const isBucketLoading = state.bucket.isBucketLoading;
+  const bucketItemsList = state.bucket.bucketItemsList;
+  console.log(bucketList)
+  return { authToken, bucketList, bucketItemsList, isBucketLoading }
+};
 
 export default connect(mapStateToProps)(Browser);

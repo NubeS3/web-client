@@ -12,7 +12,7 @@ const initialState = {
 };
 
 const download = createAsyncThunk("storage/download", async (data, api) => {
-
+    
 })
 
 export const downloadSlice = createSlice({
