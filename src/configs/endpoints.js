@@ -11,6 +11,7 @@ const endpoints = {
   DOWNLOAD: `${BASE}/files/download`,
   GET_BUCKET: `${BASE}/auth/buckets/all`,
   CREATE_BUCKET: `${BASE}/auth/buckets/`,
+  DELETE_BUCKET: `${BASE}/auth/buckets/`,
   GET_BUCKET_ITEMS: `${BASE}/auth/files/all`,
 
 };

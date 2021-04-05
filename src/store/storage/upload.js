@@ -15,14 +15,15 @@ export const uploadFile = createAsyncThunk("storage/uploadFile", async (data, ap
     try {
         api.dispatch(uploadSlice.actions.loading());
 
+        console.log(data.file)
         var bodyFormData = new FormData();
         bodyFormData.append('file', data.file)
         bodyFormData.append('path', data.file.path)
-        bodyFormData.append('name', data.file.filename)
+        bodyFormData.append('name', data.file.name)
         bodyFormData.append('bucketId', data.bucketId)
         bodyFormData.append('hidden', false)
         
-        const response = await axios.post(endpoints.GET_BUCKET_ITEMS + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`,
+        const response = await axios.post(endpoints.UPLOAD,
             bodyFormData,
             {
                 headers: {
