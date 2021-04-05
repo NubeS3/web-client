@@ -7,7 +7,7 @@ const initialState = {
   isValidating: false,
   isValidAuthentication: false,
   authToken: localStorage.getItem(localStorageKeys.TOKEN) || null,
-  rfToken: localStorage.getItem(localStorageKeys.RFTOKEN) || null,
+  rfToken: null,
   isLoggingIn: false,
   err: null,
 };
@@ -23,7 +23,7 @@ export const login = createAsyncThunk("authen/login", async (data, api) => {
     });
     return response.data;
   } catch (err) {
-    api.rejectWithValue(err.response.data.error);
+    return api.rejectWithValue(err.response.data.error);
   }
 });
 
@@ -34,12 +34,13 @@ export const verifyAuthentication = createAsyncThunk(
     // else return api.rejectWithValue(null);
     try {
       api.dispatch(authenSlice.actions.validating());
-      const response = await axios.post(endpoints.AUTHENTICATION, undefined, {
-        headers: {
-          Authorization: data.authToken,
-        },
-      });
-      return response.data;
+      // const response = await axios.post(endpoints.AUTHENTICATION, undefined, {
+      //   headers: {
+      //     Authorization: data.authToken,
+      //   },
+      // });
+      if (localStorage.getItem(localStorageKeys.TOKEN))
+        return data;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
@@ -83,17 +84,14 @@ export const authenSlice = createSlice({
   },
   extraReducers: {
     [login.fulfilled]: (state, action) => {
-      localStorage.setItem(localStorageKeys.TOKEN, action.payload.authToken);
-      localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.rfToken);
-      // localStorage.setItem(localStorageKeys.TOKEN, "1234asdf");
-      // localStorage.setItem(localStorageKeys.RFTOKEN, "1234asdf");
+      localStorage.setItem(localStorageKeys.TOKEN, action.payload.accessToken);
+      localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.refreshToken);
+      console.log("Logged in")
       state.isValidating = false;
       state.isValidAuthentication = true;
       state.isLoggingIn = false;
       state.authToken = action.payload.accessToken;
       state.rfToken = action.payload.refreshToken;
-      // state.authToken = "1234asdf";
-      // state.rfToken = "1234asdf";
       state.err = null;
     },
     [login.rejected]: (state, action) => {
@@ -101,14 +99,10 @@ export const authenSlice = createSlice({
       state.err = action.payload;
     },
     [verifyAuthentication.fulfilled]: (state, action) => {
-      localStorage.setItem(localStorageKeys.TOKEN, action.payload.authToken);
-      localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.rfToken);
       // localStorage.setItem(localStorageKeys.TOKEN, "1234asdf");
       // localStorage.setItem(localStorageKeys.RFTOKEN, "1234asdf");
       state.isValidating = false;
       state.isValidAuthentication = true;
-      state.authToken = action.payload.authToken;
-      state.tfToken = action.payload.rfToken;
       // state.authToken = "1234asdf";
       // state.rfToken = "1234asdf";
       state.err = null;

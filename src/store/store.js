@@ -12,7 +12,7 @@ const store = configureStore({
 
     upload: uploadSlice.reducer,
     download: downloadSlice.reducer,
-    storage: bucketSlice.reducer,
+    bucket: bucketSlice.reducer,
   },
 });
 

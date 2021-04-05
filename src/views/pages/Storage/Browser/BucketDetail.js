@@ -1,11 +1,9 @@
-import React, { useState, useEffect, createRef, useRef } from "react";
+import React, { useState } from "react";
 import {
     AppBar,
     Toolbar,
     Button,
     IconButton,
-    Menu,
-    MenuItem,
     Paper,
     Table,
     TableContainer,
@@ -20,17 +18,14 @@ import {
     FormControl, FormLabel, FormGroup, FormControlLabel,
     TextField,
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AddBoxIcon from '@material-ui/icons/AddBox';
-import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
 import "./style.css";
 import { useTheme } from "@material-ui/core/styles";
 import "react-toastify/dist/ReactToastify.css";
-import { connect } from "react-redux"
 
 const accessKeyHeadCells = [
     { id: "key", numeric: false, disablePadding: true, label: "Key" },
@@ -297,7 +292,6 @@ const AccessKeyTable = ({
     const theme = useTheme();
 
     const handleOpen = (state) => {
-        console.log(permissions)
         setOpen(state)
     }
 
@@ -398,8 +392,8 @@ const AccessKeyTable = ({
                                             <FormLabel></FormLabel>
                                             <FormGroup>
                                                 <div className="grid grid-cols-2 grid-rows-4 gap-3">
-                                                    {permissions.map((permission) => {
-                                                        return (<FormControlLabel control={<Checkbox checked={permission.value} onChange={handlePermissionChange} name={permission.name} />} label={permission.label}>
+                                                    {permissions.map((permission, i) => {
+                                                        return (<FormControlLabel control={<Checkbox checked={permission.value} key={i} onChange={handlePermissionChange} name={permission.name} />} key={i} label={permission.label}>
                                                         </FormControlLabel>)
                                                     })}
                                                 </div>

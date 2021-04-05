@@ -11,15 +11,35 @@ const initialState = {
     uploading: false,
 };
 
-const upload = createAsyncThunk("storage/upload", async (data, api) => {
+export const uploadFile = createAsyncThunk("storage/uploadFile", async (data, api) => {
+    try {
+        api.dispatch(uploadSlice.actions.loading());
 
+        var bodyFormData = new FormData();
+        bodyFormData.append('file', data.file)
+        bodyFormData.append('path', data.file.path)
+        bodyFormData.append('name', data.file.filename)
+        bodyFormData.append('bucketId', data.bucketId)
+        bodyFormData.append('hidden', false)
+        
+        const response = await axios.post(endpoints.GET_BUCKET_ITEMS + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`,
+            bodyFormData,
+            {
+                headers: {
+                    Authorization: `Bearer ${data.authToken}`,
+                }
+            });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
 })
 
 export const uploadSlice = createSlice({
     name: 'upload',
     initialState: initialState,
     reducers: {
-        uploading: (state,action) => {
+        loading: (state, action) => {
             state.uploading = false;
         }
     }

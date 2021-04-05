@@ -49,7 +49,7 @@ const Register = (props) => {
     setError("");
     store.dispatch(signUp({ firstname: firstname, lastname: lastname, username: username, password: password, email: email, dob: selectedDate, company: company, gender: gender }));
     console.log(from.pathname);
-    props.history.push(from.pathname);
+    props.history.push(paths.OTP);
   };
 
   const handleChangeDate = (date) => {

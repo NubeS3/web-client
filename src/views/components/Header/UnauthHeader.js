@@ -3,12 +3,10 @@ import { useHistory } from "react-router-dom";
 
 import {
   AppBar,
-  Button,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
 } from "@material-ui/core";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import LogoHeader from "./LogoHeader";

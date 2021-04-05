@@ -7,9 +7,11 @@ const endpoints = {
   LOGIN: `${BASE}/users/signin`,
   LOGOUT: `${BASE}/users/signout`,
   CONFIRM_OTP: `${BASE}/users/confirm-otp`,
-  UPLOAD: `${BASE}/files/upload`,
+  UPLOAD: `${BASE}/auth/files/upload`,
   DOWNLOAD: `${BASE}/files/download`,
-  GETBUCKET: `${BASE}/buckets/all`,
+  GET_BUCKET: `${BASE}/auth/buckets/all`,
+  CREATE_BUCKET: `${BASE}/auth/buckets/`,
+  GET_BUCKET_ITEMS: `${BASE}/auth/files/all`,
 
 };
 

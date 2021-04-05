@@ -46,8 +46,8 @@ const Login = (props) => {
     }
 
     setError("");
-    store.dispatch(login({ username: username, password: password }));
-    console.log(from.pathname);
+    console.log(store.dispatch(login({ username: username, password: password })));
+    
     props.history.push(from.pathname);
   };
 
