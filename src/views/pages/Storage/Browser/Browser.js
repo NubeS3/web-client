@@ -20,6 +20,7 @@ import {
   Typography,
   InputLabel,
   TextField,
+  CircularProgress
 } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import AddIcon from "@material-ui/icons/Add";
@@ -40,8 +41,8 @@ import Dropzone from 'react-dropzone'
 import { connect } from "react-redux"
 import EditBucketContainer from "./BucketDetail";
 import store from "../../../../store/store";
-import {getAllBucket, createBucket, getBucketItems} from "../../../../store/storage/bucket"
-import {uploadFile} from "../../../../store/storage/upload"
+import { getAllBucket, createBucket, getBucketItems, deleteBucket } from "../../../../store/storage/bucket"
+import { uploadFile } from "../../../../store/storage/upload"
 
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -127,7 +128,7 @@ const bucketHeadCells = [
     disablePadding: false,
     label: "User",
   },
-  
+
   {
     id: "region",
     numeric: false,
@@ -224,6 +225,7 @@ const BucketContainer = ({
   onItemClick,
   visibility,
   setVisibility,
+  authToken,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -233,6 +235,11 @@ const BucketContainer = ({
 
   const handleDeleteBucket = () => {
     setItems(items.filter(() => selected));
+    for (var i in selected) {
+
+      store.dispatch(deleteBucket({authToken: authToken, bucketId: selected[i]}))
+    }  
+    store.dispatch(getAllBucket({authToken: authToken, limit: 5, offset: 0}))
     setSelected([]);
   };
 
@@ -333,19 +340,19 @@ const BucketTable = ({
 
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = bucketRows.map((n) => n.name);
+      const newSelecteds = items.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleItemCheckboxClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleItemCheckboxClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -357,6 +364,7 @@ const BucketTable = ({
       );
     }
     setSelected(newSelected);
+    console.log(selected)
   };
 
   const handleChangePage = (event, newPage) => {
@@ -368,7 +376,7 @@ const BucketTable = ({
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -390,7 +398,7 @@ const BucketTable = ({
             {stableSort(items, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
-                const isItemSelected = isSelected(row.name);
+                const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -404,14 +412,14 @@ const BucketTable = ({
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
-                        onChange={(e) => handleItemCheckboxClick(e, row.name)}
+                        onChange={(e) => handleItemCheckboxClick(e, row.id)}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
                     <TableCell
                       component="th"
                       id={labelId}
-                      onClick={() => onItemClick(row.name)}
+                      onClick={() => onItemClick(row.name, row.id)}
                       scope="row"
                       padding="none"
                     >
@@ -419,25 +427,25 @@ const BucketTable = ({
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name)}
+                      onClick={() => onItemClick(row.name, row.id)}
                     >
                       {row.name}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name)}
+                      onClick={() => onItemClick(row.name, row.id)}
                     >
                       {row.uid}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name)}
+                      onClick={() => onItemClick(row.name, row.id)}
                     >
                       {row.region}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name)}
+                      onClick={() => onItemClick(row.name, row.id)}
                     >
                       {row.created_at}
                     </TableCell>
@@ -476,7 +484,7 @@ const BucketItemsContainer = ({
   setItems,
   onBack,
   onItemClick,
-  authToken, 
+  authToken,
   bucketId,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -504,7 +512,9 @@ const BucketItemsContainer = ({
   const handleFileSelected = (e) => {
     e.preventDefault()
     let file = e.target.files;
-    store.dispatc(uploadFile({authToken: authToken, file: file[0], bucketId: bucketId}))
+    console.log(file[0])
+    //store.dispatch(uploadFile({authToken: authToken, file: file[0], bucketId: bucketId}))
+    //store.dispatch(getBucketItems({authToken: authToken, limit: 5, offset: 0, bucketId: bucketId}))
   }
 
   const dropzoneRef = createRef();
@@ -533,7 +543,7 @@ const BucketItemsContainer = ({
 
   return (
     <Slide
-      in={bucketName != "" > 0 ? true : false}
+      in={bucketId !== null ? true : false}
       direction="left"
       mountOnEnter
       unmountOnExit
@@ -598,7 +608,7 @@ const BucketItemsContainer = ({
           open={openDownloadDialog}
           handleClose={handleCloseDownload}
         />
-        <EditBucketContainer show={showEditBucket} title={bucketName}/>
+        <EditBucketContainer show={showEditBucket} title={bucketName} />
         {renderMenu}
       </Paper>
     </Slide>
@@ -835,14 +845,15 @@ const BucketItemTable = ({
   );
 };
 
-const CreateBucket = ({ onBack, visibility, authToken}) => {
+const CreateBucket = ({ onBack, visibility, authToken }) => {
 
   const regions = [
-    { name: "Albania", code: "AL" },
+    { name: "Afghanistan", code: "AF" },
     { name: "Åland Islands", code: "AX" },
+    { name: "Albania", code: "AL" },
     { name: "Algeria", code: "DZ" },
     { name: "American Samoa", code: "AS" },
-    { name: "Andorra", code: "AD" },
+    { name: "AndorrA", code: "AD" },
     { name: "Angola", code: "AO" },
     { name: "Anguilla", code: "AI" },
     { name: "Antarctica", code: "AQ" },
@@ -853,7 +864,7 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Australia", code: "AU" },
     { name: "Austria", code: "AT" },
     { name: "Azerbaijan", code: "AZ" },
-    { name: "Bahamas (the)", code: "BS" },
+    { name: "Bahamas", code: "BS" },
     { name: "Bahrain", code: "BH" },
     { name: "Bangladesh", code: "BD" },
     { name: "Barbados", code: "BB" },
@@ -863,62 +874,59 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Benin", code: "BJ" },
     { name: "Bermuda", code: "BM" },
     { name: "Bhutan", code: "BT" },
-    { name: "Bolivia (Plurinational State of)", code: "BO" },
-    { name: "Bonaire, Sint Eustatius and Saba", code: "BQ" },
+    { name: "Bolivia", code: "BO" },
     { name: "Bosnia and Herzegovina", code: "BA" },
     { name: "Botswana", code: "BW" },
     { name: "Bouvet Island", code: "BV" },
     { name: "Brazil", code: "BR" },
-    { name: "British Indian Ocean Territory (the)", code: "IO" },
+    { name: "British Indian Ocean Territory", code: "IO" },
     { name: "Brunei Darussalam", code: "BN" },
     { name: "Bulgaria", code: "BG" },
     { name: "Burkina Faso", code: "BF" },
     { name: "Burundi", code: "BI" },
-    { name: "Cabo Verde", code: "CV" },
     { name: "Cambodia", code: "KH" },
     { name: "Cameroon", code: "CM" },
     { name: "Canada", code: "CA" },
-    { name: "Cayman Islands (the)", code: "KY" },
-    { name: "Central African Republic (the)", code: "CF" },
+    { name: "Cape Verde", code: "CV" },
+    { name: "Cayman Islands", code: "KY" },
+    { name: "Central African Republic", code: "CF" },
     { name: "Chad", code: "TD" },
     { name: "Chile", code: "CL" },
     { name: "China", code: "CN" },
     { name: "Christmas Island", code: "CX" },
-    { name: "Cocos (Keeling) Islands (the)", code: "CC" },
+    { name: "Cocos (Keeling) Islands", code: "CC" },
     { name: "Colombia", code: "CO" },
-    { name: "Comoros (the)", code: "KM" },
-    { name: "Congo (the Democratic Republic of the)", code: "CD" },
-    { name: "Congo (the)", code: "CG" },
-    { name: "Cook Islands (the)", code: "CK" },
+    { name: "Comoros", code: "KM" },
+    { name: "Congo", code: "CG" },
+    { name: "Congo, The Democratic Republic of the", code: "CD" },
+    { name: "Cook Islands", code: "CK" },
     { name: "Costa Rica", code: "CR" },
+    { name: "Cote D\"Ivoire", code: "CI" },
     { name: "Croatia", code: "HR" },
     { name: "Cuba", code: "CU" },
-    { name: "Curaçao", code: "CW" },
     { name: "Cyprus", code: "CY" },
-    { name: "Czechia", code: "CZ" },
-    { name: "Côte d'Ivoire", code: "CI" },
+    { name: "Czech Republic", code: "CZ" },
     { name: "Denmark", code: "DK" },
     { name: "Djibouti", code: "DJ" },
     { name: "Dominica", code: "DM" },
-    { name: "Dominican Republic (the)", code: "DO" },
+    { name: "Dominican Republic", code: "DO" },
     { name: "Ecuador", code: "EC" },
     { name: "Egypt", code: "EG" },
     { name: "El Salvador", code: "SV" },
     { name: "Equatorial Guinea", code: "GQ" },
     { name: "Eritrea", code: "ER" },
     { name: "Estonia", code: "EE" },
-    { name: "Eswatini", code: "SZ" },
     { name: "Ethiopia", code: "ET" },
-    { name: "Falkland Islands (the) [Malvinas]", code: "FK" },
-    { name: "Faroe Islands (the)", code: "FO" },
+    { name: "Falkland Islands (Malvinas)", code: "FK" },
+    { name: "Faroe Islands", code: "FO" },
     { name: "Fiji", code: "FJ" },
     { name: "Finland", code: "FI" },
     { name: "France", code: "FR" },
     { name: "French Guiana", code: "GF" },
     { name: "French Polynesia", code: "PF" },
-    { name: "French Southern Territories (the)", code: "TF" },
+    { name: "French Southern Territories", code: "TF" },
     { name: "Gabon", code: "GA" },
-    { name: "Gambia (the)", code: "GM" },
+    { name: "Gambia", code: "GM" },
     { name: "Georgia", code: "GE" },
     { name: "Germany", code: "DE" },
     { name: "Ghana", code: "GH" },
@@ -934,15 +942,15 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Guinea-Bissau", code: "GW" },
     { name: "Guyana", code: "GY" },
     { name: "Haiti", code: "HT" },
-    { name: "Heard Island and McDonald Islands", code: "HM" },
-    { name: "Holy See (the)", code: "VA" },
+    { name: "Heard Island and Mcdonald Islands", code: "HM" },
+    { name: "Holy See (Vatican City State)", code: "VA" },
     { name: "Honduras", code: "HN" },
     { name: "Hong Kong", code: "HK" },
     { name: "Hungary", code: "HU" },
     { name: "Iceland", code: "IS" },
     { name: "India", code: "IN" },
     { name: "Indonesia", code: "ID" },
-    { name: "Iran (Islamic Republic of)", code: "IR" },
+    { name: "Iran, Islamic Republic Of", code: "IR" },
     { name: "Iraq", code: "IQ" },
     { name: "Ireland", code: "IE" },
     { name: "Isle of Man", code: "IM" },
@@ -955,34 +963,35 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Kazakhstan", code: "KZ" },
     { name: "Kenya", code: "KE" },
     { name: "Kiribati", code: "KI" },
-    { name: "Korea (the Democratic People's Republic of)", code: "KP" },
-    { name: "Korea (the Republic of)", code: "KR" },
+    { name: "Korea, Democratic People's Republic of", code: "KP" },
+    { name: "Korea, Republic of", code: "KR" },
     { name: "Kuwait", code: "KW" },
     { name: "Kyrgyzstan", code: "KG" },
-    { name: "Lao People's Democratic Republic (the)", code: "LA" },
+    { name: "Lao People's Democratic Republic", code: "LA" },
     { name: "Latvia", code: "LV" },
     { name: "Lebanon", code: "LB" },
     { name: "Lesotho", code: "LS" },
     { name: "Liberia", code: "LR" },
-    { name: "Libya", code: "LY" },
+    { name: "Libyan Arab Jamahiriya", code: "LY" },
     { name: "Liechtenstein", code: "LI" },
     { name: "Lithuania", code: "LT" },
     { name: "Luxembourg", code: "LU" },
     { name: "Macao", code: "MO" },
+    { name: "Macedonia, The Former Yugoslav Republic of", code: "MK" },
     { name: "Madagascar", code: "MG" },
     { name: "Malawi", code: "MW" },
     { name: "Malaysia", code: "MY" },
     { name: "Maldives", code: "MV" },
     { name: "Mali", code: "ML" },
     { name: "Malta", code: "MT" },
-    { name: "Marshall Islands (the)", code: "MH" },
+    { name: "Marshall Islands", code: "MH" },
     { name: "Martinique", code: "MQ" },
     { name: "Mauritania", code: "MR" },
     { name: "Mauritius", code: "MU" },
     { name: "Mayotte", code: "YT" },
     { name: "Mexico", code: "MX" },
-    { name: "Micronesia (Federated States of)", code: "FM" },
-    { name: "Moldova (the Republic of)", code: "MD" },
+    { name: "Micronesia, Federated States of", code: "FM" },
+    { name: "Moldova, Republic of", code: "MD" },
     { name: "Monaco", code: "MC" },
     { name: "Mongolia", code: "MN" },
     { name: "Montenegro", code: "ME" },
@@ -993,40 +1002,38 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Namibia", code: "NA" },
     { name: "Nauru", code: "NR" },
     { name: "Nepal", code: "NP" },
-    { name: "Netherlands (the)", code: "NL" },
+    { name: "Netherlands", code: "NL" },
+    { name: "Netherlands Antilles", code: "AN" },
     { name: "New Caledonia", code: "NC" },
     { name: "New Zealand", code: "NZ" },
     { name: "Nicaragua", code: "NI" },
-    { name: "Niger (the)", code: "NE" },
+    { name: "Niger", code: "NE" },
     { name: "Nigeria", code: "NG" },
     { name: "Niue", code: "NU" },
     { name: "Norfolk Island", code: "NF" },
-    { name: "Northern Mariana Islands (the)", code: "MP" },
+    { name: "Northern Mariana Islands", code: "MP" },
     { name: "Norway", code: "NO" },
     { name: "Oman", code: "OM" },
     { name: "Pakistan", code: "PK" },
     { name: "Palau", code: "PW" },
-    { name: "Palestine, State of", code: "PS" },
+    { name: "Palestinian Territory, Occupied", code: "PS" },
     { name: "Panama", code: "PA" },
     { name: "Papua New Guinea", code: "PG" },
     { name: "Paraguay", code: "PY" },
     { name: "Peru", code: "PE" },
-    { name: "Philippines (the)", code: "PH" },
+    { name: "Philippines", code: "PH" },
     { name: "Pitcairn", code: "PN" },
     { name: "Poland", code: "PL" },
     { name: "Portugal", code: "PT" },
     { name: "Puerto Rico", code: "PR" },
     { name: "Qatar", code: "QA" },
-    { name: "Republic of North Macedonia", code: "MK" },
+    { name: "Reunion", code: "RE" },
     { name: "Romania", code: "RO" },
-    { name: "Russian Federation (the)", code: "RU" },
-    { name: "Rwanda", code: "RW" },
-    { name: "Réunion", code: "RE" },
-    { name: "Saint Barthélemy", code: "BL" },
-    { name: "Saint Helena, Ascension and Tristan da Cunha", code: "SH" },
+    { name: "Russian Federation", code: "RU" },
+    { name: "RWANDA", code: "RW" },
+    { name: "Saint Helena", code: "SH" },
     { name: "Saint Kitts and Nevis", code: "KN" },
     { name: "Saint Lucia", code: "LC" },
-    { name: "Saint Martin (French part)", code: "MF" },
     { name: "Saint Pierre and Miquelon", code: "PM" },
     { name: "Saint Vincent and the Grenadines", code: "VC" },
     { name: "Samoa", code: "WS" },
@@ -1038,23 +1045,22 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Seychelles", code: "SC" },
     { name: "Sierra Leone", code: "SL" },
     { name: "Singapore", code: "SG" },
-    { name: "Sint Maarten (Dutch part)", code: "SX" },
     { name: "Slovakia", code: "SK" },
     { name: "Slovenia", code: "SI" },
     { name: "Solomon Islands", code: "SB" },
     { name: "Somalia", code: "SO" },
     { name: "South Africa", code: "ZA" },
     { name: "South Georgia and the South Sandwich Islands", code: "GS" },
-    { name: "South Sudan", code: "SS" },
     { name: "Spain", code: "ES" },
     { name: "Sri Lanka", code: "LK" },
-    { name: "Sudan (the)", code: "SD" },
+    { name: "Sudan", code: "SD" },
     { name: "Suriname", code: "SR" },
     { name: "Svalbard and Jan Mayen", code: "SJ" },
+    { name: "Swaziland", code: "SZ" },
     { name: "Sweden", code: "SE" },
     { name: "Switzerland", code: "CH" },
     { name: "Syrian Arab Republic", code: "SY" },
-    { name: "Taiwan", code: "TW" },
+    { name: "Taiwan, Province of China", code: "TW" },
     { name: "Tajikistan", code: "TJ" },
     { name: "Tanzania, United Republic of", code: "TZ" },
     { name: "Thailand", code: "TH" },
@@ -1066,21 +1072,21 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
     { name: "Tunisia", code: "TN" },
     { name: "Turkey", code: "TR" },
     { name: "Turkmenistan", code: "TM" },
-    { name: "Turks and Caicos Islands (the)", code: "TC" },
+    { name: "Turks and Caicos Islands", code: "TC" },
     { name: "Tuvalu", code: "TV" },
     { name: "Uganda", code: "UG" },
     { name: "Ukraine", code: "UA" },
-    { name: "United Arab Emirates (the)", code: "AE" },
-    { name: "United Kingdom of Great Britain and Northern Ireland (the)", code: "GB" },
-    { name: "United States Minor Outlying Islands (the)", code: "UM" },
-    { name: "United States of America (the)", code: "US" },
+    { name: "United Arab Emirates", code: "AE" },
+    { name: "United Kingdom", code: "GB" },
+    { name: "United States", code: "US" },
+    { name: "United States Minor Outlying Islands", code: "UM" },
     { name: "Uruguay", code: "UY" },
     { name: "Uzbekistan", code: "UZ" },
     { name: "Vanuatu", code: "VU" },
-    { name: "Venezuela (Bolivarian Republic of)", code: "VE" },
+    { name: "Venezuela", code: "VE" },
     { name: "Viet Nam", code: "VN" },
-    { name: "Virgin Islands (British)", code: "VG" },
-    { name: "Virgin Islands (U.S.)", code: "VI" },
+    { name: "Virgin Islands, British", code: "VG" },
+    { name: "Virgin Islands, U.S.", code: "VI" },
     { name: "Wallis and Futuna", code: "WF" },
     { name: "Western Sahara", code: "EH" },
     { name: "Yemen", code: "YE" },
@@ -1091,8 +1097,9 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
   const [selectedRegion, setRegion] = useState(regions[0].name)
   const [bucketName, setBucketName] = useState("")
   const handleCreateBucket = () => {
-    store.dispatch(createBucket({authToken: authToken, name: bucketName, region: selectedRegion}));
-    store.dispatch(getAllBucket({authToken: authToken, limit: 10, offset: 0}));
+    store.dispatch(createBucket({ authToken: authToken, name: bucketName, region: selectedRegion }));
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 10, offset: 0 }));
+
     onBack(null)
   }
 
@@ -1137,23 +1144,28 @@ const CreateBucket = ({ onBack, visibility, authToken}) => {
             />
             <div style={{ marginTop: "50px", marginBottom: "15px" }} className="flex">
               <Button onClick={handleCreateBucket}
-              style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
+                style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
               <Button className="flex-end">Cancel</Button>
             </div>
-        </div>
+          </div>
         </div>
       </Paper>
     </Slide >
   )
 }
 
-const Browser = ({isBucketLoading, bucketList = [], authToken, bucketItemsList = [], ...props}) => {
+const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList = [], ...props }) => {
   const [buckets, setBuckets] = useState(bucketList);
-  const [bucketItems, setBucketItems] = useState(props.bucketItemsList);
+  const [bucketItems, setBucketItems] = useState(bucketItemsList);
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
-
   const [bucketSelected, setBucketSelected] = useState(null);
   const [bucketName, setBucketName] = useState("")
+
+  const handleSelectedBucket = (name, bucketId) => {
+    setBucketSelected(bucketId);
+    setBucketName(name)
+    store.dispatch(getBucketItems({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
+  }
 
   const handleSelectedBucket = (name, bucketId) => {
     setBucketSelected(bucketId);
@@ -1162,34 +1174,44 @@ const Browser = ({isBucketLoading, bucketList = [], authToken, bucketItemsList =
   }
   useEffect(() => {
     //if (!props.isBucketLoading)
-      console.log(store.dispatch(getAllBucket({authToken: authToken, limit: 5, offset: 0})));
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
       setBuckets(bucketList)
+    })
+
     if (bucketSelected === null) {
-      console.log(bucketList)
+      //console.log(bucketList)
       setBucketItems(null);
       return;
     } else {
-      console.log(props.bucketList)
     }
   }, []);
 
+  useEffect(() => {
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
+      setBuckets(bucketList)
+    })
+  }, []);
   return (
-    <BucketContainer
-      items={buckets}
-      setItems={setBuckets}
-      onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
-      visibility={bucketSelected !== null ? "hidden" : "visible"}
-      authToken={authToken}
-    >
-      <BucketItemsContainer
-        bucketName={bucketName}
-        items={bucketItems}
-        setItems={setBucketItems}
-        onBack={() => setBucketSelected(null)}
-        onItemClick={(name) => alert(name)}
-        bucketId={bucketSelected}
-      />
-    </BucketContainer>
+    <>
+      { isBucketLoading ? <CircularProgress className="self-center" /> :
+        <BucketContainer
+          items={bucketList}
+          setItems={setBuckets}
+          onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
+          visibility={bucketSelected !== null ? "hidden" : "visible"}
+          authToken={authToken}
+        >
+          <BucketItemsContainer
+            bucketName={bucketName}
+            items={bucketItemsList}
+            setItems={setBucketItems}
+            onBack={() => setBucketSelected(null)}
+            onItemClick={(name) => alert(name)}
+            bucketId={bucketSelected}
+          />
+        </BucketContainer>
+      }
+    </>
   );
 };
 
@@ -1198,7 +1220,7 @@ const mapStateToProps = (state) => {
   const bucketList = state.bucket.bucketList;
   const isBucketLoading = state.bucket.isBucketLoading;
   const bucketItemsList = state.bucket.bucketItemsList;
-  console.log(bucketList)
+
   return { authToken, bucketList, bucketItemsList, isBucketLoading }
 };
 

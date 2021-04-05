@@ -8,7 +8,7 @@ const initialState = {
     bucketItemsList: [],
     bucketList: [],
     isLoading: false,
-    err: null,
+    err: null, 
 };
 
 //data payload: authToken, limit, offset
@@ -20,18 +20,6 @@ export const getAllBucket = createAsyncThunk("bucket/getAllBucket", async (data,
                 Authorization: `Bearer ${data.authToken}`,
             }
         });
-
-        // let payload = []
-        //     for (var i in action.payload) {
-        //         var data = action.payload[i]
-        //         payload.push({
-        //             id: data.id,
-        //             uid: data.uid,
-        //             name: data.name,
-        //             region: data.region,
-        //             created_at: data.created_at
-        //         })
-        //     }
 
         return response.data;
     } catch (err) {
@@ -57,11 +45,27 @@ export const createBucket = createAsyncThunk("bucket/createBucket", async (data,
     }
 })
 
+//data payload: authToken, limit, offset
+export const deleteBucket = createAsyncThunk("bucket/deleteBucket", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.delete(endpoints.DELETE_BUCKET + `${data.bucketId}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
 //data payload: authToken, limit, offset, bucketId
 export const getBucketItems = createAsyncThunk("bucket/getBucketItems", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
-        const response = await axios.post(endpoints.GET_BUCKET_ITEMS + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`, {
+        const response = await axios.get(endpoints.GET_BUCKET_ITEMS + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
             }
@@ -87,7 +91,7 @@ export const bucketSlice = createSlice({
     extraReducers: {
         [getAllBucket.fulfilled]: (state, action) => {
             state.bucketList = action.payload;
-            console.log(state.bucketList)
+            //console.log(state.bucketList
             state.isLoading = false;
         },
         [getAllBucket.rejected]: (state, action) => {
@@ -101,9 +105,17 @@ export const bucketSlice = createSlice({
             state.isLoading = false
             state.err = action.payload;
         },
+        [deleteBucket.fulfilled]: (state, action) => {
+            state.loading = false;
+        },
+        [deleteBucket.rejected]: (state, action) => {
+            state.loading = false;
+            state.err = action.payload;
+        },
         [getBucketItems.fulfilled]: (state, action) => {
             state.isLoading = false;
             state.bucketItemsList = action.payload
+            console.log(state.bucketItemsList)
         },
         [getBucketItems.rejected]: (state, action) => {
             state.isLoading = false
