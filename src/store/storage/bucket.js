@@ -8,7 +8,7 @@ const initialState = {
     bucketItemsList: [],
     bucketList: [],
     isLoading: false,
-    err: null,  
+    err: null, 
 };
 
 //data payload: authToken, limit, offset
@@ -91,7 +91,7 @@ export const bucketSlice = createSlice({
     extraReducers: {
         [getAllBucket.fulfilled]: (state, action) => {
             state.bucketList = action.payload;
-            //console.log(state.bucketList)
+            //console.log(state.bucketList
             state.isLoading = false;
         },
         [getAllBucket.rejected]: (state, action) => {

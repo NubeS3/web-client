@@ -1099,6 +1099,7 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
   const handleCreateBucket = () => {
     store.dispatch(createBucket({ authToken: authToken, name: bucketName, region: selectedRegion }));
     store.dispatch(getAllBucket({ authToken: authToken, limit: 10, offset: 0 }));
+
     onBack(null)
   }
 
@@ -1166,6 +1167,11 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
     store.dispatch(getBucketItems({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
   }
 
+  const handleSelectedBucket = (name, bucketId) => {
+    setBucketSelected(bucketId);
+    setBucketName(name)
+    store.dispatch(getBucketItems({authToken: authToken, limit: 10, offset: 0, bucketId: bucketId}))
+  }
   useEffect(() => {
     //if (!props.isBucketLoading)
     store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
@@ -1214,6 +1220,7 @@ const mapStateToProps = (state) => {
   const bucketList = state.bucket.bucketList;
   const isBucketLoading = state.bucket.isBucketLoading;
   const bucketItemsList = state.bucket.bucketItemsList;
+
   return { authToken, bucketList, bucketItemsList, isBucketLoading }
 };
 
