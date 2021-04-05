@@ -1,4 +1,4 @@
-const BASE = `${process.env.NUBES_BACK_END_URL}`;
+const BASE = `${process.env.REACT_APP_BACK_END_URL}`;
 
 const endpoints = {
   BASE,
@@ -7,6 +7,13 @@ const endpoints = {
   LOGIN: `${BASE}/users/signin`,
   LOGOUT: `${BASE}/users/signout`,
   CONFIRM_OTP: `${BASE}/users/confirm-otp`,
+  UPLOAD: `${BASE}/auth/files/upload`,
+  DOWNLOAD: `${BASE}/files/download`,
+  GET_BUCKET: `${BASE}/auth/buckets/all`,
+  CREATE_BUCKET: `${BASE}/auth/buckets/`,
+  DELETE_BUCKET: `${BASE}/auth/buckets/`,
+  GET_BUCKET_ITEMS: `${BASE}/auth/files/all`,
+
 };
 
 export default endpoints;

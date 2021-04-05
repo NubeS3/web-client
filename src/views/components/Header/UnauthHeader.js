@@ -3,12 +3,10 @@ import { useHistory } from "react-router-dom";
 
 import {
   AppBar,
-  Button,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
 } from "@material-ui/core";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import LogoHeader from "./LogoHeader";
@@ -37,30 +35,24 @@ const UnauthHeader = (props) => {
 
   return (
     <>
-      <AppBar position="sticky" style={{ backgroundColor: "#78c5dc" }}>
+      <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
         <Toolbar variant="dense">
           <LogoHeader />
           <div style={{ flexGrow: "1" }} />
-          <div className="unauth-header-button-group">
-            <Button
+          <div>
+            <button
               variant="contained"
-              style={{
-                backgroundColor: "#b7ecea",
-                marginRight: "10px",
-              }}
+              className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-2 mb-1"
               onClick={() => history.push(paths.LOGIN)}
             >
               Sign In
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                backgroundColor: "#b7ecea",
-              }}
+            </button>
+            <button
+              variant="contained" className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
               onClick={() => history.push(paths.REGISTER)}
             >
               Sign Up
-            </Button>
+            </button>
           </div>
           <div className="unauth-header-mobile-menu">
             <IconButton

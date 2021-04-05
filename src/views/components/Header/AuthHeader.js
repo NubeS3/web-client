@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import store from "../../../store/store";
+import { clearAuthentication } from "../../../store/auth/auth";
+import paths from "../../../configs/paths";
+import localStorageKeys from "../../../configs/localStorageKeys";
 
 import {
   AppBar,
   Toolbar,
-  Typography,
+  Button,
   IconButton,
   Menu,
   MenuItem,
@@ -15,14 +20,28 @@ import "./style.css";
 const AuthHeader = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const history = useHistory();
 
-  const handleSignOut = () => {};
+  const handleSignOut = () => {
+    store.dispatch(
+      clearAuthentication({
+        authToken: localStorage.getItem(localStorageKeys.TOKEN),
+        rfToken: localStorage.getItem(localStorageKeys.RFTOKEN),
+      })
+    );
+    history.push(paths.BASE);
+  };
 
   return (
-    <AppBar position="sticky" style={{ backgroundColor: "#78c5dc" }}>
+    <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
       <Toolbar variant="dense">
         <LogoHeader />
         <div style={{ flexGrow: "1" }} />
+        <button onClick={() => {history.push(paths.DASHBOARD)}}
+          variant="contained"
+          className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1">
+          Console
+        </button>
         <div>
           <IconButton
             aria-label="account of current user"
@@ -51,9 +70,7 @@ const AuthHeader = (props) => {
             <MenuItem onClick={() => alert("Profile clicked!")}>
               Profile
             </MenuItem>
-            <MenuItem onClick={() => alert("Signout clicked!")}>
-              Sign out
-            </MenuItem>
+            <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
           </Menu>
         </div>
       </Toolbar>

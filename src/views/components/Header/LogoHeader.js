@@ -12,7 +12,7 @@ const LogoHeader = (props) => {
   return (
     <div className="logo-header" onClick={() => history.push(paths.BASE)}>
       <img alt="nubes3-cs" src={logo} />
-      <Typography style={{ flexGrow: "1" }}>NubeS3</Typography>
+      <Typography style={{ flexGrow: "1", fontSize: "30px"}}>NubeS3</Typography>
     </div>
   );
 };
