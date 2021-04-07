@@ -20,7 +20,6 @@ export const getAllBucket = createAsyncThunk("bucket/getAllBucket", async (data,
                 Authorization: `Bearer ${data.authToken}`,
             }
         });
-
         return response.data;
     } catch (err) {
         return api.rejectWithValue(err.response.data.error);
@@ -31,9 +30,10 @@ export const getAllBucket = createAsyncThunk("bucket/getAllBucket", async (data,
 export const createBucket = createAsyncThunk("bucket/createBucket", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
+        //console.log(data.authToken)
         const response = await axios.post(endpoints.CREATE_BUCKET, {
             name: data.name,
-            region: data.region,
+            region: data.region.name,
         }, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,

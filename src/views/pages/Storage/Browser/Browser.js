@@ -226,6 +226,7 @@ const BucketContainer = ({
   visibility,
   setVisibility,
   authToken,
+  isBucketLoading,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -267,6 +268,10 @@ const BucketContainer = ({
       </MenuItem>
     </Menu>
   );
+
+  useEffect(_ => {
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 10, offset: 0 }));
+  }, [isBucketLoading])
 
   return (
     <Paper
@@ -314,7 +319,7 @@ const BucketContainer = ({
         onItemClick={onItemClick}
       />
       {renderMenu}
-      <CreateBucket authToken={props.authToken} visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
+      <CreateBucket authToken={authToken} visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
       {props.children}
     </Paper>
   );
@@ -1094,12 +1099,12 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
     { name: "Zimbabwe", code: "ZW" }
   ]
 
-  const [selectedRegion, setRegion] = useState(regions[0].name)
+  const [selectedRegion, setRegion] = useState()
   const [bucketName, setBucketName] = useState("")
   const handleCreateBucket = () => {
+    // console.log(authToken)
     store.dispatch(createBucket({ authToken: authToken, name: bucketName, region: selectedRegion }));
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 10, offset: 0 }));
-
+    
     onBack(null)
   }
 
@@ -1127,17 +1132,16 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
               style={{ width: 650 }}
               options={regions}
               autoHighlight
+              onChange={(e, value) => setRegion(value)}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   value={selectedRegion}
-                  onChange={(e) => setRegion(e.target.value)}
                   label="Choose a region"
                   variant="outlined"
                   inputProps={{
                     ...params.inputProps,
-                    autoComplete: 'new-password', // disable autocomplete and autofill
                   }}
                 />
               )}
@@ -1167,13 +1171,9 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
     store.dispatch(getBucketItems({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
   }
 
-  const handleSelectedBucket = (name, bucketId) => {
-    setBucketSelected(bucketId);
-    setBucketName(name)
-    store.dispatch(getBucketItems({authToken: authToken, limit: 10, offset: 0, bucketId: bucketId}))
-  }
   useEffect(() => {
     //if (!props.isBucketLoading)
+    
     store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
       setBuckets(bucketList)
     })
@@ -1190,7 +1190,7 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
     store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
       setBuckets(bucketList)
     })
-  }, []);
+  }, [isBucketLoading]);
   return (
     <>
       { isBucketLoading ? <CircularProgress className="self-center" /> :
@@ -1200,6 +1200,7 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
           onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
           visibility={bucketSelected !== null ? "hidden" : "visible"}
           authToken={authToken}
+          isBucketLoading= {isBucketLoading}
         >
           <BucketItemsContainer
             bucketName={bucketName}
@@ -1220,7 +1221,6 @@ const mapStateToProps = (state) => {
   const bucketList = state.bucket.bucketList;
   const isBucketLoading = state.bucket.isBucketLoading;
   const bucketItemsList = state.bucket.bucketItemsList;
-
   return { authToken, bucketList, bucketItemsList, isBucketLoading }
 };
 
