@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     AppBar,
     Toolbar,
@@ -24,8 +24,10 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import EditIcon from "@material-ui/icons/Edit";
 import "./style.css";
-import { useTheme } from "@material-ui/core/styles";
 import "react-toastify/dist/ReactToastify.css";
+import { connect } from "react-redux"
+import store from "../../../../store/store";
+import { createBucketKey, getBucketAccessKey } from "../../../../store/storage/bucket";
 
 const accessKeyHeadCells = [
     { id: "key", numeric: false, disablePadding: true, label: "Key" },
@@ -122,16 +124,20 @@ const stableSort = (array, comparator) => {
 const EditBucketContainer = ({
     title,
     bucketId,
-    items,
     onBack,
     onItemClick,
     show,
+    authToken, 
+    accessKeyList, 
+    isLoading,
 }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selected, setSelected] = useState([]);
-    const isMenuOpen = Boolean(anchorEl);
 
     const menuId = "mobile-menu";
+    useEffect( _ => {
+        store.dispatch(getBucketAccessKey({bucketId: bucketId, limit: 5, offset: 0}))
+    }, [isLoading])
 
     return (
         <Slide
@@ -173,9 +179,11 @@ const EditBucketContainer = ({
                     headCells={accessKeyHeadCells}
                     selected={selected}
                     setSelected={setSelected}
-                    items={items || []}
+                    items={accessKeyList || []}
                     onItemClick={onItemClick}
                     title={title}
+                    authToken={authToken}
+                    bucketId={bucketId}
                 />
             </Paper>
         </Slide>
@@ -204,7 +212,7 @@ const EnhancedTableHead = (props) => {
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={rowCount > 0 && numSelected === rowCount}
                         onChange={onSelectedAllClick}
-                        inputProps={{ "aria-label": "select all buckets" }}
+                        inputProps={{ "aria-label": "select all keys" }}
                     />
                 </TableCell>
                 {headCells.map((headCell) => (
@@ -235,7 +243,8 @@ const AccessKeyTable = ({
     headCells,
     items,
     onItemClick,
-    title,
+    bucketId,
+    authToken
 }) => {
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("name");
@@ -285,22 +294,37 @@ const AccessKeyTable = ({
         setPage(0);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+    const isSelected = (id) => selected.indexOf(id) !== -1;
 
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, bucketRows.length - page * rowsPerPage);
-    const theme = useTheme();
 
     const handleOpen = (state) => {
         setOpen(state)
     }
 
-    const handleGenerateKey = _ => {
-        setBucketKey("A883DA");
+    const handleGenerateKey = () => {
+        const requestPermissions = []
+        Object.keys(permissionState).map((permission, index) => {
+            if(permissionState[permission] == true) {
+                requestPermissions.push(permission)
+            }
+        })
+
+        if(requestPermissions.length == 0) {
+            alert("Please provide at least 1 key permission!");
+            return;
+        } else if(!currentExpireDate) {
+            alert("Please choose an expiration date!")
+            return;
+        }
+
+        store.dispatch(createBucketKey({authToken: authToken, bucketId: bucketId, expiringDate: currentExpireDate, permissions: requestPermissions}))
+        setOpen(false);
     }
+
     const [open, setOpen] = useState(false);
-    const [bucketKey, setBucketKey] = useState('000000')
-    const currentExpireDate = new Date();
+    const [currentExpireDate, setExpiringDate] = useState(new Date());
     const [permissionState, setPermissionState] = useState({
         GetFileList: false,
         GetFileListHidden: false,
@@ -410,6 +434,7 @@ const AccessKeyTable = ({
                                                 InputLabelProps={{
                                                     shrink: true,
                                                 }}
+                                                onChange={(e) => setExpiringDate(e.target.value)}
                                             />
                                         </form>
                                     </div>
@@ -427,7 +452,7 @@ const AccessKeyTable = ({
                                             className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                                             type="button"
                                             style={{ transition: "all .15s ease" }}
-                                            onClick={() => handleOpen(false)}
+                                            onClick={handleGenerateKey}
                                         >
                                             Create
                     </button>
@@ -472,14 +497,14 @@ const AccessKeyTable = ({
                             orderBy={orderBy}
                             onSelectedAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={keyItemRows.length}
+                            rowCount={items.length}
                             headCells={headCells}
                         />
                         <TableBody>
                             {stableSort(items, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name);
+                                    const isItemSelected = isSelected(row.index);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -487,13 +512,13 @@ const AccessKeyTable = ({
                                             hover
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.name}
+                                            key={row.index}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
-                                                    onChange={(e) => handleItemCheckboxClick(e, row.name)}
+                                                    onChange={(e) => handleItemCheckboxClick(e, row.index)}
                                                     inputProps={{ "aria-labelledby": labelId }}
                                                 />
                                             </TableCell>
@@ -502,27 +527,21 @@ const AccessKeyTable = ({
                                                 id={labelId}
                                                 scope="row"
                                                 padding="none"
-                                                onClick={() => onItemClick(row.name)}
+                                                onClick={() => onItemClick(row.index)}
                                             >
-                                                {row.name}
+                                                {row.index}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(row.name)}
+                                                onClick={() => onItemClick(row.index)}
                                             >
-                                                {row.size}
+                                                {row.expired_date}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(row.name)}
+                                                onClick={() => onItemClick(row.index)}
                                             >
-                                                {row.lastModified}
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                onClick={() => onItemClick(row.name)}
-                                            >
-                                                {row.permission}
+                                                {row.permissions}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <IconButton>
@@ -554,4 +573,11 @@ const AccessKeyTable = ({
     );
 };
 
-export default EditBucketContainer
+const mapStateToProps = (state) => {
+    const authToken = state.authen.authToken;
+    const accessKeyList = state.bucket.accessKeyList;
+    const isLoading = state.bucket.isBucketLoading;
+    return { authToken, isLoading, accessKeyList}
+};
+
+export default connect(mapStateToProps)(EditBucketContainer);

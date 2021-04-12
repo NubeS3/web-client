@@ -20,7 +20,9 @@ import {
   Typography,
   InputLabel,
   TextField,
-  CircularProgress
+  CircularProgress,
+  Link,
+  Breadcrumbs,
 } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import AddIcon from "@material-ui/icons/Add";
@@ -238,9 +240,9 @@ const BucketContainer = ({
     setItems(items.filter(() => selected));
     for (var i in selected) {
 
-      store.dispatch(deleteBucket({authToken: authToken, bucketId: selected[i]}))
-    }  
-    store.dispatch(getAllBucket({authToken: authToken, limit: 5, offset: 0}))
+      store.dispatch(deleteBucket({ authToken: authToken, bucketId: selected[i] }))
+    }
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }))
     setSelected([]);
   };
 
@@ -311,6 +313,7 @@ const BucketContainer = ({
           </div>
         </Toolbar>
       </AppBar>
+
       <BucketTable
         headCells={bucketHeadCells}
         items={items}
@@ -518,8 +521,8 @@ const BucketItemsContainer = ({
     e.preventDefault()
     let file = e.target.files;
     console.log(file[0])
-    //store.dispatch(uploadFile({authToken: authToken, file: file[0], bucketId: bucketId}))
-    //store.dispatch(getBucketItems({authToken: authToken, limit: 5, offset: 0, bucketId: bucketId}))
+    store.dispatch(uploadFile({ authToken: authToken, file: file[0], bucketId: bucketId }))
+    store.dispatch(getBucketItems({ authToken: authToken, limit: 5, offset: 0, bucketId: bucketId }))
   }
 
   const dropzoneRef = createRef();
@@ -599,6 +602,27 @@ const BucketItemsContainer = ({
               </div>
             </section>
           )} */}
+        <div className="mt-5 mx-5">
+          <Breadcrumbs>
+            <Link color="inherit"
+              // onClick={handleClick}
+              >
+                Material-UI
+            </Link>
+              <Link color="inherit"
+              // onClick={handleClick}
+              >
+                Core
+            </Link>
+              <Link
+                color="textPrimary"
+                // onClick={handleClick}
+                aria-current="page"
+                >
+                Breadcrumb
+            </Link>
+          </Breadcrumbs>
+        </div>
         <BucketItemTable
           headCells={bucketItemHeadCells}
           selected={selected}
@@ -613,7 +637,7 @@ const BucketItemsContainer = ({
           open={openDownloadDialog}
           handleClose={handleCloseDownload}
         />
-        <EditBucketContainer show={showEditBucket} title={bucketName} />
+        <EditBucketContainer show={showEditBucket} title={bucketName} bucketId={bucketId} onBack={() => setShowEditBucket(false)} />
         {renderMenu}
       </Paper>
     </Slide>
@@ -1104,7 +1128,7 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
   const handleCreateBucket = () => {
     // console.log(authToken)
     store.dispatch(createBucket({ authToken: authToken, name: bucketName, region: selectedRegion }));
-    
+
     onBack(null)
   }
 
@@ -1173,8 +1197,8 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
 
   useEffect(() => {
     //if (!props.isBucketLoading)
-    
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
+
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ => {
       setBuckets(bucketList)
     })
 
@@ -1187,7 +1211,7 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
   }, []);
 
   useEffect(() => {
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ =>{
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 })).then(_ => {
       setBuckets(bucketList)
     })
   }, [isBucketLoading]);
@@ -1200,7 +1224,7 @@ const Browser = ({ isBucketLoading, bucketList = [], authToken, bucketItemsList 
           onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
           visibility={bucketSelected !== null ? "hidden" : "visible"}
           authToken={authToken}
-          isBucketLoading= {isBucketLoading}
+          isBucketLoading={isBucketLoading}
         >
           <BucketItemsContainer
             bucketName={bucketName}

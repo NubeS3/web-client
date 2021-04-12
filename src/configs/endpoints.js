@@ -13,7 +13,9 @@ const endpoints = {
   CREATE_BUCKET: `${BASE}/auth/buckets/`,
   DELETE_BUCKET: `${BASE}/auth/buckets/`,
   GET_BUCKET_ITEMS: `${BASE}/auth/files/all`,
-
+  GET_ACCESS_KEY: `${BASE}/auth/accessKey/all/`,
+  CREATE_ACCESS_KEY: `${BASE}/auth/accessKey/`,
+  DELETE_ACCESS_KEY: `${BASE}/auth/accessKey/`
 };
 
 export default endpoints;

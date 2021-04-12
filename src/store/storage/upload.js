@@ -18,9 +18,9 @@ export const uploadFile = createAsyncThunk("storage/uploadFile", async (data, ap
         console.log(data.file)
         var bodyFormData = new FormData();
         bodyFormData.append('file', data.file)
-        bodyFormData.append('path', data.file.path)
+        bodyFormData.append('path', "/")
         bodyFormData.append('name', data.file.name)
-        bodyFormData.append('bucketId', data.bucketId)
+        bodyFormData.append('bucket_id', data.bucketId)
         bodyFormData.append('hidden', false)
         
         const response = await axios.post(endpoints.UPLOAD,

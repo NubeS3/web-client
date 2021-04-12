@@ -7,6 +7,7 @@ const initialState = {
     selectedBucket: {},
     bucketItemsList: [],
     bucketList: [],
+    accessKeyList: [],
     isLoading: false,
     err: null, 
 };
@@ -76,6 +77,55 @@ export const getBucketItems = createAsyncThunk("bucket/getBucketItems", async (d
     }
 })
 
+export const getBucketAccessKey = createAsyncThunk("bucket/getAllBucketKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.get(endpoints.GET_ACCESS_KEY + `${data.bucketId}?limit${data.limit}&offset=${data.offset}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
+//data payload: authToken, name, region
+export const createBucketKey = createAsyncThunk("bucket/createBucketKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.post(endpoints.CREATE_ACCESS_KEY, {
+            bucket_id: data.bucketId,
+            expired_date: data.expiringDate,
+            permissions: data.permissions,
+        }, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
+})
+
+//data payload: authToken, limit, offset
+export const deleteBucketKey = createAsyncThunk("bucket/deleteBucketKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.delete(endpoints.DELETE_ACCESS_KEY + `${data.bucketId}/${data.accessKey}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
 export const bucketSlice = createSlice({
     name: 'bucket',
     initialState: initialState,
@@ -112,6 +162,7 @@ export const bucketSlice = createSlice({
             state.loading = false;
             state.err = action.payload;
         },
+
         [getBucketItems.fulfilled]: (state, action) => {
             state.isLoading = false;
             state.bucketItemsList = action.payload
@@ -119,6 +170,29 @@ export const bucketSlice = createSlice({
         },
         [getBucketItems.rejected]: (state, action) => {
             state.isLoading = false
+            state.err = action.payload;
+        },
+
+        [getBucketAccessKey.fulfilled]: (state, action) => {
+            state.accessKeyList = action.payload;
+            state.isLoading = false;
+        },
+        [getBucketAccessKey.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.err = action.payload;
+        },
+        [createBucketKey.fulfilled]: (state, action) => {
+            state.isLoading = false;
+        },
+        [createBucketKey.rejected]: (state, action) => {
+            state.isLoading = false
+            state.err = action.payload;
+        },
+        [deleteBucketKey.fulfilled]: (state, action) => {
+            state.loading = false;
+        },
+        [deleteBucketKey.rejected]: (state, action) => {
+            state.loading = false;
             state.err = action.payload;
         },
     }
