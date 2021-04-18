@@ -80,7 +80,7 @@ export const getBucketItems = createAsyncThunk("bucket/getBucketItems", async (d
 export const getBucketAccessKey = createAsyncThunk("bucket/getAllBucketKey", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
-        const response = await axios.get(endpoints.GET_ACCESS_KEY + `${data.bucketId}?limit${data.limit}&offset=${data.offset}`, {
+        const response = await axios.get(endpoints.GET_ACCESS_KEY + `${data.bucketId}?limit=${data.limit}&offset=${data.offset}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
             }
@@ -104,6 +104,7 @@ export const createBucketKey = createAsyncThunk("bucket/createBucketKey", async 
                 Authorization: `Bearer ${data.authToken}`,
             }
         });
+        
         return response.data
     } catch (error) {
         return api.rejectWithValue(error.response.data.error);
@@ -119,7 +120,7 @@ export const deleteBucketKey = createAsyncThunk("bucket/deleteBucketKey", async 
                 Authorization: `Bearer ${data.authToken}`,
             }
         });
-
+        console.log(response.data)
         return response.data;
     } catch (err) {
         return api.rejectWithValue(err.response.data.error);

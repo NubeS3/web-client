@@ -8,19 +8,41 @@ const initialState = {
     name: '',
     ttl: 0,
     err: null,
-    downloading: false,
+    isLoading: false,
 };
 
-const download = createAsyncThunk("storage/download", async (data, api) => {
-    
+export const downloadSingle = createAsyncThunk("storage/downloadSingle", async (data, api) => {
+    try {
+        api.dispatch(downloadSlice.actions.downloading());
+        console.log(data.bucketId)
+        const response = await axios.get(endpoints.DOWNLOAD + `${data.full_path}?bucketId=${data.bucketId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${data.authToken}`,
+                }
+            });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
 })
 
 export const downloadSlice = createSlice({
     name: 'download',
     initialState: initialState,
     reducers: {
-        downloading: (state,action) => {
-            state.downloading = false;
+        downloading: (state, action) => {
+            state.isLoading = true;
         }
+    },
+    extraReducers: {
+        [downloadSingle.fulfilled]: (state, action) => {
+            state.isLoading = false;
+        },
+        [downloadSingle.rejected]: (state, action) => {
+            console.log(action.payload)
+            state.err = action.payload;
+            state.isLoading = false;
+        },
     }
 })

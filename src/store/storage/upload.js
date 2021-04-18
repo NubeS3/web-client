@@ -8,7 +8,7 @@ const initialState = {
     name: '',
     ttl: 0,
     err: null,
-    uploading: false,
+    isLoading: false,
 };
 
 export const uploadFile = createAsyncThunk("storage/uploadFile", async (data, api) => {
@@ -43,6 +43,15 @@ export const uploadSlice = createSlice({
         loading: (state, action) => {
             state.uploading = false;
         }
+    },
+    extraReducers: {
+        [uploadFile.fulfilled]: (state, action) => {
+            state.isLoading = false;
+        },
+        [uploadFile.rejected]: (state, action) => {
+            state.err = action.payload;
+            state.isLoading = false;
+        },
     }
 })
 

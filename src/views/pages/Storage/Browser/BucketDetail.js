@@ -28,6 +28,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { connect } from "react-redux"
 import store from "../../../../store/store";
 import { createBucketKey, getBucketAccessKey } from "../../../../store/storage/bucket";
+import {DateTime} from 'luxon';
 
 const accessKeyHeadCells = [
     { id: "key", numeric: false, disablePadding: true, label: "Key" },
@@ -136,7 +137,7 @@ const EditBucketContainer = ({
 
     const menuId = "mobile-menu";
     useEffect( _ => {
-        store.dispatch(getBucketAccessKey({bucketId: bucketId, limit: 5, offset: 0}))
+        store.dispatch(getBucketAccessKey({authToken: authToken, bucketId: bucketId, limit: 5, offset: 0}))
     }, [isLoading])
 
     return (
@@ -259,19 +260,19 @@ const AccessKeyTable = ({
 
     const handleSelectAllClick = (e) => {
         if (e.target.checked) {
-            const newSelecteds = keyItemRows.map((n) => n.name);
+            const newSelecteds = items.map((n, index) => index);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleItemCheckboxClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleItemCheckboxClick = (event, index) => {
+        const selectedIndex = selected.indexOf(index);
         let newSelected = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, index);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -306,20 +307,20 @@ const AccessKeyTable = ({
     const handleGenerateKey = () => {
         const requestPermissions = []
         Object.keys(permissionState).map((permission, index) => {
-            if(permissionState[permission] == true) {
+            if(permissionState[permission] === true) {
                 requestPermissions.push(permission)
             }
         })
 
-        if(requestPermissions.length == 0) {
+        if(requestPermissions.length === 0) {
             alert("Please provide at least 1 key permission!");
             return;
         } else if(!currentExpireDate) {
             alert("Please choose an expiration date!")
             return;
         }
-
-        store.dispatch(createBucketKey({authToken: authToken, bucketId: bucketId, expiringDate: currentExpireDate, permissions: requestPermissions}))
+        const formatedDate = DateTime.fromISO(currentExpireDate).toISO({suppressMilliseconds: true})
+        store.dispatch(createBucketKey({authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions}))
         setOpen(false);
     }
 
@@ -331,12 +332,11 @@ const AccessKeyTable = ({
         Download: false,
         DownloadHidden: false,
         Upload: false,
-        UploadHidden: false,
         DeleteFile: false,
         RecoverFile: false,
     });
     const { GetFileList, GetFileListHidden, Download, DownloadHidden,
-        Upload, UploadHidden, DeleteFile, RecoverFile } = permissionState;
+        Upload, DeleteFile, RecoverFile } = permissionState;
 
     const handlePermissionChange = (e) => {
         setPermissionState({ ...permissionState, [e.target.name]: e.target.checked })
@@ -367,11 +367,6 @@ const AccessKeyTable = ({
             value: Upload,
             name: 'Upload',
             label: 'Upload',
-        },
-        {
-            value: UploadHidden,
-            name: 'UploadHidden',
-            label: 'Upload hidden',
         },
         {
             value: DeleteFile,
@@ -504,7 +499,7 @@ const AccessKeyTable = ({
                             {stableSort(items, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.index);
+                                    const isItemSelected = isSelected(index);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -512,13 +507,13 @@ const AccessKeyTable = ({
                                             hover
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.index}
+                                            key={index}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
-                                                    onChange={(e) => handleItemCheckboxClick(e, row.index)}
+                                                    onChange={(e) => handleItemCheckboxClick(e, index)}
                                                     inputProps={{ "aria-labelledby": labelId }}
                                                 />
                                             </TableCell>
@@ -527,21 +522,21 @@ const AccessKeyTable = ({
                                                 id={labelId}
                                                 scope="row"
                                                 padding="none"
-                                                onClick={() => onItemClick(row.index)}
+                                                onClick={() => onItemClick(index)}
                                             >
-                                                {row.index}
+                                                {index}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(row.index)}
+                                                onClick={() => onItemClick(index)}
                                             >
                                                 {row.expired_date}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(row.index)}
+                                                onClick={() => onItemClick(index)}
                                             >
-                                                {row.permissions}
+                                                {row.permissions.join(", ").toString()}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <IconButton>
@@ -551,11 +546,11 @@ const AccessKeyTable = ({
                                         </TableRow>
                                     );
                                 })}
-                            {emptyRows > 0 && (
+                            {/* {emptyRows > 0 && (
                                 <TableRow style={{ height: 81 * emptyRows }}>
                                     <TableCell colSpan={6} />
                                 </TableRow>
-                            )}
+                            )} */}
                         </TableBody>
                     </Table>
                 </TableContainer>
