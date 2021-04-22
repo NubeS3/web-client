@@ -5,9 +5,11 @@ import localStorageKeys from "../../configs/localStorageKeys"
 
 const initialState = {
     selectedBucket: {},
-    bucketItemsList: [],
+    bucketFileList: [],
+    bucketFolderList: [],
     bucketList: [],
     accessKeyList: [],
+    signedKeyList: [],
     isLoading: false,
     err: null, 
 };
@@ -16,7 +18,7 @@ const initialState = {
 export const getAllBucket = createAsyncThunk("bucket/getAllBucket", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
-        const response = await axios.get(endpoints.GET_BUCKET + `?limit${data.limit}&offset=${data.offset}`, {
+        const response = await axios.get(endpoints.GET_BUCKET + `?limit=${data.limit}&offset=${data.offset}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
             }
@@ -63,14 +65,48 @@ export const deleteBucket = createAsyncThunk("bucket/deleteBucket", async (data,
 })
 
 //data payload: authToken, limit, offset, bucketId
-export const getBucketItems = createAsyncThunk("bucket/getBucketItems", async (data, api) => {
+export const getBucketFiles = createAsyncThunk("bucket/getBucketFiles", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
-        const response = await axios.get(endpoints.GET_BUCKET_ITEMS + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`, {
+        const response = await axios.get(endpoints.GET_BUCKET_FILE + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
             }
         });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
+})
+
+//data payload: authToken, limit, offset, bucketId
+export const getBucketFolders = createAsyncThunk("bucket/getBucketFolders", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.get(endpoints.GET_BUCKET_FOLDER + `?limit=${data.limit}&offset=${data.offset}&bucketId=${data.bucketId}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
+})
+
+//data payload: authToken, limit, offset, bucketId
+export const createBucketFolder = createAsyncThunk("bucket/createBucketFolder", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.post(endpoints.CREATE_BUCKET_FOLDER, {
+                name: data.name,
+                parent_path: data.parent_path
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${data.authToken}`,
+                }
+            });
         return response.data
     } catch (error) {
         return api.rejectWithValue(error.response.data.error);
@@ -127,6 +163,56 @@ export const deleteBucketKey = createAsyncThunk("bucket/deleteBucketKey", async 
     }
 })
 
+export const getSignedKey = createAsyncThunk("bucket/getAllSignedKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.get(endpoints.GET_SIGNED_KEY + `${data.bucketId}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
+//data payload: authToken, name, region
+export const createSignedKey = createAsyncThunk("bucket/createSignedKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.post(endpoints.CREATE_SIGNED_KEY, {
+            bucket_id: data.bucketId,
+            expired_date: data.expiringDate,
+            permissions: data.permissions,
+        }, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
+})
+
+//data payload: authToken, limit, offset
+export const deleteSignedKey = createAsyncThunk("bucket/deleteSignedKey", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.delete(endpoints.DELETE_SIGNED_KEY + `/${data.bucketId}/${data.publicKey}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
 export const bucketSlice = createSlice({
     name: 'bucket',
     initialState: initialState,
@@ -164,12 +250,27 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
 
-        [getBucketItems.fulfilled]: (state, action) => {
+        [getBucketFiles.fulfilled]: (state, action) => {
+            state.bucketFileList = action.payload;
             state.isLoading = false;
-            state.bucketItemsList = action.payload
-            console.log(state.bucketItemsList)
         },
-        [getBucketItems.rejected]: (state, action) => {
+        [getBucketFiles.rejected]: (state, action) => {
+            state.isLoading = false
+            state.err = action.payload;
+        },
+
+        [getBucketFolders.fulfilled]: (state, action) => {
+            state.bucketFolderList = action.payload;
+            state.isLoading = false;
+        },
+        [getBucketFolders.rejected]: (state, action) => {
+            state.isLoading = false
+            state.err = action.payload;
+        },
+        [createBucketFolder.fulfilled]: (state, action) => {
+            state.isLoading = false;
+        },
+        [createBucketFolder.rejected]: (state, action) => {
             state.isLoading = false
             state.err = action.payload;
         },
@@ -193,6 +294,21 @@ export const bucketSlice = createSlice({
             state.loading = false;
         },
         [deleteBucketKey.rejected]: (state, action) => {
+            state.loading = false;
+            state.err = action.payload;
+        },
+
+        [createSignedKey.fulfilled]: (state, action) => {
+            state.isLoading = false;
+        },
+        [createSignedKey.rejected]: (state, action) => {
+            state.isLoading = false
+            state.err = action.payload;
+        },
+        [deleteSignedKey.fulfilled]: (state, action) => {
+            state.loading = false;
+        },
+        [deleteSignedKey.rejected]: (state, action) => {
             state.loading = false;
             state.err = action.payload;
         },

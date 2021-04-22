@@ -7,6 +7,7 @@ const initialState = {
   done: false,
   err: null,
   username: "",
+  message: "",
 };
 
 export const signUp = createAsyncThunk("signUp/signUp", async (data, api) => {
@@ -49,6 +50,18 @@ export const confirmOTP = createAsyncThunk("signUp/confirmOTP", async (data, api
   }
 });
 
+export const resendOTP = createAsyncThunk("authen/resendOTP", async( data, api) => {
+  try {
+    api.dispatch(signUpSlice.actions.loggingIn());
+    const response = await axios.post(endpoints.RESEND_OTP, {
+      username: data.username,
+    });
+    return response.data;
+  } catch (err) {
+    return api.rejectWithValue(err.response.data.error)
+  }
+});
+
 export const signUpSlice = createSlice({
   name: "signUp",
   initialState: initialState,
@@ -72,6 +85,17 @@ export const signUpSlice = createSlice({
       state.err = null;
     },
     [signUp.rejected]: (state, action) => {
+      state.loading = false;
+      state.err = action.payload;
+    },
+
+    [resendOTP.fulfilled]: (state, action) => {
+      state.message = action.payload.message;
+      state.loading = false;
+      state.done = true;
+      state.err = null;
+    },
+    [resendOTP.rejected]: (state, action) => {
       state.loading = false;
       state.err = action.payload;
     },
