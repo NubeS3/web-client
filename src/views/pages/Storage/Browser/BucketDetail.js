@@ -27,7 +27,7 @@ import "./style.css";
 import "react-toastify/dist/ReactToastify.css";
 import { connect } from "react-redux"
 import store from "../../../../store/store";
-import { createBucketKey, getBucketAccessKey } from "../../../../store/storage/bucket";
+import { createBucketKey, createSignedKey, getBucketAccessKey, getSignedKey } from "../../../../store/storage/bucket";
 import {DateTime} from 'luxon';
 
 const accessKeyHeadCells = [
@@ -129,6 +129,7 @@ const EditBucketContainer = ({
     const menuId = "mobile-menu";
     useEffect( _ => {
         store.dispatch(getBucketAccessKey({authToken: authToken, bucketId: bucketId, limit: 5, offset: 0}))
+        store.dispatch(getSignedKey({authToken: authToken, bucketId: bucketId, limit: 5, offset: 0}))
     }, [isLoading])
 
     return (
@@ -180,7 +181,7 @@ const EditBucketContainer = ({
                     headCells={signedKeyHeadCells}
                     selected={selectedSignedKey}
                     setSelected={setSelectedSignedKey}
-                    items={accessKeyList || []}
+                    items={signedKeyList || []}
                     onItemClick={onItemClick}
                     authToken={authToken}
                     bucketId={bucketId}
@@ -435,7 +436,7 @@ const AccessKeyTable = ({
                                     {/*footer*/}
                                     <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
                                         <button
-                                            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                                            className="background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
                                             type="button"
                                             style={{ transition: "all .15s ease" }}
                                             onClick={() => handleOpen(false)}
@@ -649,7 +650,7 @@ const SignedKeyTable = ({
             return;
         }
         const formatedDate = DateTime.fromISO(currentExpireDate).toISO({suppressMilliseconds: true})
-        store.dispatch(createBucketKey({authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions}))
+        store.dispatch(createSignedKey({authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions}))
         setOpen(false);
     }
 
@@ -765,7 +766,7 @@ const SignedKeyTable = ({
                                     {/*footer*/}
                                     <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
                                         <button
-                                            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                                            className="background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
                                             type="button"
                                             style={{ transition: "all .15s ease" }}
                                             onClick={() => handleOpen(false)}
@@ -795,10 +796,10 @@ const SignedKeyTable = ({
                         style={{ backgroundColor: "white", color: "black" }}
                     >
                         <Toolbar variant="regular">
-                            <h3 style={{ marginRight: "20px" }}>Access Key</h3>
+                            <h3 style={{ marginRight: "20px" }}>Signed Key Pairs</h3>
                             <div style={{ flexGrow: "1" }}></div>
                             <div className="browser-appbar-button-group">
-                                <Button startIcon={<AddBoxIcon />} onClick={() => handleOpen(true)}>Create access key</Button>
+                                <Button startIcon={<AddBoxIcon />} onClick={() => handleOpen(true)}>Create key pairs</Button>
                                 <Button startIcon={<DeleteIcon />}>Delete</Button>
                             </div>
                             {/* <div className="flex">
@@ -900,8 +901,9 @@ const SignedKeyTable = ({
 const mapStateToProps = (state) => {
     const authToken = state.authen.authToken;
     const accessKeyList = state.bucket.accessKeyList;
+    const signedKeyList = state.bucket.signedKeyList;
     const isLoading = state.bucket.isBucketLoading;
-    return { authToken, isLoading, accessKeyList}
+    return { authToken, isLoading, accessKeyList, signedKeyList}
 };
 
 export default connect(mapStateToProps)(EditBucketContainer);

@@ -22,6 +22,7 @@ const endpoints = {
   DELETE_ACCESS_KEY: `${BASE}/auth/accessKey`,
   CREATE_SIGNED_KEY: `${BASE}/auth/keyPairs/`,
   DELETE_SIGNED_KEY: `${BASE}/auth/keyPairs`,
+  GET_CHILDREN_BY_PATH: `${BASE}/auth/folders/child/all`,
 };
 
 export default endpoints;

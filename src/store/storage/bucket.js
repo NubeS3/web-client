@@ -7,6 +7,7 @@ const initialState = {
     selectedBucket: {},
     bucketFileList: [],
     bucketFolderList: [],
+    folderChildrenList: [],
     bucketList: [],
     accessKeyList: [],
     signedKeyList: [],
@@ -94,6 +95,20 @@ export const getBucketFolders = createAsyncThunk("bucket/getBucketFolders", asyn
     }
 })
 
+export const getChildrenByPath = createAsyncThunk("bucket/getChildrenByPath", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.get(endpoints.GET_CHILDREN_BY_PATH + `${data.full_path}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data
+    } catch (error) {
+        return api.rejectWithValue(error.response.data.error);
+    }
+})
+
 //data payload: authToken, limit, offset, bucketId
 export const createBucketFolder = createAsyncThunk("bucket/createBucketFolder", async (data, api) => {
     try {
@@ -115,7 +130,7 @@ export const createBucketFolder = createAsyncThunk("bucket/createBucketFolder", 
 
 export const getBucketAccessKey = createAsyncThunk("bucket/getAllBucketKey", async (data, api) => {
     try {
-        api.dispatch(bucketSlice.actions.loading());
+        api.dispatch(bucketSlice.actions.loading()); 
         const response = await axios.get(endpoints.GET_ACCESS_KEY + `${data.bucketId}?limit=${data.limit}&offset=${data.offset}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
@@ -163,10 +178,10 @@ export const deleteBucketKey = createAsyncThunk("bucket/deleteBucketKey", async 
     }
 })
 
-export const getSignedKey = createAsyncThunk("bucket/getAllSignedKey", async (data, api) => {
+export const getSignedKey = createAsyncThunk("bucket/getSignedKey", async (data, api) => {
     try {
         api.dispatch(bucketSlice.actions.loading());
-        const response = await axios.get(endpoints.GET_SIGNED_KEY + `${data.bucketId}`, {
+        const response = await axios.get(endpoints.GET_SIGNED_KEY + `${data.bucketId}?limit=${data.limit}&offset=${data.offset}`, {
             headers: {
                 Authorization: `Bearer ${data.authToken}`,
             }
@@ -227,8 +242,10 @@ export const bucketSlice = createSlice({
 
     extraReducers: {
         [getAllBucket.fulfilled]: (state, action) => {
+            //var newBucketList = action.payload
             state.bucketList = action.payload;
             //console.log(state.bucketList
+            //state.bucketList = newBucketList;
             state.isLoading = false;
         },
         [getAllBucket.rejected]: (state, action) => {
@@ -275,6 +292,15 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
 
+        [getChildrenByPath.fulfilled]: (state, action) => {
+            state.folderChildrenList = action.payload;
+            state.isLoading = false;
+        },
+        [getChildrenByPath.rejected]: (state, action) => {
+            state.isLoading = false
+            state.err = action.payload;
+        },
+
         [getBucketAccessKey.fulfilled]: (state, action) => {
             state.accessKeyList = action.payload;
             state.isLoading = false;
@@ -298,7 +324,18 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
 
+        [getSignedKey.fulfilled]: (state, action) => {
+            console.log(action.payload)
+            state.signedKeyList = action.payload
+            state.isLoading = false;
+        },
+        [getSignedKey.rejected]: (state, action) => {
+            state.err = action.payload
+            state.isLoading = false;
+        },
+
         [createSignedKey.fulfilled]: (state, action) => {
+            console.log(action.payload)
             state.isLoading = false;
         },
         [createSignedKey.rejected]: (state, action) => {

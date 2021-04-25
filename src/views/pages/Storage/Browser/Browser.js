@@ -35,6 +35,8 @@ import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
 import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
 import ArchiveIcon from "@material-ui/icons/Archive";
+import DescriptionIcon from '@material-ui/icons/Description';
+import FolderIcon from '@material-ui/icons/Folder';
 import "./style.css";
 import { useTheme } from "@material-ui/core/styles";
 import { ToastContainer, toast } from "react-toastify";
@@ -44,9 +46,10 @@ import Dropzone from 'react-dropzone'
 import { connect } from "react-redux"
 import EditBucketContainer from "./BucketDetail";
 import store from "../../../../store/store";
-import { getAllBucket, createBucket, getBucketFiles, deleteBucket, getBucketFolders, createBucketFolder } from "../../../../store/storage/bucket"
+import { getAllBucket, createBucket, getBucketFiles, deleteBucket, getBucketFolders, createBucketFolder, getChildrenByPath } from "../../../../store/storage/bucket"
 import { uploadFile } from "../../../../store/storage/upload"
 import { downloadSingle } from "../../../../store/storage/download"
+import { Folder } from "@material-ui/icons";
 
 const createBucketData = (name, accessMode) => {
   return { name, accessMode };
@@ -455,6 +458,7 @@ const BucketItemsContainer = ({
   bucketName,
   breadcrumbStack =[],
   setStack,
+  children,
   files,
   folders,
   onBack,
@@ -494,25 +498,22 @@ const BucketItemsContainer = ({
   const handleFileSelected = (e) => {
     e.preventDefault()
     let file = e.target.files;
-    const parent_path = ""
+    var parent_path = ""
     if(breadcrumbStack.length === 1) {
       parent_path = "/";
     } else {
-      parent_path = breadcrumbStack.slice(1).join('/')
+      parent_path = "/" + breadcrumbStack.slice(1).join('/')
     }
-    store.dispatch(uploadFile({ authToken: authToken, file: file[0], bucketId: bucketId, full_path: breadcrumbStack }))
+    console.log(parent_path)
+    store.dispatch(uploadFile({ authToken: authToken, file: file[0], bucketId: bucketId, full_path: parent_path}))
   }
 
   const handleCreateFolder = () => {
-    store.dispatch(createBucketFolder({authToken: authToken, name: folderName, parent_path: "/" +breadcrumbStack.join('/')}))
+    store.dispatch(createBucketFolder({authToken: authToken, name: folderName, parent_path: "/" + breadcrumbStack.join('/')}))
     setOpenCreateFolderDialog(false)
   }
 
   const handleBreadcrumbStack = (link, index) => {
-    // for (var i = arrLength; i > index; i--) {
-    //   console.log(breadcrumbStack);
-    //   setStack(breadcrumbStack.pop())
-    // }
     setStack(breadcrumbStack.slice(0, index + 1))
   }
 
@@ -564,7 +565,6 @@ const BucketItemsContainer = ({
             <h3 style={{ marginRight: "20px" }}>{bucketName}</h3>
             <div className="browser-appbar-button-group">
               <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>Upload file</Button>
-              <Button startIcon={<PublishIcon />}>Upload folder</Button>
               <Button startIcon={<CreateNewFolderIcon/>} onClick={() => setOpenCreateFolderDialog(true)}>Create folder</Button>
               <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
                 Download
@@ -613,7 +613,8 @@ const BucketItemsContainer = ({
           headCells={bucketItemHeadCells}
           selected={selected}
           setSelected={setSelected}
-          items={files.concat(folders) || []}
+          // items={files.concat(folders)}
+          items={children}
           onItemClick={onItemClick}
         />
         <input type='file' id='fileInput' ref={fileInputRef} className="hidden" onChange={handleFileSelected}></input>
@@ -625,7 +626,7 @@ const BucketItemsContainer = ({
           downloadList={selected}
           authToken={authToken}
           bucketId={bucketId}
-
+          breadcrumbStack={breadcrumbStack}
         />
         <EditBucketContainer show={showEditBucket} title={bucketName} bucketId={bucketId} onBack={() => setShowEditBucket(false)} />
         {
@@ -704,12 +705,12 @@ const notification = () => {
   });
 };
 
-const ConfirmDownload = ({ open, handleClose, downloadList, authToken, bucketId }) => {
+const ConfirmDownload = ({ open, handleClose, downloadList, authToken, bucketId, breadcrumbStack}) => {
 
   const handleConfirmDownload = () => {
     for (var i in downloadList) {
 
-      var full_path = `${downloadList[i].path}/${downloadList[i].name}`
+      var full_path = `/${breadcrumbStack.join('/')}/${downloadList[i].name}`
       console.log(store.dispatch(downloadSingle({ authToken: authToken, full_path: full_path, bucketId: bucketId })))
     }
     handleClose();
@@ -886,13 +887,12 @@ const BucketItemTable = ({
                       id={labelId}
                       scope="row"
                       padding="none"
-                      onClick={() => onItemClick(row.id)}
+                      onClick={() => onItemClick(row)}
                     >
-                      {row.name}
+                      {row.type === "file" ? <DescriptionIcon color="action"/> : <FolderIcon color="action"/>} {row.name}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.id)}
                     >
                       {row.size ? (row.size < 1024 ? (<>{row.size} byte</>) : 
                         <>{row.size < Math.pow(1024, 2) ? (<>{Math.ceil(row.size/1024)} KB</>) : 
@@ -901,13 +901,11 @@ const BucketItemTable = ({
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.id)}
                     >
                       {row.content_type }
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.id)}
                     >
                       {row.expired_date}
                     </TableCell>
@@ -1246,7 +1244,7 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
   )
 }
 
-const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucketFolderList,...props }) => {
+const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucketFolderList, folderChildrenList, ...props }) => {
   const [bucketItems, setBucketItems] = useState(bucketFileList);
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
   const [bucketSelected, setBucketSelected] = useState(null);
@@ -1259,8 +1257,15 @@ const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucke
     setBreadcrumbStack(breadcrumbStack => [...breadcrumbStack, name])
     store.dispatch(getBucketFiles({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
     store.dispatch(getBucketFolders({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
+    store.dispatch(getChildrenByPath({authToken: authToken, full_path: "/" + name}))
   }
 
+  const handleOnBucketItemClick = (row) => {
+    if(row.type === "folder") {
+      setBreadcrumbStack(breadcrumbStack => [...breadcrumbStack, row.name])
+    }
+
+  }
   useEffect(() => {
     store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }))
 
@@ -1271,8 +1276,8 @@ const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucke
   }, []);
 
   useEffect(() => {
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }))
-  }, [isBucketLoading]);
+    store.dispatch(getChildrenByPath({authToken: authToken, full_path: "/" + breadcrumbStack.join('/')}))
+  }, [breadcrumbStack]);
   return (
     <>
       { isBucketLoading ? <CircularProgress className="self-center" /> :
@@ -1286,12 +1291,13 @@ const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucke
           <BucketItemsContainer
             bucketName={bucketName}
             files={bucketFileList}
+            children={folderChildrenList}
             breadcrumbStack={breadcrumbStack}
             setStack={setBreadcrumbStack}
             folders={bucketFolderList}
             setItems={setBucketItems}
-            onBack={() => setBucketSelected(null)}
-            onItemClick={(id) => alert(id)}
+            onBack={() => {setBucketSelected(null); setBreadcrumbStack([])}}
+            onItemClick={(row) => handleOnBucketItemClick(row)}
             bucketId={bucketSelected}
             authToken={authToken}
             isLoading={isBucketLoading}
@@ -1308,9 +1314,8 @@ const mapStateToProps = (state) => {
   const isBucketLoading = state.bucket.isBucketLoading;
   const bucketFileList = state.bucket.bucketFileList;
   const bucketFolderList = state.bucket.bucketFolderList;
-  // console.log(bucketRoot)
-  console.log(bucketFolderList)
-  return { authToken, bucketList, bucketFileList, bucketFolderList, isBucketLoading }
+  const folderChildrenList = state.bucket.folderChildrenList;
+  return { authToken, bucketList, bucketFileList, bucketFolderList, isBucketLoading, folderChildrenList }
 };
 
 export default connect(mapStateToProps)(Browser);

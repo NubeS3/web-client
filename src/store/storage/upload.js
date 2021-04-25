@@ -18,7 +18,7 @@ export const uploadFile = createAsyncThunk("storage/uploadFile", async (data, ap
         console.log(data.file)
         var bodyFormData = new FormData();
         bodyFormData.append('file', data.file)
-        bodyFormData.append('path', "/bucket_test")
+        bodyFormData.append('path', data.full_path)
         bodyFormData.append('name', data.file.name)
         bodyFormData.append('bucket_id', data.bucketId)
         bodyFormData.append('hidden', false)
