@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   appBar: {
-    backgroundColor: "#006db3",
+    backgroundColor: "#004383",
   },
 
   appBarShift: {

@@ -33,7 +33,7 @@ const AuthHeader = (props) => {
   };
 
   return (
-    <AppBar position="sticky" style={{ backgroundColor: "#006db3" }}>
+    <AppBar position="sticky" style={{ backgroundColor: "#004383" }}>
       <Toolbar variant="dense">
         <LogoHeader />
         <div style={{ flexGrow: "1" }} />

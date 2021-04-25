@@ -51,11 +51,12 @@ export const clearAuthentication = createAsyncThunk(
   "authen/clearAuthentication",
   async (data, api) => {
     try {
-      const response = await axios.delete(endpoints.LOGOUT, {
-        headers: {
-          Authorization: data.authToken,
-        },
-      });
+      const response = {}
+      //await axios.delete(endpoints.LOGOUT, {
+      //   headers: {
+      //     Authorization: data.authToken,
+      //   },
+      // });
       return response.data;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
@@ -95,6 +96,7 @@ export const authenSlice = createSlice({
       state.err = null;
     },
     [login.rejected]: (state, action) => {
+      console.log(action.payload)
       state.isLoggingIn = false;
       state.err = action.payload;
     },
