@@ -711,7 +711,7 @@ const ConfirmDownload = ({ open, handleClose, downloadList, authToken, bucketId,
     for (var i in downloadList) {
 
       var full_path = `/${breadcrumbStack.join('/')}/${downloadList[i].name}`
-      console.log(store.dispatch(downloadSingle({ authToken: authToken, full_path: full_path, bucketId: bucketId })))
+      console.log(store.dispatch(downloadSingle({ authToken: authToken, full_path: full_path, bucketId: bucketId, fileName: downloadList[i].name })))
     }
     handleClose();
     notification();

@@ -4,14 +4,15 @@ import { connect } from "react-redux";
 
 import paths from "../../../configs/paths";
 import "./style.css";
+import { Typography } from "@material-ui/core";
 
 const Landing = (props) => {
   return (
     <PageFrame className="landing-container">
-      <h3>NubeS3 Cloud Storage</h3>
-      <h2>Access your data anytime, anywhere</h2>
+      <Typography variant="h3" className="">NubeS3 Cloud Storage</Typography>
+      <Typography variant="h3" >Access your data anytime, anywhere</Typography>
       <button
-        className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outlined focus:outline-none mr-1 mb-1"
+        className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outlined focus:outline-none mr-1 my-3"
         onClick={() => {
           if (props.isValidAuthentication) {
             props.history.push(paths.DASHBOARD);

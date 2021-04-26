@@ -40,7 +40,8 @@ export const verifyAuthentication = createAsyncThunk(
       //   },
       // });
       if (localStorage.getItem(localStorageKeys.TOKEN))
-        return data;
+        return true;
+      return false;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
@@ -104,7 +105,7 @@ export const authenSlice = createSlice({
       // localStorage.setItem(localStorageKeys.TOKEN, "1234asdf");
       // localStorage.setItem(localStorageKeys.RFTOKEN, "1234asdf");
       state.isValidating = false;
-      state.isValidAuthentication = true;
+      state.isValidAuthentication = action.payload;
       // state.authToken = "1234asdf";
       // state.rfToken = "1234asdf";
       state.err = null;
