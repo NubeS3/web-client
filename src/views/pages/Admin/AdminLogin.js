@@ -24,7 +24,7 @@ import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
 
-const Login = (props) => {
+const AdminLogin = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isStaySignedIn, setStaySignIn] = useState(false);
@@ -59,19 +59,6 @@ const Login = (props) => {
     event.preventDefault();
   };
 
-  const redirectToForgotPassword = (event) => {
-    event.preventDefault();
-  };
-
-  const redirectToRegister = (event) => {
-    event.preventDefault();
-    props.history.push(paths.REGISTER);
-  };
-
-  const redirectToAdminLogin = (event) => {
-    event.preventDefault();
-    props.history.push(paths.LOGIN_ADMIN);
-  }
   return (
     <PageFrame className="login-container">
       <Card className="login-card">
@@ -82,7 +69,7 @@ const Login = (props) => {
             width: "100%",
             color: "#ffffff",
           }}
-          title="Sign In"
+          title="Admin Login"
           titleTypographyProps={{
             style: {
               fontWeight: "bold",
@@ -140,9 +127,6 @@ const Login = (props) => {
               }
               label="Stay signed in"
             />
-            <Link style={{ color: "black" }} onClick={redirectToForgotPassword}>
-              Forgot password?
-            </Link>
           </div>
           <div className="login-error">{error && <p>{error}</p>}</div>
           <div className="login-form-control login-form-control-button">
@@ -162,15 +146,6 @@ const Login = (props) => {
               SIGN IN
             </Button>
           </div>
-          <Link
-            style={{ marginTop: "10px", color: "black" }}
-            onClick={redirectToRegister}
-          >
-            Create new account
-          </Link>
-          <Link style={{ color: "black", fontSize: "14px" }} onClick={redirectToAdminLogin}>
-              Sign in as admin
-            </Link>
         </form>
       </Card>
     </PageFrame>
@@ -181,4 +156,4 @@ const mapStateToProps = (state) => ({
   isValidAuthentication: state.authen.isValidAuthentication,
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(AdminLogin);

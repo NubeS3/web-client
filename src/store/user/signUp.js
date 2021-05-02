@@ -50,7 +50,7 @@ export const confirmOTP = createAsyncThunk("signUp/confirmOTP", async (data, api
   }
 });
 
-export const resendOTP = createAsyncThunk("authen/resendOTP", async( data, api) => {
+export const resendOTP = createAsyncThunk("authen/resendOTP", async (data, api) => {
   try {
     api.dispatch(signUpSlice.actions.loggingIn());
     const response = await axios.post(endpoints.RESEND_OTP, {
