@@ -7,7 +7,7 @@ import paths from "../../../configs/paths";
 import preValidateLoginData from "../../../helpers/preValidateLoginData";
 
 import store from "../../../store/store";
-import { login } from "../../../store/auth/auth";
+import { adminLogin } from "../../../store/auth/auth";
 
 import {
   Button,
@@ -46,7 +46,7 @@ const AdminLogin = (props) => {
     }
 
     setError("");
-    console.log(store.dispatch(login({ username: username, password: password })));
+    console.log(store.dispatch(adminLogin({ username: username, password: password })));
     
     props.history.push(from.pathname);
   };

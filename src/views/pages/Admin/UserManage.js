@@ -149,6 +149,12 @@ const UserContainer = ({
   const [newPassword, setNewPassword] = useState();
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
+  const [openDisableDialog, setOpenDisableDialog] = useState(false);
+
+  const handleCloseDialog = () => {
+    setOpenDisableDialog(false)
+  }
+
   const handleClickShowPassword = () => {
     setVisiblePass(!isVisiblePass);
   };
@@ -215,41 +221,41 @@ const UserContainer = ({
             </div>
             {/*body*/}
             <div className="relative p-6 flex-auto">
-                <label>Username</label>
-                <TextField
-                  style={{
-                    width: "100%",
-                  }}
-                  type="text"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              <div className="relative p-6 flex-auto">
-                <label>Password</label>
-                <TextField
-                  style={{
-                    width: "100%",
-                  }}
-                  type={isVisiblePass ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {isVisiblePass ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
+              <label>Username</label>
+              <TextField
+                style={{
+                  width: "100%",
+                }}
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="relative p-6 flex-auto">
+              <label>Password</label>
+              <TextField
+                style={{
+                  width: "100%",
+                }}
+                type={isVisiblePass ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {isVisiblePass ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
             {/*footer*/}
             <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
               <button
@@ -266,7 +272,7 @@ const UserContainer = ({
                 style={{ transition: "all .15s ease" }}
                 onClick={handleAddUser}
               >
-                Create
+                Add
                 </button>
             </div>
           </div>
@@ -294,7 +300,8 @@ const UserContainer = ({
         <Toolbar variant="dense">
           <h3 style={{ marginRight: "20px" }}>MANAGE ADMIN</h3>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />} onClick={() => setOpenAddDialog(true)}>Add new user</Button>
+            {/* <Button startIcon={<AddIcon />} onClick={() => setOpenAddDialog(true)}>Add new user</Button> */}
+            <Button startIcon={<AddIcon />} onClick={() => setOpenDisableDialog(true)}>Disable a user</Button>
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
@@ -302,18 +309,6 @@ const UserContainer = ({
             >
               Disable
             </Button>
-          </div>
-          <div style={{ flexGrow: "1" }}></div>
-          <div className="browser-appbar-mobile-menu">
-            <IconButton
-              aria-label="show more"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
           </div>
         </Toolbar>
       </AppBar>
@@ -326,8 +321,12 @@ const UserContainer = ({
         setSelected={setSelected}
         onItemClick={onItemClick}
       />
-      {renderMenu}
+      {/* {renderMenu} */}
       {openAddDialog ? renderAddDialog : null}
+      <ConfirmDialog
+          open={openDisableDialog}
+          handleClose={handleCloseDialog}
+      />
       {props.children}
     </Paper>
   );
@@ -485,8 +484,8 @@ const UserTable = ({
 
 
 const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
-
-  const handleConfirmDownload = () => {
+  const [disableUsername, setDisableUsername] = useState("")
+  const handleConfirmDisable = () => {
     handleClose();
     // notification();
   };
@@ -515,9 +514,16 @@ const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <p>
-                    Disable {name} ?
-                  </p>
+                  <label>Username</label>
+                  <TextField
+                    style={{
+                      width: "100%",
+                    }}
+                    type="text"
+                    value={disableUsername}
+                    onChange={(e) => setDisableUsername(e.target.value)}
+                    autoFocus
+                  />
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
@@ -533,9 +539,9 @@ const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
                     className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="button"
                     style={{ transition: "all .15s ease" }}
-                    onClick={handleConfirmDownload}
+                    onClick={handleConfirmDisable}
                   >
-                    Yes
+                    OK
                   </button>
                 </div>
               </div>

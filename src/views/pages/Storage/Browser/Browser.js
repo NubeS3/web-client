@@ -572,9 +572,7 @@ const BucketItemsContainer = ({
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
-              <Button startIcon={<ShareIcon />}>Share</Button>
               <Button startIcon={<EditIcon />} onClick={() => setShowEditBucket(true)}>Edit bucket</Button>
-              <Button startIcon={<DeleteIcon />}>Delete</Button>
             </div>
             {/* <div>
               <IconButton

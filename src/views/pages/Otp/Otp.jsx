@@ -32,7 +32,7 @@ const ConfirmedOTP = ({username, message, ...props}) => {
                         textAlign: "center",
                         width: "100%",
                     }}
-                    className="bg-ocean-blue"
+                    className="bg-light-blue"
                     title="OTP Confirmation"
                     titleTypographyProps={{
                         style: {
@@ -51,13 +51,13 @@ const ConfirmedOTP = ({username, message, ...props}) => {
                             autoFocus
                         />
                     </div>
-                    <div className="login-form-control-button justify-center mt-4">
+                    <div className="flex w-full justify-evenly">
                         <button onClick={handleResendOTP}
-                            className="bg-ocean-blue text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            className="bg-light-blue text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             RESEND
                         </button>
                         <button onClick={handleConfirmOTP}
-                            className="bg-ocean-blue text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            className="bg-light-blue text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             CONFIRM
                         </button>
                     </div>

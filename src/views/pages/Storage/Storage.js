@@ -43,14 +43,10 @@ const Storage = (props) => {
       >
         <Tabs value={value} onChange={handleChange}>
           <Tab className="focus:outline-none" label="Browser" {...a11yProps(0)} />
-          <Tab className="focus:outline-none" label="Trash bin" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         <Browser />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Trashbin
       </TabPanel>
     </PersistentDrawer>
   );

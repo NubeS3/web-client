@@ -242,8 +242,10 @@ export const bucketSlice = createSlice({
 
     extraReducers: {
         [getAllBucket.fulfilled]: (state, action) => {
-            //var newBucketList = action.payload
-            state.bucketList = action.payload;
+            let newBucketList = [...state.bucketList];
+            newBucketList = action.payload;
+            state.bucketList = newBucketList;
+            // state.bucketList = action.payload;
             //console.log(state.bucketList
             //state.bucketList = newBucketList;
             state.isLoading = false;

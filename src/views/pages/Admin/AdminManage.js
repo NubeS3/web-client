@@ -28,6 +28,7 @@ import "./style.css";
 import { connect } from "react-redux"
 import store from "../../../store/store";
 import AdminDrawer from "../../components/AdminDrawer";
+import { addMod } from "../../../store/admin/admin";
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -149,6 +150,12 @@ const AdminContainer = ({
   const [newPassword, setNewPassword] = useState();
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
+  const [openDisableDialog, setOpenDisableDialog] = useState(false);
+
+  const handleCloseDialog = () => {
+    setOpenDisableDialog(false)
+  }
+
   const handleClickShowPassword = () => {
     setVisiblePass(!isVisiblePass);
   };
@@ -158,7 +165,10 @@ const AdminContainer = ({
   };
 
   const handleDisableAdmin = () => {
-    setItems(items.filter(() => selected));
+
+    setOpenDisableDialog(true);
+    setAnchorEl(null)
+    console.log(selected)
     // for (var i in selected) {
 
     //   store.dispatch(deleteBucket({ authToken: authToken, bucketId: selected[i] }))
@@ -168,6 +178,7 @@ const AdminContainer = ({
   };
 
   const handleAddAdmin = () => {
+    store.dispatch(addMod())
     setOpenAddDialog(false)
   }
 
@@ -215,41 +226,41 @@ const AdminContainer = ({
             </div>
             {/*body*/}
             <div className="relative p-6 flex-auto">
-                <label>Username</label>
-                <TextField
-                  style={{
-                    width: "100%",
-                  }}
-                  type="text"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              <div className="relative p-6 flex-auto">
-                <label>Password</label>
-                <TextField
-                  style={{
-                    width: "100%",
-                  }}
-                  type={isVisiblePass ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {isVisiblePass ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
+              <label>Username</label>
+              <TextField
+                style={{
+                  width: "100%",
+                }}
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="relative p-6 flex-auto">
+              <label>Password</label>
+              <TextField
+                style={{
+                  width: "100%",
+                }}
+                type={isVisiblePass ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {isVisiblePass ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
             {/*footer*/}
             <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
               <button
@@ -266,7 +277,7 @@ const AdminContainer = ({
                 style={{ transition: "all .15s ease" }}
                 onClick={handleAddAdmin}
               >
-                Create
+                Add
                 </button>
             </div>
           </div>
@@ -277,6 +288,7 @@ const AdminContainer = ({
   )
 
   useEffect(_ => {
+    console.log(isLoading)
   }, [isLoading])
 
   return (
@@ -328,6 +340,11 @@ const AdminContainer = ({
       />
       {renderMenu}
       {openAddDialog ? renderAddDialog : null}
+      <ConfirmDialog
+        open={openDisableDialog}
+        handleClose={handleCloseDialog}
+        selected={selected}
+      />
       {props.children}
     </Paper>
   );
@@ -484,11 +501,11 @@ const AdminTable = ({
 };
 
 
-const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
+const ConfirmDialog = ({ open, handleClose, authToken, selected }) => {
 
   const handleConfirmDownload = () => {
+    console.log(selected)
     handleClose();
-    // notification();
   };
 
   return (
@@ -516,7 +533,7 @@ const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                   <p>
-                    Disable {name} ?
+                    Disable {selected[0].name} ?
                   </p>
                 </div>
                 {/*footer*/}
@@ -550,7 +567,7 @@ const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
 
 const AdminManageBoard = ({ isLoading, adminList, authToken, ...props }) => {
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
-  const [adminSelected, setAdminSelected] = useState(null);
+  const [adminSelected, setAdminSelected] = useState([]);
   const [selectedAdminName, setAdminName] = useState()
 
   const handleSelectedAdmin = (name, adminId) => {
@@ -585,6 +602,7 @@ const mapStateToProps = (state) => {
   const authToken = state.authen.authToken;
   const isLoading = state.adminManage.isLoading;
   const adminList = state.adminManage.adminList;
+  console.log(adminList)
   return { authToken, adminList, isLoading, }
 };
 

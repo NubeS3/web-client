@@ -133,17 +133,11 @@ const PersistentDrawer = (props) => {
               <ListItem button key="storage" onClick={() => { history.push(paths.STORAGE) }}>
                 <ListItemText primary="Storage" />
               </ListItem>
-              <ListItem button key="browser">
+              <ListItem button key="browser" onClick={() => { history.push(paths.STORAGE) }}>
                 <ListItemIcon>
                   <StorageIcon />
                 </ListItemIcon>
                 <ListItemText primary="Browser" />
-              </ListItem>
-              <ListItem button key="trash">
-                <ListItemIcon>
-                  <DeleteIcon />
-                </ListItemIcon>
-                <ListItemText primary="Trash" />
               </ListItem>
             </List>
           </div>

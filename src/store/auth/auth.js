@@ -27,6 +27,21 @@ export const login = createAsyncThunk("authen/login", async (data, api) => {
   }
 });
 
+export const adminLogin = createAsyncThunk("authen/adminLogin", async (data, api) => {
+  // if (data) return data;
+  // else return api.rejectWithValue(data);
+  try {
+    api.dispatch(authenSlice.actions.loggingIn());
+    const response = await axios.post(endpoints.LOGIN_ADMIN, {
+      username: data.username,
+      password: data.password,
+    });
+    return response.data;
+  } catch (err) {
+    return api.rejectWithValue(err.response.data.error);
+  }
+});
+
 export const verifyAuthentication = createAsyncThunk(
   "authen/verifyAuthentication",
   async (data, api) => {
@@ -88,7 +103,6 @@ export const authenSlice = createSlice({
     [login.fulfilled]: (state, action) => {
       localStorage.setItem(localStorageKeys.TOKEN, action.payload.accessToken);
       localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.refreshToken);
-      console.log("Logged in")
       state.isValidating = false;
       state.isValidAuthentication = true;
       state.isLoggingIn = false;
@@ -97,6 +111,21 @@ export const authenSlice = createSlice({
       state.err = null;
     },
     [login.rejected]: (state, action) => {
+      console.log(action.payload)
+      state.isLoggingIn = false;
+      state.err = action.payload;
+    },
+    [adminLogin.fulfilled]: (state, action) => {
+      localStorage.setItem(localStorageKeys.TOKEN, action.payload.accessToken);
+      localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.refreshToken);
+      state.isValidating = false;
+      state.isValidAuthentication = true;
+      state.isLoggingIn = false;
+      state.authToken = action.payload.accessToken;
+      state.rfToken = action.payload.refreshToken;
+      state.err = null;
+    },
+    [adminLogin.rejected]: (state, action) => {
       console.log(action.payload)
       state.isLoggingIn = false;
       state.err = action.payload;

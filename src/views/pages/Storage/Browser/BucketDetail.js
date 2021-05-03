@@ -150,22 +150,6 @@ const EditBucketContainer = ({
                         <ArrowBackIcon />
                     </IconButton>
                     <h3 style={{ marginRight: "20px" }}>{title}</h3>
-                    <div style={{ flexGrow: "1" }}></div>
-                    <div className="browser-appbar-button-group">
-                        <Button startIcon={<EditIcon />}>Edit bucket</Button>
-                        <Button startIcon={<DeleteIcon />}>Delete</Button>
-                    </div>
-                    <div className="browser-appbar-mobile-menu">
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={(e) => setAnchorEl(e.currentTarget)}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </div>
                 </Toolbar>
                 {/* </AppBar> */}
                 <AccessKeyTable

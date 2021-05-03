@@ -7,7 +7,7 @@ const initialState = {
     isLoading: false,
     done: false,
     err: null,
-    userList: [{uid: "FAKEUSERID", name:"FAKEUSER"}],
+    userList: [],
     message: "",
 };
 
@@ -32,6 +32,23 @@ export const getUserList = createAsyncThunk("userManage/getUserList", async (dat
     }
 });
 
+export const disableUser = createAsyncThunk("adminManage/disableMod", async (data, api) => {
+    try {
+        api.dispatch(adminManageSlice.actions.loading(true));
+        const response = await axios.post(endpoints.BAN_USER, {
+            username: data.username,
+            is_ban: true,
+        }, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+});
+
 export const userManageSlice = createSlice({
     name: "userManage",
     initialState: initialState,
@@ -48,6 +65,14 @@ export const userManageSlice = createSlice({
             state.err = null;
         },
         [getUserList.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.err = action.payload;
+        },
+        [disableUser.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            // state.adminList = [...state.adminList, ...action.payload]
+        },
+        [disableUser.rejected]: (state, action) => {
             state.isLoading = false;
             state.err = action.payload;
         },

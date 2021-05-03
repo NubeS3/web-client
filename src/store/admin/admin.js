@@ -6,7 +6,7 @@ const initialState = {
     isLoading: false,
     done: false,
     err: null,
-    adminList: [{uid: "FAKEID", name: "ADMIN_1"}],
+    adminList: [{ uid: "FAKEID", name: "ADMIN_1" }, { uid: "FAKEID", name: "ADMIN_2" }],
     message: "",
 };
 
@@ -31,24 +31,74 @@ export const getAdminList = createAsyncThunk("adminManage/getAdminList", async (
     }
 });
 
+
+export const addMod = createAsyncThunk("adminManage/addMod", async (data, api) => {
+    try {
+        api.dispatch(adminManageSlice.actions.loading(true));
+        const response = await axios.post(endpoints.ADD_MOD, {
+            username: data.username,
+            password: data.password,
+        });
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+});
+
+export const disableMod = createAsyncThunk("adminManage/disableMod", async (data, api) => {
+    try {
+        api.dispatch(adminManageSlice.actions.loading(true));
+        const response = await axios.post(endpoints.BAN_MOD, {
+            username: data.username,
+            disable: true,
+        }, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+});
+
 export const adminManageSlice = createSlice({
     name: "adminManage",
     initialState: initialState,
     reducers: {
         loading: (state, action) => {
-            state.isLoading = true;
+            state = { ...state, isLoading: action.payload }
         },
     },
     extraReducers: {
         [getAdminList.fulfilled]: (state, action) => {
             state.adminList = action.payload;
-            state.loading = false;
+            state = { ...state, isLoading: false };
             state.done = true;
             state.err = null;
         },
         [getAdminList.rejected]: (state, action) => {
-            state.isLloading = false;
+            state.isLoading = false;
             state.err = action.payload;
         },
+
+        [addMod.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            // state.adminList = [...state.adminList, ...action.payload]
+        },
+        [addMod.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.err = action.payload;
+        },
+        [disableMod.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            // state.adminList = [...state.adminList, ...action.payload]
+        },
+        [disableMod.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.err = action.payload;
+        },
+        
+
     },
 });

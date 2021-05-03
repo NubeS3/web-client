@@ -23,6 +23,12 @@ const endpoints = {
   CREATE_SIGNED_KEY: `${BASE}/auth/keyPairs/`,
   DELETE_SIGNED_KEY: `${BASE}/auth/keyPairs`,
   GET_CHILDREN_BY_PATH: `${BASE}/auth/folders/child/all`,
+
+  LOGIN_ADMIN: `${BASE}/admin/signin`,
+  GET_ALL_ADMIN: `${BASE}/admin/`,
+  ADD_MOD: `${BASE}/admin/auth/mod`,
+  BAN_USER: `${BASE}/admin/auth/ban-user`,
+  BAN_MOD: `${BASE}/admin/auth/disable-mod`,
 };
 
 export default endpoints;
