@@ -29,6 +29,8 @@ const endpoints = {
   ADD_MOD: `${BASE}/admin/auth/mod`,
   BAN_USER: `${BASE}/admin/auth/ban-user`,
   BAN_MOD: `${BASE}/admin/auth/disable-mod`,
+  GET_ACCESS_KEY_REQ_COUNT: `${BASE}/auth/accessKey/use-count/all/`,
+  GET_SIGNED_KEY_REQ_COUNT: `${BASE}/auth/keyPairs/use-count/all/`,
 };
 
 export default endpoints;

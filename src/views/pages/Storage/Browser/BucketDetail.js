@@ -27,8 +27,8 @@ import "./style.css";
 import "react-toastify/dist/ReactToastify.css";
 import { connect } from "react-redux"
 import store from "../../../../store/store";
-import { createBucketKey, createSignedKey, getBucketAccessKey, getSignedKey } from "../../../../store/storage/bucket";
-import {DateTime} from 'luxon';
+import { createBucketKey, createSignedKey, getAccessKeyReqCount, getBucketAccessKey, getSignedKey, getSignedKeyReqCount } from "../../../../store/storage/bucket";
+import { DateTime } from 'luxon';
 
 const accessKeyHeadCells = [
     { id: "key", numeric: false, disablePadding: true, label: "Key" },
@@ -111,25 +111,72 @@ const stableSort = (array, comparator) => {
     return stabilizedThis.map((el) => el[0]);
 };
 
+const KeyStatistic = ({ open, handleOpen, count }) => {
+    return (
+        <>
+            <div
+                className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+            >
+                <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                    {/*content*/}
+                    <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                        {/*header*/}
+                        <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                            <h3 className="text-3xl font-semibold">
+                                Key Request Statistic
+                </h3>
+                            <button
+                                className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                onClick={handleOpen}
+                            >
+                                <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                                    ×
+                  </span>
+                            </button>
+                        </div>
+                        {/*body*/}
+                        <div className="relative p-6 flex-auto">
+                            This key has been called {count} time(s)
+                        </div>
+                        {/*footer*/}
+                        <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                            <button
+                                className="background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                                type="button"
+                                style={{ transition: "all .15s ease" }}
+                                onClick={handleOpen}
+                            >
+                                OK
+                </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+    )
+}
+
 const EditBucketContainer = ({
     title,
     bucketId,
     onBack,
     onItemClick,
     show,
-    authToken, 
+    authToken,
     accessKeyList,
     signedKeyList,
     isLoading,
+    accessKeyReqCount, signedKeyReqCount,
 }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedAccessKey, setSelectedAccessKey] = useState([]);
     const [selectedSignedKey, setSelectedSignedKey] = useState([]);
 
     const menuId = "mobile-menu";
-    useEffect( _ => {
-        store.dispatch(getBucketAccessKey({authToken: authToken, bucketId: bucketId, limit: 5, offset: 0}))
-        store.dispatch(getSignedKey({authToken: authToken, bucketId: bucketId, limit: 5, offset: 0}))
+    useEffect(_ => {
+        store.dispatch(getBucketAccessKey({ authToken: authToken, bucketId: bucketId, limit: 5, offset: 0 }))
+        store.dispatch(getSignedKey({ authToken: authToken, bucketId: bucketId, limit: 5, offset: 0 }))
     }, [isLoading])
 
     return (
@@ -160,6 +207,7 @@ const EditBucketContainer = ({
                     onItemClick={onItemClick}
                     authToken={authToken}
                     bucketId={bucketId}
+                    reqCount={accessKeyReqCount}
                 />
                 <SignedKeyTable
                     headCells={signedKeyHeadCells}
@@ -169,6 +217,7 @@ const EditBucketContainer = ({
                     onItemClick={onItemClick}
                     authToken={authToken}
                     bucketId={bucketId}
+                    reqCount={signedKeyReqCount}
                 />
             </Paper>
         </Slide>
@@ -229,12 +278,18 @@ const AccessKeyTable = ({
     items,
     onItemClick,
     bucketId,
-    authToken
+    authToken,
+    reqCount
 }) => {
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("name");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [openStatsDialog, setOpenStatsDialog] = useState(false)
+
+    const handleOpenStatsDialog = () => {
+        setOpenStatsDialog(false)
+    }
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
@@ -250,6 +305,11 @@ const AccessKeyTable = ({
         }
         setSelected([]);
     };
+
+    const handleKeyClick = (accessKey) => {
+        store.dispatch(getAccessKeyReqCount({ authToken: authToken, accessKey: accessKey }))
+        setOpenStatsDialog(true)
+    }
 
     const handleItemCheckboxClick = (event, index) => {
         const selectedIndex = selected.indexOf(index);
@@ -291,20 +351,20 @@ const AccessKeyTable = ({
     const handleGenerateKey = () => {
         const requestPermissions = []
         Object.keys(permissionState).map((permission, index) => {
-            if(permissionState[permission] === true) {
+            if (permissionState[permission] === true) {
                 requestPermissions.push(permission)
             }
         })
 
-        if(requestPermissions.length === 0) {
+        if (requestPermissions.length === 0) {
             alert("Please provide at least 1 key permission!");
             return;
-        } else if(!currentExpireDate) {
+        } else if (!currentExpireDate) {
             alert("Please choose an expiration date!")
             return;
         }
-        const formatedDate = DateTime.fromISO(currentExpireDate).toISO({suppressMilliseconds: true})
-        store.dispatch(createBucketKey({authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions}))
+        const formatedDate = DateTime.fromISO(currentExpireDate).toISO({ suppressMilliseconds: true })
+        store.dispatch(createBucketKey({ authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions }))
         setOpen(false);
     }
 
@@ -442,6 +502,7 @@ const AccessKeyTable = ({
                         <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
                     </>
                 ) : null}
+            <KeyStatistic open={openStatsDialog} handleOpen={handleOpenStatsDialog} count={reqCount} />
             <Paper elevation={0} className="mx-auto my-10 w-4/5 max-h-5xl ">
                 <TableContainer>
                     <AppBar
@@ -493,6 +554,7 @@ const AccessKeyTable = ({
                                             tabIndex={-1}
                                             key={index}
                                             selected={isItemSelected}
+                                            onClick={handleKeyClick(row.key)}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -506,19 +568,16 @@ const AccessKeyTable = ({
                                                 id={labelId}
                                                 scope="row"
                                                 padding="none"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {index}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {row.expired_date}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {row.permissions.join(", ").toString()}
                                             </TableCell>
@@ -559,12 +618,18 @@ const SignedKeyTable = ({
     items,
     onItemClick,
     bucketId,
-    authToken
+    authToken,
+    reqCount,
 }) => {
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("name");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [openStatsDialog, setOpenStatsDialog] = useState(false)
+
+    const handleOpenStatsDialog = () => {
+        setOpenStatsDialog(false)
+    }
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
@@ -580,6 +645,11 @@ const SignedKeyTable = ({
         }
         setSelected([]);
     };
+
+    const handleKeyClick = (key) => {
+        store.dispatch(getSignedKeyReqCount({ authToken: authToken, publicKey: key }))
+        setOpenStatsDialog(true)
+    }
 
     const handleItemCheckboxClick = (event, index) => {
         const selectedIndex = selected.indexOf(index);
@@ -621,20 +691,20 @@ const SignedKeyTable = ({
     const handleGenerateKey = () => {
         const requestPermissions = []
         Object.keys(permissionState).map((permission, index) => {
-            if(permissionState[permission] === true) {
+            if (permissionState[permission] === true) {
                 requestPermissions.push(permission)
             }
         })
 
-        if(requestPermissions.length === 0) {
+        if (requestPermissions.length === 0) {
             alert("Please provide at least 1 key permission!");
             return;
-        } else if(!currentExpireDate) {
+        } else if (!currentExpireDate) {
             alert("Please choose an expiration date!")
             return;
         }
-        const formatedDate = DateTime.fromISO(currentExpireDate).toISO({suppressMilliseconds: true})
-        store.dispatch(createSignedKey({authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions}))
+        const formatedDate = DateTime.fromISO(currentExpireDate).toISO({ suppressMilliseconds: true })
+        store.dispatch(createSignedKey({ authToken: authToken, bucketId: bucketId, expiringDate: formatedDate, permissions: requestPermissions }))
         setOpen(false);
     }
 
@@ -772,6 +842,7 @@ const SignedKeyTable = ({
                         <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
                     </>
                 ) : null}
+            <KeyStatistic open={openStatsDialog} handleOpen={handleOpenStatsDialog} count={reqCount} />
             <Paper elevation={0} className="mx-auto my-10 w-4/5 max-h-5xl ">
                 <TableContainer>
                     <AppBar
@@ -823,6 +894,7 @@ const SignedKeyTable = ({
                                             tabIndex={-1}
                                             key={index}
                                             selected={isItemSelected}
+                                            onClick={handleKeyClick(row.public)}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -836,19 +908,16 @@ const SignedKeyTable = ({
                                                 id={labelId}
                                                 scope="row"
                                                 padding="none"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {index}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {row.expired_date}
                                             </TableCell>
                                             <TableCell
                                                 align="left"
-                                                onClick={() => onItemClick(index)}
                                             >
                                                 {row.permissions.join(", ").toString()}
                                             </TableCell>
@@ -886,8 +955,11 @@ const mapStateToProps = (state) => {
     const authToken = state.authen.authToken;
     const accessKeyList = state.bucket.accessKeyList;
     const signedKeyList = state.bucket.signedKeyList;
+    const accessKeyReqCount = state.bucket.accessKeyReqCount;
+    const signedKeyReqCount = state.bucket.signedKeyReqCount;
     const isLoading = state.bucket.isBucketLoading;
-    return { authToken, isLoading, accessKeyList, signedKeyList}
+
+    return { authToken, isLoading, accessKeyList, signedKeyList, signedKeyReqCount, accessKeyReqCount }
 };
 
 export default connect(mapStateToProps)(EditBucketContainer);

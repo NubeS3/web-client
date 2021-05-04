@@ -50,9 +50,9 @@ const App = (props) => {
         <Route exact path={paths.OTP} component={ConfirmedOTP} />
         <GuardRoute exact path={paths.DASHBOARD} component={Dashboard} />
         <GuardRoute exact path={paths.STORAGE} component={Storage} />
-        <Route exact path={paths.DASHBOARD_ADMIN} component={AdminDashboard}></Route>
-        <Route exact path={paths.USER_MANAGE} component={UserManageBoard}/>
-        <Route exact path={paths.ADMIN_MANAGE} component={AdminManageBoard}/>
+        <GuardRoute exact path={paths.DASHBOARD_ADMIN} component={AdminDashboard}/>
+        <GuardRoute exact path={paths.USER_MANAGE} component={UserManageBoard}/>
+        <GuardRoute exact path={paths.ADMIN_MANAGE} component={AdminManageBoard}/>
         {/* <Route exact path={paths.DASHBOARD} component={Dashboard} />
         <Route exact path={paths.STORAGE} component={Storage} /> */}
       </Switch>

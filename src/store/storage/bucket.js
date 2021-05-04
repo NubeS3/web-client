@@ -11,6 +11,8 @@ const initialState = {
     bucketList: [],
     accessKeyList: [],
     signedKeyList: [],
+    accessKeyReqCount: null,
+    signedKeyReqCount: null,
     isLoading: false,
     err: null, 
 };
@@ -228,6 +230,35 @@ export const deleteSignedKey = createAsyncThunk("bucket/deleteSignedKey", async 
     }
 })
 
+export const getSignedKeyReqCount = createAsyncThunk("bucket/getSignedKeyReqCount", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.delete(endpoints.GET_SIGNED_KEY_REQ_COUNT + `/${data.publicKey}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
+
+export const getAccessKeyReqCount = createAsyncThunk("bucket/getAccessKeyReqCount", async (data, api) => {
+    try {
+        api.dispatch(bucketSlice.actions.loading());
+        const response = await axios.delete(endpoints.GET_ACCESS_KEY_REQ_COUNT + `/${data.accessKey}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (err) {
+        return api.rejectWithValue(err.response.data.error);
+    }
+})
 export const bucketSlice = createSlice({
     name: 'bucket',
     initialState: initialState,
@@ -255,6 +286,7 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
         [createBucket.fulfilled]: (state, action) => {
+            state.bucketList = [...state.bucketList, ...action.payload]
             state.isLoading = false;
         },
         [createBucket.rejected]: (state, action) => {
@@ -287,6 +319,7 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
         [createBucketFolder.fulfilled]: (state, action) => {
+            state.bucketFolderList = [...state.bucketFolderList, ...action.payload]
             state.isLoading = false;
         },
         [createBucketFolder.rejected]: (state, action) => {
@@ -312,6 +345,7 @@ export const bucketSlice = createSlice({
             state.err = action.payload;
         },
         [createBucketKey.fulfilled]: (state, action) => {
+            state.accessKeyList = [...state.accessKeyList, ...action.payload]
             state.isLoading = false;
         },
         [createBucketKey.rejected]: (state, action) => {
@@ -327,7 +361,6 @@ export const bucketSlice = createSlice({
         },
 
         [getSignedKey.fulfilled]: (state, action) => {
-            console.log(action.payload)
             state.signedKeyList = action.payload
             state.isLoading = false;
         },
@@ -337,7 +370,7 @@ export const bucketSlice = createSlice({
         },
 
         [createSignedKey.fulfilled]: (state, action) => {
-            console.log(action.payload)
+            state.signedKeyList = [...state.signedKeyList, ...action.payload]
             state.isLoading = false;
         },
         [createSignedKey.rejected]: (state, action) => {
@@ -348,6 +381,22 @@ export const bucketSlice = createSlice({
             state.loading = false;
         },
         [deleteSignedKey.rejected]: (state, action) => {
+            state.loading = false;
+            state.err = action.payload;
+        },
+
+        [getSignedKeyReqCount.fulfilled]: (state, action) => {
+            state.loading = false;
+        },
+        [getSignedKeyReqCount.rejected]: (state, action) => {
+            state.loading = false;
+            state.err = action.payload;
+        },
+        [getAccessKeyReqCount.fulfilled]: (state, action) => {
+            state.accessKeyReqCount = action.payload
+            state.loading = false;
+        },
+        [getAccessKeyReqCount.rejected]: (state, action) => {
             state.loading = false;
             state.err = action.payload;
         },
