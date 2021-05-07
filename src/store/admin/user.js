@@ -11,20 +11,14 @@ const initialState = {
     message: "",
 };
 
-export const getUserList = createAsyncThunk("userManage/getUserList", async (data, api) => {
+export const getUserList = createAsyncThunk("adminManage/getUserList", async (data, api) => {
     try {
         api.dispatch(userManageSlice.actions.loading());
-        // const response = await axios.post(endpoints.REGISTER, {
-        //   firstname: data.firstname,
-        //   lastname: data.lastname,
-        //   username: data.username,
-        //   password: data.password,
-        //   email: data.email,
-        //   dob: data.dob,
-        //   company: data.company,
-        //   gender: data.gender,
-        // });
-        const response = []
+        const response = await axios.get(endpoints.GET_ALL_USER + `?limit=${data.limit}&offset=${data.offset}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
 
         return response.data;
     } catch (err) {
@@ -59,8 +53,8 @@ export const userManageSlice = createSlice({
     },
     extraReducers: {
         [getUserList.fulfilled]: (state, action) => {
-            state.adminList = action.payload;
-            state.loading = false;
+            state.userList = action.payload;
+            state = { ...state, isLoading: false };
             state.done = true;
             state.err = null;
         },
@@ -70,7 +64,6 @@ export const userManageSlice = createSlice({
         },
         [disableUser.fulfilled]: (state, action) => {
             state.isLoading = false;
-            // state.adminList = [...state.adminList, ...action.payload]
         },
         [disableUser.rejected]: (state, action) => {
             state.isLoading = false;

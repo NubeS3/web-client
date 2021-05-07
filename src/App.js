@@ -18,6 +18,7 @@ import AdminLogin from "./views/pages/Admin/AdminLogin";
 import AdminDashboard from "./views/pages/Admin/AdminDashboard";
 import UserManageBoard from "./views/pages/Admin/UserManage"
 import AdminManageBoard from "./views/pages/Admin/AdminManage";
+import AdminLanding from './views/pages/AdminLanding/Landing'
 const App = (props) => {
   const mount = async () => {
     await store.dispatch(
@@ -44,6 +45,7 @@ const App = (props) => {
     <Router basename="/">
       <Switch>
         <Route exact path={paths.BASE} component={Landing} />
+        <Route exact path={paths.BASE_ADMIN} component={AdminLanding} />
         <Route exact path={paths.REGISTER} component={SignUp} />
         <Route exact path={paths.LOGIN_ADMIN} component={AdminLogin}/>
         <Route exact path={paths.LOGIN} component={SignIn} />

@@ -27,6 +27,7 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
 import { connect } from "react-redux"
 import store from "../../../store/store";
+import {disableUser, getUserList} from '../../../store/admin/user'
 import AdminDrawer from "../../components/AdminDrawer";
 
 const descendingComparator = (a, b, orderBy) => {
@@ -164,7 +165,7 @@ const UserContainer = ({
   };
 
   const handleDisableUser = () => {
-    setItems(items.filter(() => selected));
+    setOpenDisableDialog(true);
     // for (var i in selected) {
 
     //   store.dispatch(deleteBucket({ authToken: authToken, bucketId: selected[i] }))
@@ -302,13 +303,13 @@ const UserContainer = ({
           <div className="browser-appbar-button-group">
             {/* <Button startIcon={<AddIcon />} onClick={() => setOpenAddDialog(true)}>Add new user</Button> */}
             <Button startIcon={<AddIcon />} onClick={() => setOpenDisableDialog(true)}>Disable a user</Button>
-            <Button
+            {/* <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
               onClick={handleDisableUser}
             >
               Disable
-            </Button>
+            </Button> */}
           </div>
         </Toolbar>
       </AppBar>
@@ -326,6 +327,7 @@ const UserContainer = ({
       <ConfirmDialog
           open={openDisableDialog}
           handleClose={handleCloseDialog}
+          authToken={authToken}
       />
       {props.children}
     </Paper>
@@ -352,21 +354,29 @@ const UserTable = ({
     setOrderBy(property);
   };
 
+  const findWithProperty = (arr, prop, value) => {
+    for(var i in arr) {
+      if(arr[i][prop] === value) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = items.map((n) => n.id);
+      const newSelecteds = items.map((n) => ({id: n.id, name: n.username}));
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleItemCheckboxClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleItemCheckboxClick = (event, fileItem) => {
+    const selectedIndex = findWithProperty(selected, "id", fileItem.id);
     let newSelected = [];
-
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, fileItem);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -389,7 +399,7 @@ const UserTable = ({
     setPage(0);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const isSelected = (id) => findWithProperty(selected, "id", id) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -425,28 +435,28 @@ const UserTable = ({
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
-                        onChange={(e) => handleItemCheckboxClick(e, row.id)}
+                        onChange={(e) => handleItemCheckboxClick(e, row)}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
                     <TableCell
                       component="th"
                       id={labelId}
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                       scope="row"
                       padding="none"
                     >
-                      {row.uid}
+                      {row.id}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                     >
-                      {row.name}
+                      {row.username}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                     >
                       {row.created_at}
                     </TableCell>
@@ -483,11 +493,11 @@ const UserTable = ({
 };
 
 
-const ConfirmDialog = ({ open, handleClose, authToken, uid, name }) => {
+const ConfirmDialog = ({ open, handleClose, authToken }) => {
   const [disableUsername, setDisableUsername] = useState("")
   const handleConfirmDisable = () => {
+    store.dispatch(disableUser({authToken: authToken, username: disableUsername}));
     handleClose();
-    // notification();
   };
 
   return (
@@ -565,6 +575,7 @@ const UserManageBoard = ({ isLoading, userList, authToken, ...props }) => {
   }
 
   useEffect(() => {
+    store.dispatch(getUserList({authToken: authToken, limit: 5, offset: 0}))
     if (userSelected === null) {
       return;
     } else {
@@ -573,7 +584,7 @@ const UserManageBoard = ({ isLoading, userList, authToken, ...props }) => {
 
   return (
     <AdminDrawer>
-      { isLoading ? <CircularProgress className="self-center" /> :
+      {/* { isLoading ? <CircularProgress className="self-center" /> : */}
         <UserContainer
           items={userList}
           onItemClick={(name, userId) => handleSelectedUser(name, userId)}
@@ -582,7 +593,7 @@ const UserManageBoard = ({ isLoading, userList, authToken, ...props }) => {
           isLoading={isLoading}
         >
         </UserContainer>
-      }
+       {/* } */}
     </AdminDrawer>
   );
 };

@@ -1,5 +1,6 @@
 const paths = {
   BASE: "/",
+  BASE_ADMIN: "/admin",
   LOGIN: "/sign-in",
   
   REGISTER: "/sign-up",

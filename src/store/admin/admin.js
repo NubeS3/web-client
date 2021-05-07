@@ -6,24 +6,18 @@ const initialState = {
     isLoading: false,
     done: false,
     err: null,
-    adminList: [{ uid: "FAKEID", name: "ADMIN_1" }, { uid: "FAKEID", name: "ADMIN_2" }],
+    adminList: [],
     message: "",
 };
 
 export const getAdminList = createAsyncThunk("adminManage/getAdminList", async (data, api) => {
     try {
         api.dispatch(adminManageSlice.actions.loading());
-        // const response = await axios.post(endpoints.REGISTER, {
-        //   firstname: data.firstname,
-        //   lastname: data.lastname,
-        //   username: data.username,
-        //   password: data.password,
-        //   email: data.email,
-        //   dob: data.dob,
-        //   company: data.company,
-        //   gender: data.gender,
-        // });
-        const response = []
+        const response = await axios.get(endpoints.GET_ALL_ADMIN + `?limit=${data.limit}&offset=${data.offset}`, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
+        });
 
         return response.data;
     } catch (err) {
@@ -38,6 +32,10 @@ export const addMod = createAsyncThunk("adminManage/addMod", async (data, api) =
         const response = await axios.post(endpoints.ADD_MOD, {
             username: data.username,
             password: data.password,
+        }, {
+            headers: {
+                Authorization: `Bearer ${data.authToken}`,
+            }
         });
         return response.data;
     } catch (err) {
@@ -98,7 +96,7 @@ export const adminManageSlice = createSlice({
             state.isLoading = false;
             state.err = action.payload;
         },
-        
+
 
     },
 });

@@ -48,7 +48,7 @@ const AdminLogin = (props) => {
     setError("");
     console.log(store.dispatch(adminLogin({ username: username, password: password })));
     
-    props.history.push(from.pathname);
+    props.history.push(paths.BASE_ADMIN);
   };
 
   const handleClickShowPassword = () => {

@@ -28,7 +28,7 @@ import "./style.css";
 import { connect } from "react-redux"
 import store from "../../../store/store";
 import AdminDrawer from "../../components/AdminDrawer";
-import { addMod } from "../../../store/admin/admin";
+import { addMod, disableMod, getAdminList } from "../../../store/admin/admin";
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -165,7 +165,6 @@ const AdminContainer = ({
   };
 
   const handleDisableAdmin = () => {
-
     setOpenDisableDialog(true);
     setAnchorEl(null)
     console.log(selected)
@@ -178,7 +177,7 @@ const AdminContainer = ({
   };
 
   const handleAddAdmin = () => {
-    store.dispatch(addMod())
+    store.dispatch(addMod({authToken: authToken, username: newUsername, password: newPassword}))
     setOpenAddDialog(false)
   }
 
@@ -370,21 +369,29 @@ const AdminTable = ({
     setOrderBy(property);
   };
 
+  const findWithProperty = (arr, prop, value) => {
+    for(var i in arr) {
+      if(arr[i][prop] === value) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = items.map((n) => n.id);
+      const newSelecteds = items.map((n) => ({id: n.id, name: n.username}));
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleItemCheckboxClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleItemCheckboxClick = (event, fileItem) => {
+    const selectedIndex = findWithProperty(selected, "id", fileItem.id);
     let newSelected = [];
-
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, fileItem);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -407,7 +414,7 @@ const AdminTable = ({
     setPage(0);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const isSelected = (id) => findWithProperty(selected, "id", id) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
@@ -443,28 +450,28 @@ const AdminTable = ({
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
-                        onChange={(e) => handleItemCheckboxClick(e, row.id)}
+                        onChange={(e) => handleItemCheckboxClick(e, row)}
                         inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
                     <TableCell
                       component="th"
                       id={labelId}
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                       scope="row"
                       padding="none"
                     >
-                      {row.uid}
+                      {row.id}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                     >
-                      {row.name}
+                      {row.username}
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => onItemClick(row.name, row.id)}
+                      onClick={() => onItemClick(row.username, row.id)}
                     >
                       {row.created_at}
                     </TableCell>
@@ -503,8 +510,8 @@ const AdminTable = ({
 
 const ConfirmDialog = ({ open, handleClose, authToken, selected }) => {
 
-  const handleConfirmDownload = () => {
-    console.log(selected)
+  const handleConfirmDisable = () => {
+    store.dispatch(disableMod({authToken: authToken, username: selected[0].username}));
     handleClose();
   };
 
@@ -533,7 +540,7 @@ const ConfirmDialog = ({ open, handleClose, authToken, selected }) => {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                   <p>
-                    Disable {selected[0].name} ?
+                    Disable {selected[0].username} ?
                   </p>
                 </div>
                 {/*footer*/}
@@ -550,7 +557,7 @@ const ConfirmDialog = ({ open, handleClose, authToken, selected }) => {
                     className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
                     type="button"
                     style={{ transition: "all .15s ease" }}
-                    onClick={handleConfirmDownload}
+                    onClick={handleConfirmDisable}
                   >
                     Yes
                   </button>
@@ -576,6 +583,7 @@ const AdminManageBoard = ({ isLoading, adminList, authToken, ...props }) => {
   }
 
   useEffect(() => {
+    store.dispatch(getAdminList({authToken: authToken, limit: 5, offset: 0}))
     if (adminSelected === null) {
       return;
     } else {
@@ -584,7 +592,7 @@ const AdminManageBoard = ({ isLoading, adminList, authToken, ...props }) => {
 
   return (
     <AdminDrawer>
-      { isLoading ? <CircularProgress className="self-center" /> :
+      {/* { isLoading ? <CircularProgress className="self-center" /> : */}
         <AdminContainer
           items={adminList}
           onItemClick={(name, adminId) => handleSelectedAdmin(name, adminId)}
@@ -593,7 +601,7 @@ const AdminManageBoard = ({ isLoading, adminList, authToken, ...props }) => {
           isLoading={isLoading}
         >
         </AdminContainer>
-      }
+    {/* } */}
     </AdminDrawer>
   );
 };
@@ -602,7 +610,6 @@ const mapStateToProps = (state) => {
   const authToken = state.authen.authToken;
   const isLoading = state.adminManage.isLoading;
   const adminList = state.adminManage.adminList;
-  console.log(adminList)
   return { authToken, adminList, isLoading, }
 };
 
