@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authenSlice } from "./auth/auth"
+import { authenSlice } from "./auth/auth";
 import { signUpSlice } from "./user/signUp";
 import { uploadSlice } from "./storage/upload";
-import { downloadSlice } from "./storage/download"
+import { downloadSlice } from "./storage/download";
 import { bucketSlice } from "./storage/bucket";
-import { userManageSlice} from "./admin/user";
-import { adminManageSlice} from "./admin/admin";
-
+import { userManageSlice } from "./admin/user";
+import { adminManageSlice } from "./admin/admin";
+import { requestLogManageSlice } from "./admin/requestLog";
 const store = configureStore({
   reducer: {
     signUp: signUpSlice.reducer,
@@ -18,6 +18,7 @@ const store = configureStore({
 
     adminManage: adminManageSlice.reducer,
     userManage: userManageSlice.reducer,
+    requestLogManage: requestLogManageSlice.reducer,
   },
 });
 

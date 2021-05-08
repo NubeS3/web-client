@@ -103,7 +103,7 @@ const AdminDrawer = (props) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap onClick={() => { history.push(paths.DASHBOARD) }}>
+            <Typography variant="h6" noWrap onClick={() => { history.push(paths.BASE_ADMIN) }}>
               {/* {props.title} */}
               ADMIN
             </Typography>

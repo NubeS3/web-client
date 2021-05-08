@@ -23,6 +23,8 @@ const endpoints = {
   CREATE_SIGNED_KEY: `${BASE}/auth/keyPairs/`,
   DELETE_SIGNED_KEY: `${BASE}/auth/keyPairs`,
   GET_CHILDREN_BY_PATH: `${BASE}/auth/folders/child/all`,
+  GET_ACCESS_KEY_REQ_COUNT: `${BASE}/auth/accessKey/use-count/all/`,
+  GET_SIGNED_KEY_REQ_COUNT: `${BASE}/auth/keyPairs/use-count/all/`,
 
   LOGIN_ADMIN: `${BASE}/admin/signin`,
   GET_ALL_USER: `${BASE}/admin/auth/users-list`,
@@ -30,8 +32,11 @@ const endpoints = {
   ADD_MOD: `${BASE}/admin/auth/mod`,
   BAN_USER: `${BASE}/admin/auth/ban-user`,
   BAN_MOD: `${BASE}/admin/auth/disable-mod`,
-  GET_ACCESS_KEY_REQ_COUNT: `${BASE}/auth/accessKey/use-count/all/`,
-  GET_SIGNED_KEY_REQ_COUNT: `${BASE}/auth/keyPairs/use-count/all/`,
+  GET_AUTH_REQ_LOG: `${BASE}/admin/auth/req-log/auth`, //?limit=10&offset=0&from=0&to=1619958070&uid=1av3
+  GET_ACCESS_KEY_REQ_LOG: `${BASE}/admin/auth/req-log/accessKey`, //?limit=10&offset=0&from=0&to=1619958070&key=1av3
+  GET_SIGNED_KEY_REQ_LOG: `${BASE}/admin/auth/req-log/signed`, //?limit=10&offset=0&from=0&to=1619958070&public=1av3
+  GET_ACCESS_KEY_REQ_COUNT_ADMIN: `${BASE}/admin/auth/req-log/count/accessKey`,
+  GET_SIGNED_KEY_REQ_COUNT: `${BASE}/admin/auth/keyPairs/use-count/all/`,
 };
 
 export default endpoints;

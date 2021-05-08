@@ -23,6 +23,7 @@ import PageFrame from "../../components/PageFrame";
 import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
+import PageFrameAdmin from "../../components/PageFrameAdmin";
 
 const AdminLogin = (props) => {
   const [username, setUsername] = useState("");
@@ -60,7 +61,7 @@ const AdminLogin = (props) => {
   };
 
   return (
-    <PageFrame className="login-container">
+    <PageFrameAdmin className="login-container">
       <Card className="login-card">
         <CardHeader
         className="bg-light-blue"
@@ -148,7 +149,7 @@ const AdminLogin = (props) => {
           </div>
         </form>
       </Card>
-    </PageFrame>
+    </PageFrameAdmin>
   );
 };
 

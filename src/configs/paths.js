@@ -14,7 +14,6 @@ const paths = {
   DASHBOARD_ADMIN: "/admin/dashboard",
   USER_MANAGE: "/admin/manage-user",
   ADMIN_MANAGE: "/admin/manage-admin",
-
 };
 
 export default paths;

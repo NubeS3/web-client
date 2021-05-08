@@ -1,5 +1,5 @@
 import React from "react";
-import PageFrame from "../../components/PageFrame";
+import PageFrameAdmin from "../../components/PageFrameAdmin";
 import { connect } from "react-redux";
 
 import paths from "../../../configs/paths";
@@ -8,7 +8,7 @@ import { Typography } from "@material-ui/core";
 
 const AdminLanding = (props) => {
   return (
-    <PageFrame className="landing-container">
+    <PageFrameAdmin className="landing-container">
       <Typography variant="h3" className="">NubeS3 Cloud Storage</Typography>
       <Typography variant="h3" >Access your data anytime, anywhere</Typography>
       <button
@@ -17,14 +17,14 @@ const AdminLanding = (props) => {
           if (props.isValidAuthentication) {
             props.history.push(paths.DASHBOARD_ADMIN);
           } else {
-            props.history.push(paths.LOGIN);
+            props.history.push(paths.LOGIN_ADMIN);
           }
           // props.history.push(paths.DASHBOARD);
         }}
       >
         GO TO ADMIN CONSOLE
       </button>
-    </PageFrame>
+    </PageFrameAdmin>
   );
 };
 

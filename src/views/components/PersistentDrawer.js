@@ -13,7 +13,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import HomeIcon from "@material-ui/icons/Home";
 import StorageIcon from "@material-ui/icons/Storage";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { useTheme } from "@material-ui/core";
 import clsx from "clsx";
 import paths from "../../configs/paths"
@@ -103,7 +102,7 @@ const PersistentDrawer = (props) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap onClick={() => { history.push(paths.DASHBOARD) }}>
+            <Typography variant="h6" noWrap onClick={() => { history.push(paths.BASE) }}>
               {/* {props.title} */}
               Nubes3 Cloud
             </Typography>

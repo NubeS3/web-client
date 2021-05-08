@@ -5,6 +5,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import AdminDrawer from "../../components/AdminDrawer";
+import LogTable from "../../components/LogTable/LogTable";
 
 const AdminDashboard = (props) => {
   const [value, setValue] = React.useState(0);
@@ -19,12 +20,14 @@ const AdminDashboard = (props) => {
         position="static"
         style={{ backgroundColor: "white", color: "black" }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab className="focus:outline-none" label="Dashboard" {...a11yProps(0)} />
+          <Tab style={{ outline: 'none' }} className="outline-none" label="Monitor Request Log" {...a11yProps(0)} />
+          {/* <Tab style={{ outline: 'none' }} className="focus:outline-none" label="Access Key Log" {...a11yProps(1)} />
+          <Tab style={{ outline: 'none' }} className="focus:outline-none" label="Key Pairs Log" {...a11yProps(2)} /> */}
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        Dashboard
-        </TabPanel>
+        <LogTable/>
+      </TabPanel>
     </AdminDrawer>
   );
 };
@@ -36,8 +39,8 @@ function TabPanel(props) {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      id={`dashboard-tabpanel-${index}`}
+      aria-labelledby={`dashboard-tab-${index}`}
       {...other}
     >
       {value === index && (

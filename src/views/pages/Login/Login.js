@@ -168,9 +168,6 @@ const Login = (props) => {
           >
             Create new account
           </Link>
-          <Link style={{ color: "black", fontSize: "14px" }} onClick={redirectToAdminLogin}>
-              Sign in as admin
-            </Link>
         </form>
       </Card>
     </PageFrame>
