@@ -1,7 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import endpoints from "../../configs/endpoints";
-import { getAccessKeyReqCount, getSignedKey } from "../storage/bucket";
 
 const initialState = {
   isLoading: false,
@@ -43,7 +42,7 @@ export const getAuthLog = createAsyncThunk(
           method: element.method,
           req: element.req,
           source_ip: element.source_ip,
-          from: element.uid,
+          from: element.user_id,
         });
       });
 
@@ -121,13 +120,13 @@ export const getSignedKeyLog = createAsyncThunk(
   }
 );
 
-export const getAccessKeyReqCount = createAsyncThunk(
+export const getAccessKeyReqCountAdmin = createAsyncThunk(
   "adminManage/getAccessKeyReqCount",
   async (data, api) => {
     try {
       api.dispatch(requestLogManageSlice.actions.loading()); 
       const response = await axios.get(
-        endpoints.GET_ACCESS_KEY_REQ_COUNT +
+        endpoints.COUNT_ALL_ACCESS_KEY_REQ +
           `?limit=${data.limit}&offset=${data.offset}&from=${data.fromDate}&to=${data.toDate}&public=${data.key}`,
         {
           headers: {
@@ -143,13 +142,13 @@ export const getAccessKeyReqCount = createAsyncThunk(
   }
 );
 
-export const getSignedKeyReqCount = createAsyncThunk(
+export const getSignedKeyReqCountAdmin = createAsyncThunk(
   "adminManage/getSignedKeyReqCount",
   async (data, api) => {
     try {
       api.dispatch(requestLogManageSlice.actions.loading()); 
       const response = await axios.get(
-        endpoints.GET_SIGNED_KEY_REQ_COUNT +
+        endpoints.COUNT_ALL_SIGNED_KEY_REQ +
           `?limit=${data.limit}&offset=${data.offset}&from=${data.fromDate}&to=${data.toDate}&public=${data.public}`,
         {
           headers: {
@@ -208,33 +207,23 @@ export const requestLogManageSlice = createSlice({
       state.isLoading = false;
       state.err = action.payload;
     },
-    [getSignedKey.fulfilled]: (state, action) => {
-      state.requestLogList = action.payload;
-      state = { ...state, isLoading: false };
-      state.done = true;
-      state.err = null;
-    },
-    [getSignedKey.rejected]: (state, action) => {
-      state.isLoading = false;
-      state.err = action.payload;
-    },
-    [getAccessKeyReqCount.fulfilled]: (state, action) => {
+    [getAccessKeyReqCountAdmin.fulfilled]: (state, action) => {
       state.reqCount = action.payload;
       state = { ...state, isLoading: false };
       state.done = true;
       state.err = null;
     },
-    [getAccessKeyReqCount.rejected]: (state, action) => {
+    [getAccessKeyReqCountAdmin.rejected]: (state, action) => {
       state.isLoading = false;
       state.err = action.payload;
     },
-    [getSignedKeyReqCount.fulfilled]: (state, action) => {
+    [getSignedKeyReqCountAdmin.fulfilled]: (state, action) => {
       state.reqCount = action.payload;
       state = { ...state, isLoading: false };
       state.done = true;
       state.err = null;
     },
-    [getSignedKeyReqCount.rejected]: (state, action) => {
+    [getSignedKeyReqCountAdmin.rejected]: (state, action) => {
       state.isLoading = false;
       state.err = action.payload;
     },

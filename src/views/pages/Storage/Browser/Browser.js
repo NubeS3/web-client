@@ -23,41 +23,40 @@ import {
   CircularProgress,
   Link,
   Breadcrumbs,
-  FormGroup, FormLabel, FormControl
+  FormGroup,
+  FormLabel,
+  FormControl,
 } from "@material-ui/core";
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PublishIcon from "@material-ui/icons/Publish";
 import CreateNewFolderIcon from "@material-ui/icons/CreateNewFolder";
-import ShareIcon from "@material-ui/icons/Share";
 import EditIcon from "@material-ui/icons/Edit";
 import ArchiveIcon from "@material-ui/icons/Archive";
-import DescriptionIcon from '@material-ui/icons/Description';
-import FolderIcon from '@material-ui/icons/Folder';
+import DescriptionIcon from "@material-ui/icons/Description";
+import FolderIcon from "@material-ui/icons/Folder";
 import "./style.css";
 import { useTheme } from "@material-ui/core/styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import Dropzone from 'react-dropzone'
-import { connect } from "react-redux"
+import { connect } from "react-redux";
 import EditBucketContainer from "./BucketDetail";
 import store from "../../../../store/store";
-import { getAllBucket, createBucket, getBucketFiles, deleteBucket, getBucketFolders, createBucketFolder, getChildrenByPath } from "../../../../store/storage/bucket"
-import { uploadFile } from "../../../../store/storage/upload"
-import { downloadSingle } from "../../../../store/storage/download"
-import { Folder } from "@material-ui/icons";
-
-const createBucketData = (name, accessMode) => {
-  return { name, accessMode };
-};
-
-const createBucketItemData = (name, size, lastModified, accessMode) => {
-  return { name, size, lastModified, accessMode };
-};
+import {
+  getAllBucket,
+  createBucket,
+  getBucketFiles,
+  deleteBucket,
+  getBucketFolders,
+  createBucketFolder,
+  getChildrenByPath,
+} from "../../../../store/userStorage/bucket";
+import { uploadFile } from "../../../../store/userStorage/upload";
+import { downloadSingle } from "../../../../store/userStorage/download";
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -208,10 +207,11 @@ const BucketContainer = ({
   const handleDeleteBucket = () => {
     setItems(items.filter(() => selected));
     for (var i in selected) {
-
-      store.dispatch(deleteBucket({ authToken: authToken, bucketId: selected[i] }))
+      store.dispatch(
+        deleteBucket({ authToken: authToken, bucketId: selected[i] })
+      );
     }
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }))
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }));
     setSelected([]);
   };
 
@@ -240,9 +240,11 @@ const BucketContainer = ({
     </Menu>
   );
 
-  useEffect(_ => {
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 10, offset: 0 }));
-  }, [isBucketLoading])
+  useEffect((_) => {
+    store.dispatch(
+      getAllBucket({ authToken: authToken, limit: 10, offset: 0 })
+    );
+  }, []);
 
   return (
     <Paper
@@ -259,7 +261,12 @@ const BucketContainer = ({
         <Toolbar variant="dense">
           <h3 style={{ marginRight: "20px" }}>Bucket</h3>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />} onClick={() => setCreateButtonClick(true)}>Create bucket</Button>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={() => setCreateButtonClick(true)}
+            >
+              Create bucket
+            </Button>
             <Button
               startIcon={<DeleteIcon />}
               disabled={selected.length !== 0 ? false : true}
@@ -291,7 +298,11 @@ const BucketContainer = ({
         onItemClick={onItemClick}
       />
       {renderMenu}
-      <CreateBucket authToken={authToken} visibility={createButtonClicked} onBack={() => setCreateButtonClick(false)} />
+      <CreateBucket
+        authToken={authToken}
+        visibility={createButtonClicked}
+        onBack={() => setCreateButtonClick(false)}
+      />
       {props.children}
     </Paper>
   );
@@ -456,7 +467,7 @@ const BucketTable = ({
 
 const BucketItemsContainer = ({
   bucketName,
-  breadcrumbStack =[],
+  breadcrumbStack = [],
   setStack,
   children,
   files,
@@ -465,7 +476,7 @@ const BucketItemsContainer = ({
   onItemClick,
   authToken,
   bucketId,
-  isLoading
+  isLoading,
 }) => {
   // const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState([]);
@@ -480,7 +491,7 @@ const BucketItemsContainer = ({
   //const [breadcrumbStack, setBreadcrumbStack] = useState([]);
 
   const handleOpenDownload = () => {
-    if(selected.length > 0) {
+    if (selected.length > 0) {
       setOpenDownloadDialog(true);
     }
   };
@@ -489,33 +500,46 @@ const BucketItemsContainer = ({
     setOpenDownloadDialog(false);
   };
 
-  const fileInputRef = useRef(null)
+  const fileInputRef = useRef(null);
   const handleUploadFile = () => {
     fileInputRef.current.click();
-    //setStack(breadcrumbStack => [...breadcrumbStack, bucketName +  breadcrumbStack.length]) 
-  }
+    //setStack(breadcrumbStack => [...breadcrumbStack, bucketName +  breadcrumbStack.length])
+  };
 
   const handleFileSelected = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     let file = e.target.files;
-    var parent_path = ""
-    if(breadcrumbStack.length === 1) {
+    var parent_path = "";
+    if (breadcrumbStack.length === 1) {
       parent_path = "/";
     } else {
-      parent_path = "/" + breadcrumbStack.slice(1).join('/')
+      parent_path = "/" + breadcrumbStack.slice(1).join("/");
     }
-    console.log(parent_path)
-    store.dispatch(uploadFile({ authToken: authToken, file: file[0], bucketId: bucketId, full_path: parent_path}))
-  }
+    console.log(parent_path);
+    store.dispatch(
+      uploadFile({
+        authToken: authToken,
+        file: file[0],
+        bucketId: bucketId,
+        full_path: parent_path,
+      })
+    );
+  };
 
   const handleCreateFolder = () => {
-    store.dispatch(createBucketFolder({authToken: authToken, name: folderName, parent_path: "/" + breadcrumbStack.join('/')}))
-    setOpenCreateFolderDialog(false)
-  }
+    store.dispatch(
+      createBucketFolder({
+        authToken: authToken,
+        name: folderName,
+        parent_path: "/" + breadcrumbStack.join("/"),
+      })
+    );
+    setOpenCreateFolderDialog(false);
+  };
 
   const handleBreadcrumbStack = (link, index) => {
-    setStack(breadcrumbStack.slice(0, index + 1))
-  }
+    setStack(breadcrumbStack.slice(0, index + 1));
+  };
 
   const dropzoneRef = createRef();
   // const renderMenu = (
@@ -540,11 +564,25 @@ const BucketItemsContainer = ({
   //     </MenuItem>
   //   </Menu>
   // );
-  
-  useEffect(_ => {
-    store.dispatch(getBucketFiles({ authToken: authToken, limit: 5, offset: 0, bucketId: bucketId }))
-    store.dispatch(getBucketFolders({ authToken: authToken, limit: 5, offset: 0, bucketId: bucketId }))
-  }, [])
+
+  useEffect((_) => {
+    store.dispatch(
+      getBucketFiles({
+        authToken: authToken,
+        limit: 5,
+        offset: 0,
+        bucketId: bucketId,
+      })
+    );
+    store.dispatch(
+      getBucketFolders({
+        authToken: authToken,
+        limit: 5,
+        offset: 0,
+        bucketId: bucketId,
+      })
+    );
+  }, []);
 
   return (
     <Slide
@@ -564,15 +602,27 @@ const BucketItemsContainer = ({
             </IconButton>
             <h3 style={{ marginRight: "20px" }}>{bucketName}</h3>
             <div className="browser-appbar-button-group">
-              <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>Upload file</Button>
-              <Button startIcon={<CreateNewFolderIcon/>} onClick={() => setOpenCreateFolderDialog(true)}>Create folder</Button>
+              <Button startIcon={<PublishIcon />} onClick={handleUploadFile}>
+                Upload file
+              </Button>
+              <Button
+                startIcon={<CreateNewFolderIcon />}
+                onClick={() => setOpenCreateFolderDialog(true)}
+              >
+                Create folder
+              </Button>
               <Button startIcon={<GetAppIcon />} onClick={handleOpenDownload}>
                 Download
               </Button>
             </div>
             <div style={{ flexGrow: "1" }}></div>
             <div className="browser-appbar-button-group">
-              <Button startIcon={<EditIcon />} onClick={() => setShowEditBucket(true)}>Edit bucket</Button>
+              <Button
+                startIcon={<EditIcon />}
+                onClick={() => setShowEditBucket(true)}
+              >
+                Edit bucket
+              </Button>
             </div>
             {/* <div>
               <IconButton
@@ -599,11 +649,15 @@ const BucketItemsContainer = ({
         <div className="mt-5 mx-5">
           <Breadcrumbs>
             {breadcrumbStack.map((link, index) => {
-              return(<Link color="inherit" key={index}
-                      onClick={() => handleBreadcrumbStack(link, index)}
-                      >
-                      {link}
-                    </Link>)
+              return (
+                <Link
+                  color="inherit"
+                  key={index}
+                  onClick={() => handleBreadcrumbStack(link, index)}
+                >
+                  {link}
+                </Link>
+              );
             })}
           </Breadcrumbs>
         </div>
@@ -615,7 +669,13 @@ const BucketItemsContainer = ({
           items={children}
           onItemClick={onItemClick}
         />
-        <input type='file' id='fileInput' ref={fileInputRef} className="hidden" onChange={handleFileSelected}></input>
+        <input
+          type="file"
+          id="fileInput"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileSelected}
+        ></input>
         {/* </Dropzone> */}
 
         <ConfirmDownload
@@ -626,65 +686,70 @@ const BucketItemsContainer = ({
           bucketId={bucketId}
           breadcrumbStack={breadcrumbStack}
         />
-        <EditBucketContainer show={showEditBucket} title={bucketName} bucketId={bucketId} onBack={() => setShowEditBucket(false)} />
-        {
-                openCreateFolderDialog ? (
-                    <>
-                        <div
-                            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-                        >
-                            <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                                {/*content*/}
-                                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                                    {/*header*/}
-                                    <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                                        <h3 className="text-3xl font-semibold">
-                                            Create folder
-                                        </h3>
-                                        <button
-                                            className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                            onClick={() => setOpenCreateFolderDialog(false)}>
-                                            <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                                                ×
-                                            </span>
-                                        </button>
-                                    </div>
-                                    {/*body*/}
-                                    <div className="relative p-6 flex-auto">
-                                        <FormControl >
-                                            <FormLabel>Folder Name:</FormLabel>
-                                            <FormGroup>
-                                                <div className="">
-                                                    <TextField value={folderName} type="text" onChange={(e) => setFolderName(e.target.value)} ></TextField>
-                                                </div>
-                                            </FormGroup>
-                                        </FormControl>
-                                    </div>
-                                    {/*footer*/}
-                                    <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                                        <button
-                                            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
-                                            type="button"
-                                            style={{ transition: "all .15s ease" }}
-                                            onClick={() => setOpenCreateFolderDialog(false)}
-                                        >
-                                            Cancel
+        <EditBucketContainer
+          show={showEditBucket}
+          title={bucketName}
+          bucketId={bucketId}
+          onBack={() => setShowEditBucket(false)}
+        />
+        {openCreateFolderDialog ? (
+          <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+              <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                {/*content*/}
+                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                  {/*header*/}
+                  <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+                    <h3 className="text-3xl font-semibold">Create folder</h3>
+                    <button
+                      className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                      onClick={() => setOpenCreateFolderDialog(false)}
+                    >
+                      <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                        ×
+                      </span>
                     </button>
-                                        <button
-                                            className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                                            type="button"
-                                            style={{ transition: "all .15s ease" }}
-                                            onClick={handleCreateFolder}
-                                        >
-                                            Create
-                    </button>
-                                    </div>
-                                </div>
-                            </div>
+                  </div>
+                  {/*body*/}
+                  <div className="relative p-6 flex-auto">
+                    <FormControl>
+                      <FormLabel>Folder Name:</FormLabel>
+                      <FormGroup>
+                        <div className="">
+                          <TextField
+                            value={folderName}
+                            type="text"
+                            onChange={(e) => setFolderName(e.target.value)}
+                          ></TextField>
                         </div>
-                        <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-                    </>
-                ) : null}
+                      </FormGroup>
+                    </FormControl>
+                  </div>
+                  {/*footer*/}
+                  <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+                    <button
+                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1"
+                      type="button"
+                      style={{ transition: "all .15s ease" }}
+                      onClick={() => setOpenCreateFolderDialog(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                      type="button"
+                      style={{ transition: "all .15s ease" }}
+                      onClick={handleCreateFolder}
+                    >
+                      Create
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+          </>
+        ) : null}
         {/* {renderMenu} */}
       </Paper>
     </Slide>
@@ -703,13 +768,27 @@ const notification = () => {
   });
 };
 
-const ConfirmDownload = ({ open, handleClose, downloadList, authToken, bucketId, breadcrumbStack}) => {
-
+const ConfirmDownload = ({
+  open,
+  handleClose,
+  downloadList,
+  authToken,
+  bucketId,
+  breadcrumbStack,
+}) => {
   const handleConfirmDownload = () => {
     for (var i in downloadList) {
-
-      var full_path = `/${breadcrumbStack.join('/')}/${downloadList[i].name}`
-      console.log(store.dispatch(downloadSingle({ authToken: authToken, full_path: full_path, bucketId: bucketId, fileName: downloadList[i].name })))
+      var full_path = `/${breadcrumbStack.join("/")}/${downloadList[i].name}`;
+      console.log(
+        store.dispatch(
+          downloadSingle({
+            authToken: authToken,
+            full_path: full_path,
+            bucketId: bucketId,
+            fileName: downloadList[i].name,
+          })
+        )
+      );
     }
     handleClose();
     notification();
@@ -742,9 +821,11 @@ const ConfirmDownload = ({ open, handleClose, downloadList, authToken, bucketId,
                 <div className="relative p-6 flex-auto">
                   <ul>
                     {downloadList.map((file, index) => {
-                      return(<li key={index}>
-                        <ArchiveIcon /> {file.name}
-                      </li>)
+                      return (
+                        <li key={index}>
+                          <ArchiveIcon /> {file.name}
+                        </li>
+                      );
                     })}
                   </ul>
                 </div>
@@ -796,17 +877,17 @@ const BucketItemTable = ({
   };
 
   const findWithProperty = (arr, prop, value) => {
-    for(var i in arr) {
-      if(arr[i][prop] === value) {
+    for (var i in arr) {
+      if (arr[i][prop] === value) {
         return i;
       }
     }
     return -1;
-  }
+  };
 
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = items.map((n) => ({id: n.id, name: n.name}));
+      const newSelecteds = items.map((n) => ({ id: n.id, name: n.name }));
       setSelected(newSelecteds);
       return;
     }
@@ -887,26 +968,32 @@ const BucketItemTable = ({
                       padding="none"
                       onClick={() => onItemClick(row)}
                     >
-                      {row.type === "file" ? <DescriptionIcon color="action"/> : <FolderIcon color="action"/>} {row.name}
+                      {row.type === "file" ? (
+                        <DescriptionIcon color="action" />
+                      ) : (
+                        <FolderIcon color="action" />
+                      )}{" "}
+                      {row.name}
                     </TableCell>
-                    <TableCell
-                      align="left"
-                    >
-                      {row.size ? (row.size < 1024 ? (<>{row.size} byte</>) : 
-                        <>{row.size < Math.pow(1024, 2) ? (<>{Math.ceil(row.size/1024)} KB</>) : 
-                          (<>{Math.ceil(row.size/(Math.pow(1024, 2)))} MB</>)}</>) : ""
-                      } 
+                    <TableCell align="left">
+                      {row.size ? (
+                        row.size < 1024 ? (
+                          <>{row.size} byte</>
+                        ) : (
+                          <>
+                            {row.size < Math.pow(1024, 2) ? (
+                              <>{Math.ceil(row.size / 1024)} KB</>
+                            ) : (
+                              <>{Math.ceil(row.size / Math.pow(1024, 2))} MB</>
+                            )}
+                          </>
+                        )
+                      ) : (
+                        ""
+                      )}
                     </TableCell>
-                    <TableCell
-                      align="left"
-                    >
-                      {row.content_type }
-                    </TableCell>
-                    <TableCell
-                      align="left"
-                    >
-                      {row.expired_date}
-                    </TableCell>
+                    <TableCell align="left">{row.content_type}</TableCell>
+                    <TableCell align="left">{row.expired_date}</TableCell>
                     <TableCell align="right">
                       <IconButton>
                         <MoreIcon />
@@ -937,7 +1024,6 @@ const BucketItemTable = ({
 };
 
 const CreateBucket = ({ onBack, visibility, authToken }) => {
-
   const regions = [
     { name: "Afghanistan", code: "AF" },
     { name: "Åland Islands", code: "AX" },
@@ -992,7 +1078,7 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
     { name: "Congo, The Democratic Republic of the", code: "CD" },
     { name: "Cook Islands", code: "CK" },
     { name: "Costa Rica", code: "CR" },
-    { name: "Cote D\"Ivoire", code: "CI" },
+    { name: 'Cote D"Ivoire', code: "CI" },
     { name: "Croatia", code: "HR" },
     { name: "Cuba", code: "CU" },
     { name: "Cyprus", code: "CY" },
@@ -1182,35 +1268,64 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
     { name: "Western Sahara", code: "EH" },
     { name: "Yemen", code: "YE" },
     { name: "Zambia", code: "ZM" },
-    { name: "Zimbabwe", code: "ZW" }
-  ]
+    { name: "Zimbabwe", code: "ZW" },
+  ];
 
-  const [selectedRegion, setRegion] = useState()
-  const [bucketName, setBucketName] = useState("")
+  const [selectedRegion, setRegion] = useState();
+  const [bucketName, setBucketName] = useState("");
   const handleCreateBucket = () => {
-    store.dispatch(createBucket({ authToken: authToken, name: bucketName, region: selectedRegion }));
+    store.dispatch(
+      createBucket({
+        authToken: authToken,
+        name: bucketName,
+        region: selectedRegion,
+      })
+    );
     onBack(null);
-  }
+  };
 
   return (
-    <Slide
-      in={visibility}
-      direction="left"
-      mountOnEnter
-      unmountOnExit
-    >
+    <Slide in={visibility} direction="left" mountOnEnter unmountOnExit>
       <Paper style={{ position: "absolute", width: "inherit", top: "0" }}>
         <div>
           <Toolbar variant="dense">
             <IconButton onClick={() => onBack(null)}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography style={{ fontWeight: "bold" }}>Create a bucket</Typography>
+            <Typography style={{ fontWeight: "bold" }}>
+              Create a bucket
+            </Typography>
           </Toolbar>
           <div style={{ marginLeft: "50px" }}>
-            <InputLabel className="my-2"><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }}>Name</Typography> (must be unique across storage)</InputLabel>
-            <TextField value={bucketName} onChange={(e) => setBucketName(e.target.value)} variant="outlined" style={{ width: 650, backgroundColor: "#FFF" }} />
-            <InputLabel className="my-2"><Typography style={{ fontWeight: "bold", color: 'black', display: 'inline-block' }} >Region</Typography></InputLabel>
+            <InputLabel className="my-2">
+              <Typography
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  display: "inline-block",
+                }}
+              >
+                Name
+              </Typography>{" "}
+              (must be unique across storage)
+            </InputLabel>
+            <TextField
+              value={bucketName}
+              onChange={(e) => setBucketName(e.target.value)}
+              variant="outlined"
+              style={{ width: 650, backgroundColor: "#FFF" }}
+            />
+            <InputLabel className="my-2">
+              <Typography
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  display: "inline-block",
+                }}
+              >
+                Region
+              </Typography>
+            </InputLabel>
             <Autocomplete
               id="region-select-"
               style={{ width: 650 }}
@@ -1230,42 +1345,78 @@ const CreateBucket = ({ onBack, visibility, authToken }) => {
                 />
               )}
             />
-            <div style={{ marginTop: "50px", marginBottom: "15px" }} className="flex">
-              <Button onClick={handleCreateBucket}
-                style={{ color: "#FFF", backgroundColor: "#006DB3", marginRight: "80px" }}>Create</Button>
-              <Button className="flex-end" onClick={() => onBack(null)}>Cancel</Button>
+            <div
+              style={{ marginTop: "50px", marginBottom: "15px" }}
+              className="flex"
+            >
+              <Button
+                onClick={handleCreateBucket}
+                style={{
+                  color: "#FFF",
+                  backgroundColor: "#006DB3",
+                  marginRight: "80px",
+                }}
+              >
+                Create
+              </Button>
+              <Button className="flex-end" onClick={() => onBack(null)}>
+                Cancel
+              </Button>
             </div>
           </div>
         </div>
       </Paper>
-    </Slide >
-  )
-}
+    </Slide>
+  );
+};
 
-const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucketFolderList, folderChildrenList, ...props }) => {
+const Browser = ({
+  isBucketLoading,
+  bucketList,
+  authToken,
+  bucketFileList,
+  bucketFolderList,
+  folderChildrenList,
+  ...props
+}) => {
   const [bucketItems, setBucketItems] = useState(bucketFileList);
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
   const [bucketSelected, setBucketSelected] = useState(null);
-  const [bucketName, setBucketName] = useState()
-  const [breadcrumbStack, setBreadcrumbStack] = useState([])
+  const [bucketName, setBucketName] = useState();
+  const [breadcrumbStack, setBreadcrumbStack] = useState([]);
 
   const handleSelectedBucket = (name, bucketId) => {
     setBucketSelected(bucketId);
-    setBucketName(name)
-    setBreadcrumbStack(breadcrumbStack => [...breadcrumbStack, name])
-    store.dispatch(getBucketFiles({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
-    store.dispatch(getBucketFolders({ authToken: authToken, limit: 10, offset: 0, bucketId: bucketId }))
-    store.dispatch(getChildrenByPath({authToken: authToken, full_path: "/" + name}))
-  }
+    setBucketName(name);
+    setBreadcrumbStack((breadcrumbStack) => [...breadcrumbStack, name]);
+    store.dispatch(
+      getBucketFiles({
+        authToken: authToken,
+        limit: 10,
+        offset: 0,
+        bucketId: bucketId,
+      })
+    );
+    store.dispatch(
+      getBucketFolders({
+        authToken: authToken,
+        limit: 10,
+        offset: 0,
+        bucketId: bucketId,
+      })
+    );
+    store.dispatch(
+      getChildrenByPath({ authToken: authToken, full_path: "/" + name })
+    );
+  };
 
   const handleOnBucketItemClick = (row) => {
-    if(row.type === "folder") {
-      setBreadcrumbStack(breadcrumbStack => [...breadcrumbStack, row.name])
+    if (row.type === "folder") {
+      setBreadcrumbStack((breadcrumbStack) => [...breadcrumbStack, row.name]);
     }
-
-  }
+  };
   useEffect(() => {
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }))
+    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }));
 
     if (bucketSelected === null) {
       return;
@@ -1274,11 +1425,19 @@ const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucke
   }, []);
 
   useEffect(() => {
-    store.dispatch(getChildrenByPath({authToken: authToken, full_path: "/" + breadcrumbStack.join('/')}))
+    store.dispatch(
+      getChildrenByPath({
+        authToken: authToken,
+        full_path: "/" + breadcrumbStack.join("/"),
+      })
+    );
   }, [breadcrumbStack]);
+
   return (
     <>
-      { isBucketLoading ? <CircularProgress className="self-center" /> :
+      {isBucketLoading ? (
+        <CircularProgress className="self-center" />
+      ) : (
         <BucketContainer
           items={bucketList}
           onItemClick={(name, bucketId) => handleSelectedBucket(name, bucketId)}
@@ -1294,14 +1453,17 @@ const Browser = ({ isBucketLoading, bucketList, authToken, bucketFileList, bucke
             setStack={setBreadcrumbStack}
             folders={bucketFolderList}
             setItems={setBucketItems}
-            onBack={() => {setBucketSelected(null); setBreadcrumbStack([])}}
+            onBack={() => {
+              setBucketSelected(null);
+              setBreadcrumbStack([]);
+            }}
             onItemClick={(row) => handleOnBucketItemClick(row)}
             bucketId={bucketSelected}
             authToken={authToken}
             isLoading={isBucketLoading}
           />
         </BucketContainer>
-      }
+      )}
     </>
   );
 };
@@ -1313,7 +1475,14 @@ const mapStateToProps = (state) => {
   const bucketFileList = state.bucket.bucketFileList;
   const bucketFolderList = state.bucket.bucketFolderList;
   const folderChildrenList = state.bucket.folderChildrenList;
-  return { authToken, bucketList, bucketFileList, bucketFolderList, isBucketLoading, folderChildrenList }
+  return {
+    authToken,
+    bucketList,
+    bucketFileList,
+    bucketFolderList,
+    isBucketLoading,
+    folderChildrenList,
+  };
 };
 
 export default connect(mapStateToProps)(Browser);

@@ -30,7 +30,7 @@ import {
 import "./style.css";
 import { connect } from "react-redux";
 import store from "../../../store/store";
-import { getAccessKeyLog, getAccessKeyReqCount, getAuthLog, getSignedKeyLog, getSignedKeyReqCount, resetLog } from "../../../store/admin/requestLog";
+import { getAccessKeyLog, getAccessKeyReqCountAdmin, getAuthLog, getSignedKeyLog, getSignedKeyReqCountAdmin, resetLog } from "../../../store/admin/requestLog";
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -270,11 +270,11 @@ const LogContainer = ({
           break;
         case "signed":
           store.dispatch(getSignedKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
-          store.dispatch(getAccessKeyReqCount({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
+          store.dispatch(getSignedKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
           break;
         case "access":
           store.dispatch(getAccessKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
-          store.dispatch(getSignedKeyReqCount({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
+          store.dispatch(getAccessKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
       }
   }
   
@@ -373,7 +373,6 @@ const LogContainer = ({
           <div className="browser-appbar-button-group">
             <Button startIcon={<AddIcon />} onClick={handleLogRequest}>Log request</Button>
           </div>
-          <div style={{ flexGrow: "1" }}></div>
           <div className="browser-appbar-mobile-menu">
             <IconButton
               aria-label="show more"
