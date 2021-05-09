@@ -40,8 +40,15 @@ import {
   createSignedKey,
   getBucketAccessKey,
   getSignedKey,
+  deleteBucketKey,
+  deleteSignedKey,
 } from "../../../../store/userStorage/bucket";
-import {countAllAccessKeyReq, countAllSignedKeyReq, countDateAccessKeyReq, countDateSignedKeyReq} from '../../../../store/userStorage/bucketKey'
+import {
+  countAllAccessKeyReq,
+  countAllSignedKeyReq,
+  countDateAccessKeyReq,
+  countDateSignedKeyReq,
+} from "../../../../store/userStorage/bucketKey";
 import { DateTime } from "luxon";
 
 const accessKeyHeadCells = [
@@ -454,9 +461,21 @@ const AccessKeyTable = ({
     setOrderBy(property);
   };
 
+  const handleDeleteAccessKey = () => {
+    selected.forEach((element) => {
+      store.dispatch(
+        deleteBucketKey({
+          authToken: authToken,
+          bucketId: bucketId,
+          accessKey: element,
+        })
+      );
+    });
+  };
+
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = items.map((n, index) => index);
+      const newSelecteds = items.map((n) => n.key);
       setSelected(newSelecteds);
       return;
     }
@@ -720,7 +739,12 @@ const AccessKeyTable = ({
                 >
                   Create access key
                 </Button>
-                <Button startIcon={<DeleteIcon />}>Delete</Button>
+                <Button
+                  startIcon={<DeleteIcon />}
+                  onClick={handleDeleteAccessKey}
+                >
+                  Delete
+                </Button>
               </div>
               {/* <div className="flex">
                             <IconButton
@@ -749,7 +773,7 @@ const AccessKeyTable = ({
               {stableSort(items, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(index);
+                  const isItemSelected = isSelected(row.key);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -759,12 +783,11 @@ const AccessKeyTable = ({
                       tabIndex={-1}
                       key={index}
                       selected={isItemSelected}
-                      onClick={() => handleKeyClick(row.key)}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(e) => handleItemCheckboxClick(e, index)}
+                          onChange={(e) => handleItemCheckboxClick(e, row.key)}
                           inputProps={{ "aria-labelledby": labelId }}
                         />
                       </TableCell>
@@ -773,6 +796,7 @@ const AccessKeyTable = ({
                         id={labelId}
                         scope="row"
                         padding="none"
+                        onClick={() => handleKeyClick(row.key)}
                       >
                         {index}
                       </TableCell>
@@ -830,7 +854,17 @@ const SignedKeyTable = ({
   const handleOpenStatsDialog = () => {
     setOpenStatsDialog(false);
   };
-
+  const handleDeleteSignedKey = () => {
+    selected.forEach((element) => {
+      store.dispatch(
+        deleteSignedKey({
+          authToken: authToken,
+          bucketId: bucketId,
+          publicKey: element,
+        })
+      );
+    });
+  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -839,7 +873,7 @@ const SignedKeyTable = ({
 
   const handleSelectAllClick = (e) => {
     if (e.target.checked) {
-      const newSelecteds = items.map((n, index) => index);
+      const newSelecteds = items.map((n) => n.public);
       setSelected(newSelecteds);
       return;
     }
@@ -862,6 +896,7 @@ const SignedKeyTable = ({
 
   const handleItemCheckboxClick = (event, index) => {
     const selectedIndex = selected.indexOf(index);
+    console.log(selected)
     let newSelected = [];
 
     if (selectedIndex === -1) {
@@ -1102,7 +1137,12 @@ const SignedKeyTable = ({
                 >
                   Create key pairs
                 </Button>
-                <Button startIcon={<DeleteIcon />}>Delete</Button>
+                <Button
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleDeleteSignedKey(selected)}
+                >
+                  Delete
+                </Button>
               </div>
               {/* <div className="flex">
                             <IconButton
@@ -1131,7 +1171,7 @@ const SignedKeyTable = ({
               {stableSort(items, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(index);
+                  const isItemSelected = isSelected(row.public);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -1141,12 +1181,13 @@ const SignedKeyTable = ({
                       tabIndex={-1}
                       key={index}
                       selected={isItemSelected}
-                      onClick={() => handleKeyClick(row.public)}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
-                          onChange={(e) => handleItemCheckboxClick(e, index)}
+                          onChange={(e) =>
+                            handleItemCheckboxClick(e, row.public)
+                          }
                           inputProps={{ "aria-labelledby": labelId }}
                         />
                       </TableCell>
@@ -1155,6 +1196,7 @@ const SignedKeyTable = ({
                         id={labelId}
                         scope="row"
                         padding="none"
+                        onClick={() => handleKeyClick(row.public)}
                       >
                         {index}
                       </TableCell>
@@ -1201,7 +1243,7 @@ const mapStateToProps = (state) => {
   const isLoading = state.bucket.isBucketLoading;
   const reqCount = state.bucket.reqCount;
   console.log(accessKeyList);
-
+  console.log(signedKeyList);
   return {
     authToken,
     isLoading,

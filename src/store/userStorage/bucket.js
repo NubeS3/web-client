@@ -77,7 +77,7 @@ export const deleteBucket = createAsyncThunk(
           },
         }
       );
-
+      response.data.id = await data.bucketId;
       return response.data;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
@@ -214,8 +214,13 @@ export const createBucketKey = createAsyncThunk(
           },
         }
       );
-
-      return response.data;
+      const responseData = await {
+        key: response.data,
+        bucket_id: data.bucketId,
+        expired_date: data.expiringDate,
+        permissions: data.permissions,
+      };
+      return responseData;
     } catch (error) {
       return api.rejectWithValue(error.response.data.error);
     }
@@ -229,15 +234,17 @@ export const deleteBucketKey = createAsyncThunk(
     try {
       api.dispatch(bucketSlice.actions.loading());
       const response = await axios.delete(
-        endpoints.DELETE_ACCESS_KEY + `${data.bucketId}/${data.accessKey}`,
+        endpoints.DELETE_ACCESS_KEY + `/${data.bucketId}/${data.accessKey}`,
         {
           headers: {
             Authorization: `Bearer ${data.authToken}`,
           },
         }
       );
-      console.log(response.data);
-      return response.data;
+      const responseData = await {
+        key: response.data,
+      };
+      return responseData;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
@@ -284,7 +291,14 @@ export const createSignedKey = createAsyncThunk(
           },
         }
       );
-
+      response.data = {
+        ...response.data,
+        ...{
+          bucket_id: data.bucketId,
+          expired_date: data.expiringDate,
+          permissions: data.permissions,
+        },
+      };
       return response.data;
     } catch (error) {
       return api.rejectWithValue(error.response.data.error);
@@ -306,14 +320,15 @@ export const deleteSignedKey = createAsyncThunk(
           },
         }
       );
-      console.log(response.data);
-      return response.data;
+      const responseData = await {
+        public: response.data,
+      };
+      return responseData;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
   }
 );
-
 
 export const bucketSlice = createSlice({
   name: "bucket",
@@ -329,12 +344,7 @@ export const bucketSlice = createSlice({
 
   extraReducers: {
     [getAllBucket.fulfilled]: (state, action) => {
-      let newBucketList = [...state.bucketList];
-      newBucketList = action.payload;
-      state.bucketList = newBucketList;
-      // state.bucketList = action.payload;
-      //console.log(state.bucketList
-      //state.bucketList = newBucketList;
+      state.bucketList = action.payload;
       state.isLoading = false;
     },
     [getAllBucket.rejected]: (state, action) => {
@@ -342,7 +352,7 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [createBucket.fulfilled]: (state, action) => {
-      state.bucketList = [...state.bucketList, ...action.payload];
+      state.bucketList = [...state.bucketList, action.payload];
       state.isLoading = false;
     },
     [createBucket.rejected]: (state, action) => {
@@ -350,6 +360,9 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [deleteBucket.fulfilled]: (state, action) => {
+      state.bucketList = state.bucketList.filter(
+        (bucket) => bucket.id !== action.payload.id
+      );
       state.loading = false;
     },
     [deleteBucket.rejected]: (state, action) => {
@@ -375,7 +388,7 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [createBucketFolder.fulfilled]: (state, action) => {
-      state.bucketFolderList = [...state.bucketFolderList, ...action.payload];
+      state.bucketFolderList = [...state.bucketFolderList, action.payload];
       state.isLoading = false;
     },
     [createBucketFolder.rejected]: (state, action) => {
@@ -401,7 +414,8 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [createBucketKey.fulfilled]: (state, action) => {
-      state.accessKeyList = [...state.accessKeyList, ...action.payload];
+      console.log(action.payload)
+      state.accessKeyList = [...state.accessKeyList, action.payload];
       state.isLoading = false;
     },
     [createBucketKey.rejected]: (state, action) => {
@@ -409,6 +423,9 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [deleteBucketKey.fulfilled]: (state, action) => {
+      state.accessKeyList = state.accessKeyList.filter(
+        (accessKey) => accessKey.key !== action.payload.key
+      );
       state.loading = false;
     },
     [deleteBucketKey.rejected]: (state, action) => {
@@ -426,7 +443,7 @@ export const bucketSlice = createSlice({
     },
 
     [createSignedKey.fulfilled]: (state, action) => {
-      state.signedKeyList = [...state.signedKeyList, ...action.payload];
+      state.signedKeyList = [...state.signedKeyList, action.payload];
       state.isLoading = false;
     },
     [createSignedKey.rejected]: (state, action) => {
@@ -434,6 +451,9 @@ export const bucketSlice = createSlice({
       state.err = action.payload;
     },
     [deleteSignedKey.fulfilled]: (state, action) => {
+      state.signedKeyList = state.signedKeyList.filter(
+        (publicKey) => publicKey.public !== action.payload.public
+      );
       state.loading = false;
     },
     [deleteSignedKey.rejected]: (state, action) => {

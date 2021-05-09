@@ -205,7 +205,6 @@ const BucketContainer = ({
   const [createButtonClicked, setCreateButtonClick] = useState(false);
 
   const handleDeleteBucket = () => {
-    setItems(items.filter(() => selected));
     for (var i in selected) {
       store.dispatch(
         deleteBucket({ authToken: authToken, bucketId: selected[i] })
@@ -242,7 +241,7 @@ const BucketContainer = ({
 
   useEffect((_) => {
     store.dispatch(
-      getAllBucket({ authToken: authToken, limit: 10, offset: 0 })
+      getAllBucket({ authToken: authToken, limit: 5, offset: 0 })
     );
   }, []);
 
@@ -1416,8 +1415,6 @@ const Browser = ({
     }
   };
   useEffect(() => {
-    store.dispatch(getAllBucket({ authToken: authToken, limit: 5, offset: 0 }));
-
     if (bucketSelected === null) {
       return;
     } else {
