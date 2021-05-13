@@ -269,12 +269,13 @@ const LogContainer = ({
           store.dispatch(getAuthLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), uid: requestBy}));
           break;
         case "signed":
-          store.dispatch(getSignedKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
-          store.dispatch(getSignedKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
+          console.log(requestBy)
+          store.dispatch(getSignedKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
+          store.dispatch(getSignedKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
           break;
         case "access":
-          store.dispatch(getAccessKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
-          store.dispatch(getAccessKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
+          store.dispatch(getAccessKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
+          store.dispatch(getAccessKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
       }
   }
   
@@ -288,12 +289,12 @@ const LogContainer = ({
           break;
         case "signed":
           setHeadCells(signedLogHeadCells);
-          setInputLabel("Access Key:");
+          setInputLabel("Public Key:");
           store.dispatch(resetLog());
           break;
         case "access":
           setHeadCells(accessLogHeadCells);
-          setInputLabel("Public Key:");
+          setInputLabel("Access Key:");
           store.dispatch(resetLog());
       }
     },
@@ -336,9 +337,9 @@ const LogContainer = ({
                 <div className="pt-2">
                   <TextField
                     label={inputLabel}
-                    id="requestedBy-input" 
+                    id={"requestedBy-input"+ logType}
                     defaultValue={requestBy} size="small"
-                    onChange={(e) => setRequestBy(e.target.value)}
+                    onChange={(e) => {setRequestBy(e.target.value); console.log(requestBy)}}
                   />
                 </div>
                 <KeyboardDatePicker

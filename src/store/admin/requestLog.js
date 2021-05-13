@@ -58,6 +58,7 @@ export const getAccessKeyLog = createAsyncThunk(
   async (data, api) => {
     try {
       api.dispatch(requestLogManageSlice.actions.loading());
+      console.log(data.key)
       const response = await axios.get(
         endpoints.GET_ACCESS_KEY_REQ_LOG +
           `?limit=${data.limit}&offset=${data.offset}&from=${data.fromDate}&to=${data.toDate}&key=${data.key}`,
