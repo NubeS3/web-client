@@ -1,6 +1,7 @@
 import validator from "validator";
 
-const preValidateRegisterData = (data = { username: "", password: "" }) => {
+const preValidateRegisterData = (data={username:"", password:"",}) => {
+  
   if (!/^(\d+|\w+)$/.test(data.username)) {
     return "Invalid username";
   }

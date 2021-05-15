@@ -47,7 +47,7 @@ const Login = (props) => {
     }
     setError("");
     store.dispatch(login({ username: username, password: password }));
-    store.dispatch(clearAuthentication());
+    store.dispatch(clearAuthentication()  );
     props.history.push(from.pathname);
   };
 
