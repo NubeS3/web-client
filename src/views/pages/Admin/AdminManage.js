@@ -607,7 +607,7 @@ const AdminManageBoard = ({ isLoading, adminList, authToken, ...props }) => {
 };
 
 const mapStateToProps = (state) => {
-  const authToken = state.authen.authToken;
+  const authToken = state.adminAuthen.adminToken;
   const isLoading = state.adminManage.isLoading;
   const adminList = state.adminManage.adminList;
   return { authToken, adminList, isLoading, }

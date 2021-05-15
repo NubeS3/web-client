@@ -896,7 +896,7 @@ const SignedKeyTable = ({
 
   const handleItemCheckboxClick = (event, index) => {
     const selectedIndex = selected.indexOf(index);
-    console.log(selected)
+    console.log(selected);
     let newSelected = [];
 
     if (selectedIndex === -1) {

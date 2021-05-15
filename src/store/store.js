@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { authenSlice } from "./auth/auth";
+import { adminAuthenSlice } from "./auth/admin_auth";
 import { signUpSlice } from "./user/signUp";
 import { uploadSlice } from "./userStorage/upload";
 import { downloadSlice } from "./userStorage/download";
@@ -13,6 +14,7 @@ const store = configureStore({
   reducer: {
     signUp: signUpSlice.reducer,
     authen: authenSlice.reducer,
+    adminAuthen: adminAuthenSlice.reducer,
 
     upload: uploadSlice.reducer,
     download: downloadSlice.reducer,

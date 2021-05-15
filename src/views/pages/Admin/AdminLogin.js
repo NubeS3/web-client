@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-import respType from "../../../configs/responseType";
 import paths from "../../../configs/paths";
 import preValidateLoginData from "../../../helpers/preValidateLoginData";
 
 import store from "../../../store/store";
-import { adminLogin } from "../../../store/auth/auth";
+import { adminLogin } from "../../../store/auth/admin_auth";
 
 import {
   Button,
@@ -19,11 +18,11 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core";
-import PageFrame from "../../components/PageFrame";
 import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
 import PageFrameAdmin from "../../components/PageFrameAdmin";
+import { clearAuthentication } from "../../../store/auth/auth";
 
 const AdminLogin = (props) => {
   const [username, setUsername] = useState("");
@@ -32,7 +31,7 @@ const AdminLogin = (props) => {
   const [isVisiblePass, setVisiblePass] = useState(false);
   const [error, setError] = useState();
 
-  const { from } = props.location.state || { from: { pathname: paths.BASE } };
+  const { from } = props.location.state || { from: { pathname: paths.BASE_ADMIN } };
 
   if (props.isValidAuthentication) {
     return <Redirect to={from.pathname} />;
@@ -47,8 +46,9 @@ const AdminLogin = (props) => {
     }
 
     setError("");
-    console.log(store.dispatch(adminLogin({ username: username, password: password })));
-    
+    console.log(adminLogin)
+    store.dispatch(adminLogin({ username: username, password: password }));
+    store.dispatch(clearAuthentication())
     props.history.push(paths.BASE_ADMIN);
   };
 
@@ -134,7 +134,7 @@ const AdminLogin = (props) => {
             <Button
               variant="outlined"
               className="login-buttons"
-              onClick={() => props.history.push(paths.BASE)}
+              onClick={() => props.history.push(paths.BASE_ADMIN)}
             >
               BACK
             </Button>
@@ -154,7 +154,7 @@ const AdminLogin = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authen.isValidAuthentication,
+  isValidAuthentication: state.adminAuthen.isAdminValidAuthentication,
 });
 
 export default connect(mapStateToProps)(AdminLogin);

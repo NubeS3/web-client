@@ -6,6 +6,7 @@ import localStorageKeys from "../../configs/localStorageKeys";
 const initialState = {
   isValidating: false,
   isValidAuthentication: false,
+  isAdmin: false,
   authToken: localStorage.getItem(localStorageKeys.TOKEN) || null,
   rfToken: null,
   isLoggingIn: false,
@@ -13,8 +14,6 @@ const initialState = {
 };
 
 export const login = createAsyncThunk("authen/login", async (data, api) => {
-  // if (data) return data;
-  // else return api.rejectWithValue(data);
   try {
     api.dispatch(authenSlice.actions.loggingIn());
     const response = await axios.post(endpoints.LOGIN, {
@@ -27,26 +26,9 @@ export const login = createAsyncThunk("authen/login", async (data, api) => {
   }
 });
 
-export const adminLogin = createAsyncThunk("authen/adminLogin", async (data, api) => {
-  // if (data) return data;
-  // else return api.rejectWithValue(data);
-  try {
-    api.dispatch(authenSlice.actions.loggingIn());
-    const response = await axios.post(endpoints.LOGIN_ADMIN, {
-      username: data.username,
-      password: data.password,
-    });
-    return response.data;
-  } catch (err) {
-    return api.rejectWithValue(err.response.data.error);
-  }
-});
-
 export const verifyAuthentication = createAsyncThunk(
   "authen/verifyAuthentication",
   async (data, api) => {
-    // if (data.authToken) return { authToken: "1234asdf", rfToken: "1234asdf" };
-    // else return api.rejectWithValue(null);
     try {
       api.dispatch(authenSlice.actions.validating());
       // const response = await axios.post(endpoints.AUTHENTICATION, undefined, {
@@ -103,6 +85,7 @@ export const authenSlice = createSlice({
     [login.fulfilled]: (state, action) => {
       localStorage.setItem(localStorageKeys.TOKEN, action.payload.accessToken);
       localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.refreshToken);
+      state.isAdmin = false;
       state.isValidating = false;
       state.isValidAuthentication = true;
       state.isLoggingIn = false;
@@ -115,24 +98,7 @@ export const authenSlice = createSlice({
       state.isLoggingIn = false;
       state.err = action.payload;
     },
-    [adminLogin.fulfilled]: (state, action) => {
-      localStorage.setItem(localStorageKeys.TOKEN, action.payload.accessToken);
-      localStorage.setItem(localStorageKeys.RFTOKEN, action.payload.refreshToken);
-      state.isValidating = false;
-      state.isValidAuthentication = true;
-      state.isLoggingIn = false;
-      state.authToken = action.payload.accessToken;
-      state.rfToken = action.payload.refreshToken;
-      state.err = null;
-    },
-    [adminLogin.rejected]: (state, action) => {
-      console.log(action.payload)
-      state.isLoggingIn = false;
-      state.err = action.payload;
-    },
     [verifyAuthentication.fulfilled]: (state, action) => {
-      // localStorage.setItem(localStorageKeys.TOKEN, "1234asdf");
-      // localStorage.setItem(localStorageKeys.RFTOKEN, "1234asdf");
       state.isValidating = false;
       state.isValidAuthentication = action.payload;
       // state.authToken = "1234asdf";
@@ -142,6 +108,7 @@ export const authenSlice = createSlice({
     [verifyAuthentication.rejected]: (state, action) => {
       localStorage.removeItem(localStorageKeys.TOKEN);
       localStorage.removeItem(localStorageKeys.RFTOKEN);
+      state.isAdmin = false;
       state.isValidating = false;
       state.isValidAuthentication = false;
       state.authToken = null;
@@ -151,6 +118,7 @@ export const authenSlice = createSlice({
     [clearAuthentication.fulfilled]: (state, action) => {
       localStorage.removeItem(localStorageKeys.TOKEN);
       localStorage.removeItem(localStorageKeys.RFTOKEN);
+      state.isAdmin = false;
       state.isValidating = false;
       state.isValidAuthentication = false;
       state.authToken = null;
@@ -160,6 +128,7 @@ export const authenSlice = createSlice({
     [clearAuthentication.rejected]: (state, action) => {
       localStorage.removeItem(localStorageKeys.TOKEN);
       localStorage.removeItem(localStorageKeys.RFTOKEN);
+      state.isAdmin = false;
       state.isValidating = false;
       state.isValidAuthentication = false;
       state.authToken = null;

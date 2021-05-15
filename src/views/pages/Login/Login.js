@@ -23,6 +23,7 @@ import PageFrame from "../../components/PageFrame";
 import TextField from "../../components/Textfield";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import "./style.css";
+import { clearAuthentication } from "../../../store/auth/admin_auth";
 
 const Login = (props) => {
   const [username, setUsername] = useState("");
@@ -44,10 +45,9 @@ const Login = (props) => {
     if (error) {
       return setError(error);
     }
-
     setError("");
-    console.log(store.dispatch(login({ username: username, password: password })));
-    
+    store.dispatch(login({ username: username, password: password }));
+    store.dispatch(clearAuthentication());
     props.history.push(from.pathname);
   };
 
@@ -71,12 +71,12 @@ const Login = (props) => {
   const redirectToAdminLogin = (event) => {
     event.preventDefault();
     props.history.push(paths.LOGIN_ADMIN);
-  }
+  };
   return (
     <PageFrame className="login-container">
       <Card className="login-card">
         <CardHeader
-        className="bg-light-blue"
+          className="bg-light-blue"
           style={{
             textAlign: "center",
             width: "100%",

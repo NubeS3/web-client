@@ -30,7 +30,14 @@ import {
 import "./style.css";
 import { connect } from "react-redux";
 import store from "../../../store/store";
-import { getAccessKeyLog, getAccessKeyReqCountAdmin, getAuthLog, getSignedKeyLog, getSignedKeyReqCountAdmin, resetLog } from "../../../store/admin/requestLog";
+import {
+  getAccessKeyLog,
+  getAccessKeyReqCountAdmin,
+  getAuthLog,
+  getSignedKeyLog,
+  getSignedKeyReqCountAdmin,
+  resetLog,
+} from "../../../store/admin/requestLog";
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -265,20 +272,65 @@ const LogContainer = ({
 
   const handleLogRequest = () => {
     switch (logType) {
-        case "auth":
-          store.dispatch(getAuthLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), uid: requestBy}));
-          break;
-        case "signed":
-          console.log(requestBy)
-          store.dispatch(getSignedKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
-          store.dispatch(getSignedKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), public: requestBy}));
-          break;
-        case "access":
-          store.dispatch(getAccessKeyLog({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
-          store.dispatch(getAccessKeyReqCountAdmin({authToken: authToken, limit: 10, offset: 0, fromDate: Math.round(fromDate.getTime()/1000), toDate: Math.round(toDate.getTime()/1000), key: requestBy}));
-      }
-  }
-  
+      case "auth":
+        store.dispatch(
+          getAuthLog({
+            authToken: authToken,
+            limit: 10,
+            offset: 0,
+            fromDate: Math.round(fromDate.getTime() / 1000),
+            toDate: Math.round(toDate.getTime() / 1000),
+            uid: requestBy,
+          })
+        );
+        break;
+      case "signed":
+        console.log(requestBy);
+        store.dispatch(
+          getSignedKeyLog({
+            authToken: authToken,
+            limit: 10,
+            offset: 0,
+            fromDate: Math.round(fromDate.getTime() / 1000),
+            toDate: Math.round(toDate.getTime() / 1000),
+            public: requestBy,
+          })
+        );
+        store.dispatch(
+          getSignedKeyReqCountAdmin({
+            authToken: authToken,
+            limit: 10,
+            offset: 0,
+            fromDate: Math.round(fromDate.getTime() / 1000),
+            toDate: Math.round(toDate.getTime() / 1000),
+            public: requestBy,
+          })
+        );
+        break;
+      case "access":
+        store.dispatch(
+          getAccessKeyLog({
+            authToken: authToken,
+            limit: 10,
+            offset: 0,
+            fromDate: Math.round(fromDate.getTime() / 1000),
+            toDate: Math.round(toDate.getTime() / 1000),
+            key: requestBy,
+          })
+        );
+        store.dispatch(
+          getAccessKeyReqCountAdmin({
+            authToken: authToken,
+            limit: 10,
+            offset: 0,
+            fromDate: Math.round(fromDate.getTime() / 1000),
+            toDate: Math.round(toDate.getTime() / 1000),
+            key: requestBy,
+          })
+        );
+    }
+  };
+
   useEffect(
     (_) => {
       switch (logType) {
@@ -337,9 +389,13 @@ const LogContainer = ({
                 <div className="pt-2">
                   <TextField
                     label={inputLabel}
-                    id={"requestedBy-input"+ logType}
-                    defaultValue={requestBy} size="small"
-                    onChange={(e) => {setRequestBy(e.target.value); console.log(requestBy)}}
+                    id={"requestedBy-input" + logType}
+                    defaultValue={requestBy}
+                    size="small"
+                    onChange={(e) => {
+                      setRequestBy(e.target.value);
+                      console.log(requestBy);
+                    }}
                   />
                 </div>
                 <KeyboardDatePicker
@@ -372,7 +428,9 @@ const LogContainer = ({
             </MuiPickersUtilsProvider>
           </div>
           <div className="browser-appbar-button-group">
-            <Button startIcon={<AddIcon />} onClick={handleLogRequest}>Log request</Button>
+            <Button startIcon={<AddIcon />} onClick={handleLogRequest}>
+              Log request
+            </Button>
           </div>
           <div className="browser-appbar-mobile-menu">
             <IconButton
@@ -583,7 +641,13 @@ const LogTableRow = ({
     </TableRow>
   );
 };
-const LogTable = ({ requestLogList, isLoading, authToken, reqCount, ...props }) => {
+const LogTable = ({
+  requestLogList,
+  isLoading,
+  authToken,
+  reqCount,
+  ...props
+}) => {
   // const [bucketItemSelected, setBucketItemSelected] = useState({ });
   const [adminSelected, setAdminSelected] = useState([]);
   const [selectedAdminName, setAdminName] = useState();

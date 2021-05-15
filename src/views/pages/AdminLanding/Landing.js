@@ -9,8 +9,10 @@ import { Typography } from "@material-ui/core";
 const AdminLanding = (props) => {
   return (
     <PageFrameAdmin className="landing-container">
-      <Typography variant="h3" className="">NubeS3 Cloud Storage</Typography>
-      <Typography variant="h3" >Access your data anytime, anywhere</Typography>
+      <Typography variant="h3" className="">
+        NubeS3 Cloud Storage
+      </Typography>
+      <Typography variant="h3">THIS IS THE NUBES3 ADMIN PAGE</Typography>
       <button
         className="bg-light-blue text-white active:bg-light-blue font-bold uppercase text-sm px-4 py-2 rounded shadow hover:shadow-lg outlined focus:outline-none mr-1 my-3"
         onClick={() => {
@@ -29,7 +31,7 @@ const AdminLanding = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authen.isValidAuthentication,
+  isValidAuthentication: state.adminAuthen.isAdminValidAuthentication,
 });
 
 export default connect(mapStateToProps)(AdminLanding);

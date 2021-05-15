@@ -1,19 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import AuthHeader from "./Header/AuthHeader";
+import AuthHeaderAdmin from "./Header/AuthHeaderAdmin";
 import UnauthHeaderAdmin from "./Header/UnauthHeaderAdmin";
 
 const Header = (props) => {
   if (props.isValidAuthentication) {
-    return <AuthHeader />;
+    return <AuthHeaderAdmin />;
   } else {
     return <UnauthHeaderAdmin />;
   }
 };
 
 const mapStateToProps = (state) => ({
-  isValidAuthentication: state.authen.isValidAuthentication,
+  isValidAuthentication: state.adminAuthen.isAdminValidAuthentication,
 });
 
 export default connect(mapStateToProps)(Header);
