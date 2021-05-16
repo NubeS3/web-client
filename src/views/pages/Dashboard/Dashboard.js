@@ -27,13 +27,13 @@ const Dashboard = (props) => {
     let curDate = new Date();
     let firstDate = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
     let gap = curDate.getDate();
-    let milestone = firstDate.getTime();
+    let milestone = firstDate.getTime() / 1000;
     for (let i = 1; i <= gap; i++) {
       store.dispatch(
         getTotalBandwidth({
           authToken: props.authToken,
-          from: milestone + 1000 * 3600 * 24 * (i - 1),
-          to: milestone + 1000 * 3600 * 24 * i,
+          from: milestone + 3600 * 24 * (i - 1),
+          to: milestone + 3600 * 24 * i,
         })
       );
       data.push({
