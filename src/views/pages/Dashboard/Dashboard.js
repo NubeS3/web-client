@@ -20,30 +20,9 @@ import { getTotalBandwidth } from "../../../store/user/bandwidthReport";
 
 const Dashboard = (props) => {
   const [value, setValue] = React.useState(0);
-  const [totalBandwidth, setTotalBandwidth] = React.useState([]);
 
   React.useEffect(() => {
-    let data = [];
-    let curDate = new Date();
-    let firstDate = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
-    let gap = curDate.getDate();
-    let milestone = firstDate.getTime() / 1000;
-    for (let i = 1; i <= gap; i++) {
-      store.dispatch(
-        getTotalBandwidth({
-          authToken: props.authToken,
-          from: milestone + 3600 * 24 * (i - 1),
-          to: milestone + 3600 * 24 * i,
-        })
-      );
-      data.push({
-        name: i.toString(),
-        uv: props.data / 8 / 1024,
-        pv: 2400,
-        amt: 2400,
-      });
-    }
-    setTotalBandwidth(data);
+    store.dispatch(getTotalBandwidth({ authToken: props.authToken }));
   }, []);
 
   const handleChange = (event, newValue) => {
@@ -57,30 +36,30 @@ const Dashboard = (props) => {
       data={data}
       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
     >
-      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <XAxis dataKey="name" />
+      <Line type='monotone' dataKey='uv' stroke='#8884d8' />
+      <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
+      <XAxis dataKey='name' />
       <YAxis />
       <Tooltip />
     </LineChart>
   );
 
   return (
-    <PersistentDrawer title="Dashboard">
+    <PersistentDrawer title='Dashboard'>
       <AppBar
-        position="static"
+        position='static'
         style={{ backgroundColor: "white", color: "black" }}
       >
         <Tabs value={value} onChange={handleChange}>
           <Tab
-            className="focus:outline-none"
-            label="Dashboard"
+            className='focus:outline-none'
+            label='Dashboard'
             {...a11yProps(0)}
           />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        {renderLineChart(totalBandwidth)}
+        {renderLineChart(props.data)}
       </TabPanel>
     </PersistentDrawer>
   );
@@ -91,7 +70,7 @@ function TabPanel(props) {
 
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}

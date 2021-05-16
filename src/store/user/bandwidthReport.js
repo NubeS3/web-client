@@ -5,24 +5,39 @@ import endpoints from "../../configs/endpoints";
 const initialState = {
   loading: false,
   err: null,
-  data: 0.0,
+  data: [],
 };
 
 export const getTotalBandwidth = createAsyncThunk(
   "bandwidthReport/getTotalBandwidth",
   async (data, api) => {
+    let temp = [];
+    let curDate = new Date();
+    let firstDate = new Date(curDate.getFullYear(), curDate.getMonth(), 1);
+    let gap = curDate.getDate();
+    let milestone = firstDate.getTime() / 1000;
     try {
       // api.dispatch(bandwidthReportSlice.actions.loading());
-      const response = await axios.get(
-        endpoints.GET_TOTAL_BANDWIDTH + `?from=${data.from}&to=${data.to}`,
-        {
-          headers: {
-            Authorization: `Bearer ${data.authToken}`,
-          },
-        }
-      );
-      api.dispatch(bandwidthReportSlice.sendGetTotalBandwidth(response.data));
-      return response.data;
+      for (let i = 1; i <= gap; i++) {
+        const response = await axios.get(
+          endpoints.GET_TOTAL_BANDWIDTH +
+            `?from=${milestone + 3600 * 24 * (i - 1)}&to=${
+              milestone + 3600 * 24 * i
+            }`,
+          {
+            headers: {
+              Authorization: `Bearer ${data.authToken}`,
+            },
+          }
+        );
+        temp.push({
+          name: i.toString(),
+          uv: Math.ceil(response.data / 8 / 1024),
+          pv: 2400,
+          amt: 2400,
+        });
+      }
+      return temp;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
@@ -39,20 +54,19 @@ export const bandwidthReportSlice = createSlice({
     reset: (state, action) => {
       state.loading = false;
       state.err = null;
-      state.data = 0.0;
-    },
-    sendGetTotalBandwidth: (state, action) => {
-      state = { data: action.payload, ...state };
+      state.data = 0;
     },
   },
   extraReducers: {
     [getTotalBandwidth.fulfilled]: (state, action) => {
-      state = { loading: false, err: null, data: action.payload };
+      state.loading = false;
+      state.err = null;
+      state.data = action.payload;
     },
     [getTotalBandwidth.rejected]: (state, action) => {
       state.loading = false;
       state.err = action.payload;
-      state.data = 0.0;
+      state.data = [];
     },
   },
 });
