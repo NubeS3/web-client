@@ -9,6 +9,7 @@ import { bucketKeySlice } from "./userStorage/bucketKey";
 import { userManageSlice } from "./admin/user";
 import { adminManageSlice } from "./admin/admin";
 import { requestLogManageSlice } from "./admin/requestLog";
+import { bandwidthReportSlice } from "./user/bandwidthReport";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
     download: downloadSlice.reducer,
     bucket: bucketSlice.reducer,
     bucketKey: bucketKeySlice.reducer,
+    bandwidthReport: bandwidthReportSlice.reducer,
 
     adminManage: adminManageSlice.reducer,
     userManage: userManageSlice.reducer,
