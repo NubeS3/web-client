@@ -5,7 +5,7 @@ import endpoints from "../../configs/endpoints";
 const initialState = {
   loading: false,
   err: null,
-  data: 0,
+  data: 0.0,
 };
 
 export const getTotalBandwidth = createAsyncThunk(
@@ -21,6 +21,7 @@ export const getTotalBandwidth = createAsyncThunk(
           },
         }
       );
+      api.dispatch(bandwidthReportSlice.sendGetTotalBandwidth(response.data));
       return response.data;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
@@ -38,19 +39,20 @@ export const bandwidthReportSlice = createSlice({
     reset: (state, action) => {
       state.loading = false;
       state.err = null;
-      state.data = 0;
+      state.data = 0.0;
+    },
+    sendGetTotalBandwidth: (state, action) => {
+      state = { data: action.payload, ...state };
     },
   },
   extraReducers: {
     [getTotalBandwidth.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.err = null;
-      state.data = action.payload;
+      state = { loading: false, err: null, data: action.payload };
     },
     [getTotalBandwidth.rejected]: (state, action) => {
       state.loading = false;
       state.err = action.payload;
-      state.data = 0;
+      state.data = 0.0;
     },
   },
 });

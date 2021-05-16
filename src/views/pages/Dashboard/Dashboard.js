@@ -7,7 +7,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
-import Button from "@material-ui/core/Button";
 import {
   LineChart,
   Line,
@@ -18,16 +17,6 @@ import {
 } from "recharts";
 import store from "../../../store/store";
 import { getTotalBandwidth } from "../../../store/user/bandwidthReport";
-
-// const data = [
-//   { name: "1", uv: 400, pv: 20, amt: 20 },
-//   { name: "5", uv: 400, pv: 20, amt: 20 },
-//   { name: "10", uv: 400, pv: 20, amt: 20 },
-//   { name: "15", uv: 400, pv: 20, amt: 20 },
-//   { name: "20", uv: 400, pv: 20, amt: 20 },
-//   { name: "25", uv: 400, pv: 20, amt: 20 },
-//   { name: "30", uv: 400, pv: 20, amt: 20 },
-// ];
 
 const Dashboard = (props) => {
   const [value, setValue] = React.useState(0);
@@ -47,7 +36,12 @@ const Dashboard = (props) => {
           to: milestone + 1000 * 3600 * 24 * i,
         })
       );
-      data.push({ name: i, uv: props.data / 8 / 1024, pv: 2400, amt: 2400 });
+      data.push({
+        name: i.toString(),
+        uv: props.data / 8 / 1024,
+        pv: 2400,
+        amt: 2400,
+      });
     }
     setTotalBandwidth(data);
   }, []);
@@ -60,7 +54,7 @@ const Dashboard = (props) => {
     <LineChart
       width={width}
       height={height}
-      data={totalBandwidth}
+      data={data}
       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
     >
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
