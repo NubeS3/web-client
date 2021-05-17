@@ -27,6 +27,7 @@ const endpoints = {
   COUNT_ALL_SIGNED_KEY_REQ: `${BASE}/auth/keyPairs/use-count/all`,
   COUNT_DATE_ACCESS_KEY_REQ: `${BASE}/auth/accessKey/use-count/date`,
   COUNT_DATE_SIGNED_KEY_REQ: `${BASE}/auth/keyPairs/use-count/date`,
+  GET_TOTAL_BANDWIDTH: `${BASE}/users/bandwidth-report`,
 
   LOGIN_ADMIN: `${BASE}/admin/signin`,
   GET_ALL_USER: `${BASE}/admin/auth/users-list`,
