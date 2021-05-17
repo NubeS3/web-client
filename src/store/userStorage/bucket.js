@@ -353,16 +353,19 @@ export const bucketSlice = createSlice({
     },
     [createBucket.fulfilled]: (state, action) => {
       state.bucketList = [...state.bucketList, action.payload];
+      alert("Bucket added!")
       state.isLoading = false;
     },
     [createBucket.rejected]: (state, action) => {
       state.isLoading = false;
+      alert("Failed to add bucket!")
       state.err = action.payload;
     },
     [deleteBucket.fulfilled]: (state, action) => {
       state.bucketList = state.bucketList.filter(
         (bucket) => bucket.id !== action.payload.id
       );
+      alert("Bucket deleted!")
       state.loading = false;
     },
     [deleteBucket.rejected]: (state, action) => {
@@ -389,6 +392,7 @@ export const bucketSlice = createSlice({
     },
     [createBucketFolder.fulfilled]: (state, action) => {
       state.bucketFolderList = [...state.bucketFolderList, action.payload];
+      alert("Folder added!")
       state.isLoading = false;
     },
     [createBucketFolder.rejected]: (state, action) => {

@@ -4,7 +4,6 @@ import { Redirect } from "react-router-dom";
 
 import PageFrame from "../../components/PageFrame";
 import paths from "../../../configs/paths";
-import preValidateRegisterData from "../../../helpers/preValidateRegisterData";
 
 import {
   Button,
@@ -28,16 +27,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const Register = (props) => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [gender, setGender] = useState(true);
-  const [selectedDate, setDate] = useState(new Date());
-  const [company, setCompany] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-
   const formik = useFormik({
     initialValues: {
       firstname: "",
