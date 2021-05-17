@@ -138,13 +138,15 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
             })
           );
         } else {
-          store.dispatch(
-            countDateAccessKeyReq({
-              authToken: authToken,
-              fromDate: Math.round(fromDate.getTime() / 1000),
-              toDate: Math.round(toDate.getTime() / 1000),
-              key: reqKey.key,
-            })
+          console.log(
+            store.dispatch(
+              countDateAccessKeyReq({
+                authToken: authToken,
+                fromDate: Math.round(fromDate.getTime() / 1000),
+                toDate: Math.round(toDate.getTime() / 1000),
+                key: reqKey.key,
+              })
+            )
           );
         }
         break;
@@ -157,6 +159,7 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
             })
           );
         } else {
+          
           store.dispatch(
             countDateSignedKeyReq({
               authToken: authToken,
@@ -273,7 +276,7 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
                       />
                     </Grid>
                   </MuiPickersUtilsProvider>
-                  {count ? `This key has been used ${count} time(s)` : ""}
+                  {`This key has been used ${count.count} time(s)`}
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-between p-6 border-t border-solid border-gray-300 rounded-b">
@@ -447,7 +450,7 @@ const AccessKeyTable = ({
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openStatsDialog, setOpenStatsDialog] = useState(false);
   const [requestKey, setRequestKey] = useState({ key: "" });
   const isFirstRender = useRef(true);
@@ -1242,7 +1245,7 @@ const mapStateToProps = (state) => {
   const signedKeyReqCount = state.bucketKey.signedKeyReqCount;
   const isLoading = state.bucket.isBucketLoading;
   const reqCount = state.bucket.reqCount;
-  console.log(accessKeyList);
+  console.log(accessKeyReqCount);
   console.log(signedKeyList);
   return {
     authToken,

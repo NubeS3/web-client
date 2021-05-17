@@ -51,6 +51,7 @@ export const uploadSlice = createSlice({
         [uploadFile.rejected]: (state, action) => {
             state.err = action.payload;
             state.isLoading = false;
+            alert(action.payload)
         },
     }
 })

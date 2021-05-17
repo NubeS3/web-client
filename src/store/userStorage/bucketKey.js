@@ -3,8 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import endpoints from "../../configs/endpoints";
 
 const initialState = {
-  accessKeyReqCount: 0,
-  signedKeyReqCount: 0,
+  accessKeyReqCount: { count: 0 },
+  signedKeyReqCount: { count: 0 },
   isLoading: false,
   err: null,
 };
@@ -16,7 +16,7 @@ export const countDateSignedKeyReq = createAsyncThunk(
       api.dispatch(bucketKeySlice.actions.loading());
       const response = await axios.get(
         endpoints.COUNT_DATE_SIGNED_KEY_REQ +
-          `?from=${data.fromDate}&to=${data.toDate}&key=${data.key}`,
+          `/${data.public}?from=${data.fromDate}&to=${data.toDate}`,
         {
           headers: {
             Authorization: `Bearer ${data.authToken}`,
@@ -37,7 +37,7 @@ export const countAllSignedKeyReq = createAsyncThunk(
     try {
       api.dispatch(bucketKeySlice.actions.loading());
       const response = await axios.get(
-        endpoints.COUNT_ALL_SIGNED_KEY_REQ + `/${data.key}`,
+        endpoints.COUNT_ALL_SIGNED_KEY_REQ + `/${data.public}`,
         {
           headers: {
             Authorization: `Bearer ${data.authToken}`,
@@ -59,7 +59,7 @@ export const countDateAccessKeyReq = createAsyncThunk(
       api.dispatch(bucketKeySlice.actions.loading());
       const response = await axios.get(
         endpoints.COUNT_DATE_ACCESS_KEY_REQ +
-          `?from=${data.fromDate}&to=${data.toDate}&key=${data.key}`,
+          `/${data.key}?from=${data.fromDate}&to=${data.toDate}`,
         {
           headers: {
             Authorization: `Bearer ${data.authToken}`,
@@ -87,7 +87,6 @@ export const countAllAccessKeyReq = createAsyncThunk(
           },
         }
       );
-      console.log(response.data);
       return response.data;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
@@ -106,7 +105,7 @@ export const bucketKeySlice = createSlice({
 
   extraReducers: {
     [countDateSignedKeyReq.fulfilled]: (state, action) => {
-      state = { ...state, signedKeyReqCount: action.payload };
+      state.signedKeyReqCount.count = action.payload
       state.loading = false;
     },
     [countDateSignedKeyReq.rejected]: (state, action) => {
@@ -115,7 +114,7 @@ export const bucketKeySlice = createSlice({
     },
 
     [countAllSignedKeyReq.fulfilled]: (state, action) => {
-      state = { ...state, signedKeyReqCount: action.payload };
+      state.signedKeyReqCount.count = action.payload
       state.loading = false;
     },
     [countAllSignedKeyReq.rejected]: (state, action) => {
@@ -124,7 +123,7 @@ export const bucketKeySlice = createSlice({
     },
 
     [countDateAccessKeyReq.fulfilled]: (state, action) => {
-      state = { ...state, accessKeyReqCount: action.payload };
+      state.accessKeyReqCount.count = action.payload
       state.loading = false;
     },
     [countDateAccessKeyReq.rejected]: (state, action) => {
@@ -133,7 +132,7 @@ export const bucketKeySlice = createSlice({
     },
 
     [countAllAccessKeyReq.fulfilled]: (state, action) => {
-      state = { ...state, accessKeyReqCount: action.payload };
+      state.accessKeyReqCount.count = action.payload
       state.loading = false;
     },
     [countAllAccessKeyReq.rejected]: (state, action) => {

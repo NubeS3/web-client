@@ -392,7 +392,6 @@ export const bucketSlice = createSlice({
     },
     [createBucketFolder.fulfilled]: (state, action) => {
       state.bucketFolderList = [...state.bucketFolderList, action.payload];
-      alert("Folder added!")
       state.isLoading = false;
     },
     [createBucketFolder.rejected]: (state, action) => {

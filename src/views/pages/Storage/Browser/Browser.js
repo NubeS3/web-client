@@ -123,7 +123,7 @@ const bucketItemHeadCells = [
   { id: "name", numeric: false, disablePadding: true, label: "Name" },
   { id: "size", numeric: false, disablePadding: false, label: "Size" },
   {
-    id: "content_type",
+    id: "type",
     numeric: false,
     disablePadding: false,
     label: "File type",
@@ -509,6 +509,7 @@ const BucketItemsContainer = ({
     e.preventDefault();
     let file = e.target.files;
     var parent_path = "";
+    console.log(breadcrumbStack)
     if (breadcrumbStack.length === 1) {
       parent_path = "/";
     } else {
@@ -975,24 +976,26 @@ const BucketItemTable = ({
                       {row.name}
                     </TableCell>
                     <TableCell align="left">
-                      {row.size ? (
-                        row.size < 1024 ? (
-                          <>{row.size} byte</>
+                      {row.metadata ? 
+                      <>{row.metadata.size ? (
+                        row.metadata.size < 1024 ? (
+                          <>{row.metadata.size} byte</>
                         ) : (
                           <>
-                            {row.size < Math.pow(1024, 2) ? (
-                              <>{Math.ceil(row.size / 1024)} KB</>
+                            {row.metadata.size < Math.pow(1024, 2) ? (
+                              <>{Math.ceil(row.metadata.size / 1024)} KB</>
                             ) : (
-                              <>{Math.ceil(row.size / Math.pow(1024, 2))} MB</>
+                              <>{Math.ceil(row.metadata.size / Math.pow(1024, 2))} MB</>
                             )}
                           </>
                         )
                       ) : (
                         ""
-                      )}
+                      )}</>
+                      : null}
                     </TableCell>
-                    <TableCell align="left">{row.content_type}</TableCell>
-                    <TableCell align="left">{row.expired_date}</TableCell>
+                    <TableCell align="left">{row.metadata ? row.metadata.content_type : null}</TableCell>
+                    <TableCell align="left">{row.metadata ? row.metadata.expired_date: null}</TableCell>
                     <TableCell align="right">
                       <IconButton>
                         <MoreIcon />
@@ -1472,6 +1475,7 @@ const mapStateToProps = (state) => {
   const bucketFileList = state.bucket.bucketFileList;
   const bucketFolderList = state.bucket.bucketFolderList;
   const folderChildrenList = state.bucket.folderChildrenList;
+  console.log(folderChildrenList)
   return {
     authToken,
     bucketList,
