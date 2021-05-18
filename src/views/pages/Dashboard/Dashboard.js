@@ -36,7 +36,7 @@ const Dashboard = (props) => {
   const CustomTooltip = ({ payload, active }, ...props) => {
     if (active) {
       console.log(payload);
-      return <p>{`${payload[0].value} kB`}</p>;
+      return <p>{`${payload[0].value} MB`}</p>;
     }
     return null;
   };
@@ -73,7 +73,7 @@ const Dashboard = (props) => {
       <TabPanel value={value} index={0}>
         <div>
           {renderLineChart(props.data)}
-          <p>Total bandwidth usage in this month: {props.total} kB</p>
+          <p>Total bandwidth usage in this month: {props.total} MB</p>
         </div>
       </TabPanel>
     </PersistentDrawer>

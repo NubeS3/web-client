@@ -34,7 +34,7 @@ export const getMonthUsageBandwidth = createAsyncThunk(
         temp.push({
           day: i.toString(),
           unit: "KB",
-          bandwidth: Math.ceil(response.data / 8 / 1024),
+          bandwidth: Math.round((response.data * 100) / 8 / 1024 / 1024) / 100,
         });
       }
       return temp;
@@ -62,7 +62,7 @@ export const getTotalUsageBandwidth = createAsyncThunk(
           },
         }
       );
-      return response.data;
+      return Math.round((response.data * 100) / 8 / 1024 / 1024) / 100;
     } catch (err) {
       return api.rejectWithValue(err.response.data.error);
     }
