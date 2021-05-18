@@ -159,7 +159,6 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
             })
           );
         } else {
-          
           store.dispatch(
             countDateSignedKeyReq({
               authToken: authToken,
@@ -215,7 +214,7 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <div className="pt-2">
+                  <Grid container justify="space-between" alignItems="flex-end">
                     <TextField
                       disabled
                       disableUnderline
@@ -237,7 +236,7 @@ const KeyStatistic = ({ open, handleOpen, count, reqKey, id, authToken }) => {
                       }
                       label="Check with date range"
                     />
-                  </div>
+                  </Grid>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid
                       container
@@ -352,7 +351,12 @@ const EditBucketContainer = ({
       unmountOnExit
     >
       <Paper
-        style={{ position: "absolute", width: "inherit", top: "0" }}
+        style={{
+          position: "absolute",
+          width: "inherit",
+          top: "0",
+          height: "150%",
+        }}
         className="flex flex-col"
       >
         {/* <AppBar

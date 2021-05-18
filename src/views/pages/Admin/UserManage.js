@@ -621,7 +621,7 @@ const BucketContainer = ({
       mountOnEnter
       unmountOnExit
     >
-      <Paper style={{ position: "absolute", width: "inherit", top: "0" }}>
+      <Paper style={{ position: "absolute", width: "inherit", top: "0", height: '155%' }}>
         <AppBar
           position="static"
           style={{ backgroundColor: "white", color: "black" }}

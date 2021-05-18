@@ -35,7 +35,7 @@ import {
 } from "../../../store/admin/user";
 
 const accessKeyHeadCells = [
-  { id: "key", numeric: false, disablePadding: true, label: "Key" },
+  { id: "key", numeric: false, disablePadding: false, label: "Key" },
   {
     id: "expiringDate",
     numeric: false,
@@ -58,7 +58,7 @@ const accessKeyHeadCells = [
 ];
 
 const signedKeyHeadCells = [
-  { id: "key", numeric: false, disablePadding: true, label: "Key" },
+  { id: "key", numeric: false, disablePadding: false, label: "Key" },
   {
     id: "expiringDate",
     numeric: false,
@@ -141,6 +141,7 @@ const BucketKeyContainer = ({
       <Paper
         style={{ position: "absolute", width: "inherit", top: "0" }}
         className="flex flex-col"
+        elevation={0}
       >
         {/* <AppBar
                     style={{ backgroundColor: "white", color: "black" }}
@@ -293,7 +294,6 @@ const AccessKeyTable = ({
                         component="th"
                         id={labelId}
                         scope="row"
-                        padding="checkbox"
                         onClick={() => handleKeyClick(row.key)}
                       >
                         {row.key}
@@ -425,7 +425,6 @@ const SignedKeyTable = ({
                         component="th"
                         id={labelId}
                         scope="row"
-                        padding="checkbox"
                         onClick={() => handleKeyClick(row.public)}
                       >
                         {row.public}
