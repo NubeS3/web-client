@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Label,
 } from "recharts";
 import store from "../../../store/store";
 import {
@@ -50,8 +51,12 @@ const Dashboard = (props) => {
     >
       <Line type="monotone" dataKey="bandwidth" stroke="#8884d8" />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <XAxis dataKey="day" />
-      <YAxis />
+      <XAxis dataKey="day">
+        <Label value="Days" offset={0} position="insideBottom" />
+      </XAxis>
+      <YAxis
+        label={{ value: "Bandwidth usage", angle: -90, position: "insideLeft" }}
+      />
       <Tooltip content={<CustomTooltip />} />
     </LineChart>
   );
