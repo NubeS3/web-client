@@ -21,6 +21,7 @@ import {
   getMonthUsageBandwidth,
   getTotalUsageBandwidth,
 } from "../../../store/user/bandwidthReport";
+import { Grid } from "@material-ui/core";
 
 const Dashboard = (props) => {
   const [value, setValue] = React.useState(0);
@@ -52,11 +53,15 @@ const Dashboard = (props) => {
       <Line type="monotone" dataKey="bandwidth" stroke="#8884d8" />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
       <XAxis dataKey="day">
-        <Label value="Day in month" offset={0} position="bottom"></Label>
+        <Label value="Days" offset={0} position="insideBottom" />
       </XAxis>
-      <YAxis>
-      <Label value="Bandwidth usage (KB)" offset={0} position="left"></Label>
-      </YAxis>
+      <YAxis
+        label={{
+          value: "Bandwidth usage (MB)",
+          angle: -90,
+          position: "insideLeft",
+        }}
+      />
       <Tooltip content={<CustomTooltip />} />
     </LineChart>
   );
@@ -76,10 +81,10 @@ const Dashboard = (props) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <div>
+        <Grid align="center">
           {renderLineChart(props.data)}
-          <p>Total bandwidth usage in this month: {props.total} MB</p>
-        </div>
+          <p className="mt-10 text-lg font-bold">Total bandwidth usage in this month: {props.total} MB</p>
+        </Grid>
       </TabPanel>
     </PersistentDrawer>
   );
