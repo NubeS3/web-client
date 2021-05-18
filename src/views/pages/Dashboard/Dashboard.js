@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Label,
 } from "recharts";
 import store from "../../../store/store";
 import {
@@ -33,7 +34,7 @@ const Dashboard = (props) => {
     setValue(newValue);
   };
 
-  const CustomTooltip = ({ payload, active }, ...props) => {
+  const CustomTooltip = ({ payload=[0], active}) => {
     if (active) {
       console.log(payload);
       return <p>{`${payload[0].value} MB`}</p>;
@@ -50,8 +51,12 @@ const Dashboard = (props) => {
     >
       <Line type="monotone" dataKey="bandwidth" stroke="#8884d8" />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <XAxis dataKey="day" />
-      <YAxis />
+      <XAxis dataKey="day">
+        <Label value="Day in month" offset={0} position="bottom"></Label>
+      </XAxis>
+      <YAxis>
+      <Label value="Bandwidth usage (KB)" offset={0} position="left"></Label>
+      </YAxis>
       <Tooltip content={<CustomTooltip />} />
     </LineChart>
   );
