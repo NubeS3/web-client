@@ -34,7 +34,7 @@ const Dashboard = (props) => {
   };
 
   const CustomTooltip = ({ payload, active }, ...props) => {
-    if (active) {
+    if (active && payload && payload.length) {
       console.log(payload);
       return <p>{`${payload[0].value} MB`}</p>;
     }
